@@ -8,6 +8,7 @@ import (
 
 func main() {
 	a := lm.NewLinkedMap()
+
 	for i := 0; i < 2000; i++ {
 		a.Put(strconv.Itoa(i), i)
 	}
