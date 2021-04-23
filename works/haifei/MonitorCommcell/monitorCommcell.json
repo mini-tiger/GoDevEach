@@ -1,0 +1,10 @@
+{
+  "schedule": "0 40 * * * ",
+  "logLevel": "INFO",
+  "stdout": true,
+  "logfile": "run.log",
+  "urlIP": "127.0.0.1:8080",
+  "spaceTime": 15,
+  "validTime": 10,
+  "logMaxDays": 4
+}

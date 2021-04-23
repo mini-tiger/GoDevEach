@@ -1,0 +1,16 @@
+{
+  "mailAddr": "smtp.163.com",
+  "mailUser": "61566027@163.com",
+  "mailPass": "IORQCTROCDAKWPZS",
+  "mailPort": 465,
+  "mailTo": ["61566027@163.com"],
+  "schedule": "*/10 * * * * ",
+  "debug": false,
+  "stdout": true,
+  "logfile": "run.log",
+  "getIP": "192.168.43.26:4444",
+  "tmpDownloadDir": ".",
+  "validHours": 3,
+  "logMaxDays": 7,
+  "htmlTpl": "tpl/monitor.HTML"
+}

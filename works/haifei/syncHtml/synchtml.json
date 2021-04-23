@@ -1,0 +1,10 @@
+{
+  "htmlfileReg": "/home/go/GoDevEach/works/haifei/syncHtml/htmlData/",
+  "htmlBakDir": "/home/go/GoDevEach/works/haifei/syncHtml/HisData/bak/",
+  "htmlFailDir": "/home/go/GoDevEach/works/haifei/syncHtml/HisData/fail/",
+  "logfile": "/home/go/GoDevEach/works/haifei/syncHtml/run.log",
+  "logMaxDays": 7,
+  "timeinter": 10,
+  "oracledsn": "HAIFEI/Highfly,2019!!DD@192.168.43.22:1521/orcl",
+  "debug": false
+}

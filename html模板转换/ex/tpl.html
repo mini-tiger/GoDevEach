@@ -1,0 +1,22 @@
+{{ define "layout" }}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{{.Title | totitle}}</title>
+{{   /*        函数带参数 {{funcname .arg1 .arg2}}   */ }}
+
+    </head>
+    <body>
+ {{ if .Arg }}
+  <b1>111</b1>
+{{ end }}
+
+{{ range .Days }}
+    <li>{{ . }}</li>
+{{ else }}
+ empty
+{{ end }}
+    </body>
+</html>
+{{ end }}

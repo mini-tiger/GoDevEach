@@ -1,0 +1,671 @@
+package g
+
+import (
+	"database/sql"
+	"fmt"
+	"github.com/PuerkitoBio/goquery"
+	"github.com/ccpaging/nxlog4go"
+	"log"
+	"os"
+	"path/filepath"
+	"regexp"
+	"sort"
+	"strconv"
+	"strings"
+	"time"
+)
+
+//[caidddb1 Linux FS         / defaultBackupSet/34.81_file 96780* , SWC(C) FULL Classic 01/26/2019 20:00:06 (01/26/2019 20:00:16 ) 01/26/2019 20:00:53 (01/26/2019 20:00:53 ) 152.73 MB (54.17%%) 71.54 MB 73.19 MB( 52.08%%) 0%% 0:00:07 76.706 4,861 0 0 /home/go/GoDevEach/works/haifei/syncHtml/htmlData/1monthReport/cv10/cv10-bj1/28day_4copy.html 1573442911000 hfserverbj1 152.73 34.81_file]
+//&[DATACLIENT AgentInstance BackupSetSubclient Job ID (CommCell)(Status) Type Scan Type Start Time(Write Start Time) End Time or Current Phase Size of Application Data Transferred Data Written Data Size Change Transfer Time Throughput (GB/Hour) Protected Objects Failed Objects Failed Folders HTMLFILE INSERTTIME COMMCELL APPLICATIONSIZE DATASUBCLIENT START TIME]
+
+/*
+1.查看 是否包含中文
+2.确认CV8 CV*
+3.找到摘要和报告中下面的颜色规律
+4.生成摘要表 sql
+5.生成详细信息表sql
+
+*/
+const (
+	//ReadFile    = "10.155.2.4_yuebao_English.html"
+	//htmlfileReg = "C:\\work\\go-dev\\src\\godev\\works\\haifei\\*.html"
+	//htmlBakDir  = "C:\\work\\go-dev\\src\\godev\\works\\haifei\\bak\\"
+	//timeinter   = 10
+	timeLayout = "2006-01-02 15:04:05"
+	FieldsLen  = 21 // 列一共有几列,使用时 要 减一 "
+	DetailTable  = "HF_BACKUPDETAIL"
+)
+
+var startRunTime = time.Now().Unix()
+var (
+	CommCell        string // 客户端名
+	GenTime         string
+	StartTime       string
+	ApplicationSize string
+	Subclient       string
+	//StartTimeArr  []string = make([]string, 0)
+	HtmlFile     string
+	DetailSqlArr [](*map[string]string)
+	Version      int
+	OracleDsn string
+)
+var Log *nxlog4go.Logger
+
+type VerCol struct {
+	DetailCol int
+}
+
+//const ConfigJson = "D:\\work\\project-dev\\GoDevEach\\works\\haifei\\syncYWReport\\syncYWReport.json"
+
+/*
+	版本 说明version 10 : summery:18cols,detail: 17cols
+			11 :20 17
+			8 :16 16
+*/
+var VersionCols map[int]VerCol = map[int]VerCol{11: VerCol{17},
+	10: VerCol{17},
+	8:  VerCol{16}}
+
+func formatFields(index int, s string) (rstr string) {
+	switch true {
+	case index == 0 && strings.Contains(s, "Client"):
+		rstr = "DATACLIENT"
+		break
+	case strings.Contains(s, "Phase(Write End Time)"):
+		rstr = strings.Replace(s, "(Write End Time)", "", -1)
+		break
+	case strings.Contains(s, " (Compression Rate)"):
+		rstr = strings.Replace(s, " (Compression Rate)", "", -1)
+		break
+	case strings.Contains(s, "(Space Saving Percentage)"):
+		rstr = strings.Replace(s, "(Space Saving Percentage)", "", -1)
+		break
+	case strings.Contains(s, "(Current)"):
+		rstr = strings.Replace(s, "(Current)", "", -1)
+		break
+	case s == "Agent /Instance":
+		rstr = "AgentInstance"
+		break
+	case s == "Backup Set /Subclient":
+		rstr = "BackupSetSubclient"
+		break
+
+	default:
+		rstr = strings.TrimSpace(s)
+	}
+	return
+}
+
+func formatStr(s string) string {
+	return strings.Replace(strings.TrimSpace(s), "\n", "", -1)
+}
+
+func formatDetailValues(index int, s string, Log *nxlog4go.Logger) (rstr string) {
+	//fmt.Println(index, s)
+	if strings.Contains(s, "N/A") {
+		rstr = strings.Replace(s, "N/A", "", -1)
+		s = rstr
+	} else {
+		rstr = s
+	}
+	if strings.Contains(s, "%") {
+		rstr = strings.Replace(s, "%", "%%", -1)
+		s = rstr
+	} else {
+		rstr = s
+	}
+
+	switch true {
+	//case strings.Contains(s, "N/A"):
+	//	rstr = strings.Replace(s, "N/A", "", -1)
+	//	s = rstr
+	case index == 2: // subclient
+
+		tmpstr := s
+		switch true {
+		case strings.Contains(tmpstr, "/"):
+			tmpstr = strings.Split(s, "/")[1]
+			//fallthrough
+			if strings.Contains(tmpstr, "Logcommand line") {
+				Subclient = "Logcommand line"
+			} else {
+				Subclient = tmpstr
+			}
+			break
+		default:
+			Subclient = s
+
+		}
+		//fmt.Println("333333333333",index, s, Subclient)
+		break
+
+	case index == 6: // starttime 赋值 全局变量，对应自定义列
+		StartTimeValue := ""
+		if strings.Contains(s, "(") {
+			StartTimeValue = strings.Split(s, "(")[0]
+		} else {
+			StartTimeValue = s
+		}
+
+		StartTimeValue = strings.TrimSpace(StartTimeValue)
+		//StartTimeValue = fmt.Sprint("to_date('" + StartTimeValue + "','mm/dd/yyyy hh24:mi:ss')")
+		StartTimeValue = FormatTime(StartTimeValue)
+		//StartTimeArr = append(StartTimeArr, StartTimeValue)
+		StartTime = StartTimeValue
+
+		break
+	case index == 8:
+		as := ""
+		if strings.Contains(s, "(") {
+			as = strings.Split(s, "(")[0]
+		} else {
+			as = s
+		}
+
+		switch true {
+		case strings.Contains(as, "TB"):
+			as = strings.Split(as, " TB")[0]
+			fl, err := strconv.ParseFloat(as, 64)
+			if err != nil {
+				Log.Error("应用程序大小转换float失败 err:%s\n", err)
+				break
+			}
+
+			//am:=strconv.FormatFloat(fl*1024,'E',-1,64)
+			ApplicationSize = fmt.Sprintf("%.2f", fl*1024*1014)
+		case strings.Contains(as, "GB"):
+			as = strings.Split(as, " GB")[0]
+			fl, err := strconv.ParseFloat(as, 64)
+			if err != nil {
+				Log.Error("应用程序大小转换float失败 err:%s\n", err)
+				break
+			}
+
+			//am:=strconv.FormatFloat(fl*1024,'E',-1,64)
+			ApplicationSize = fmt.Sprintf("%.2f", fl*1024)
+
+		case strings.Contains(as, "MB"):
+			as = strings.Split(as, " MB")[0]
+			fl, err := strconv.ParseFloat(as, 64)
+			if err != nil {
+				Log.Error("应用程序大小转换float失败 err:%s\n", err)
+				break
+			}
+			ApplicationSize = fmt.Sprintf("%.2f", fl)
+		case strings.Contains(as, "KB"):
+			as = strings.Split(as, " KB")[0]
+			fl, err := strconv.ParseFloat(as, 64)
+			if err != nil {
+				Log.Error("应用程序大小转换float失败 err:%s\n", err)
+				break
+			}
+			ApplicationSize = fmt.Sprintf("%.2f", fl/1024)
+		case strings.Contains(as, "Bytes"):
+			as = strings.Split(as, " Bytes")[0]
+			fl, err := strconv.ParseFloat(as, 64)
+			if err != nil {
+				Log.Error("应用程序大小转换float失败 err:%s\n", err)
+				break
+			}
+			ApplicationSize = fmt.Sprintf("%.2f", fl/1024/1024)
+		case strings.Contains(as, "Not Run because of another job running for the same subclient"):
+			break
+		default:
+			p := `(\d+)\.(\d+)`
+			floatNum, _ := regexp.MatchString(p, as)
+			//fmt.Println(i,err)
+			p = `(\d+)`
+			intNum, _ := regexp.MatchString(p, as)
+			if floatNum || intNum {
+				ApplicationSize = as
+				break
+			}
+
+			application, e := strconv.Atoi(strings.TrimSpace(as))
+			if e != nil {
+				Log.Error("change type string:%s,err:%s\n", as, e)
+			}
+			if application == 0 {
+				ApplicationSize = "0"
+			}
+
+		}
+
+		break
+
+	}
+	return
+}
+
+func FormatTime(toBeCharge string) string {
+	//toBeCharge := "09/04/2019 11:03:16"
+	// 如果不是时间格式
+	if _, err := strconv.Atoi(strings.Split(toBeCharge, "/")[0]); err != nil {
+		return toBeCharge
+	}
+
+	// 待转化为时间戳的字符串 注意 这里的小时和分钟还要秒必须写 因为是跟着模板走的 修改模板的话也可以不写
+	timeLayout := "2006/01/02 15:04:05" // 中英文 时间格式不一样
+	if ii, _ := strconv.Atoi(strings.Split(toBeCharge, "/")[0]); ii <= 12 {
+		timeLayout = "01/02/2006 15:04:05" //转化所需模板
+	}
+
+	loc, _ := time.LoadLocation("Local")                            //重要：获取时区
+	theTime, _ := time.ParseInLocation(timeLayout, toBeCharge, loc) //使用模板在对应时区转化为time.time类型
+	sr := theTime.Unix()                                            //转化为时间戳 类型是int64
+	//fmt.Println(theTime)                                            //打印输出theTime 2015-01-01 15:15:00 +0800 CST
+	//fmt.Println(sr)
+	return strconv.FormatInt(sr, 10) + "000"
+}
+
+func ReadChiHtml(log *nxlog4go.Logger, htmlfile string,dsn string) (rn int) {
+	HtmlFile = htmlfile
+	// 清空数据
+	DetailSqlArr = make([]*(map[string]string), 0)
+	Log = log
+	OracleDsn = dsn
+
+	//Data := make([][]string, 0)
+	//FiledsHeader := new([]string) // 列头，序号为KEY
+	//fmt.Println(f.Name())
+
+	f, err := os.OpenFile(htmlfile, os.O_RDONLY, 0755)
+	if err != nil {
+		Log.Error("file open err:%s\n", err)
+		rn = 10
+		return
+	}
+	defer func() {
+		f.Close()
+	}()
+
+	dom, err := goquery.NewDocumentFromReader(f)
+	if err != nil {
+		//log.Fatal(err)
+		Log.Error("Htmlfile:%s,dom_Error:%s\n", HtmlFile, err)
+		return 6
+	}
+	//fmt.Println(dom.Find("body:contains(CommCell)").Length())
+
+	// check chinese
+	cvSelection := dom.Find("body:contains(备份作业)") // 正常
+
+	OtherChiSele1 := dom.Find("body:contains(存储策略拷贝中的作业报告)") // 不正常
+	OtherChiSele2 := dom.Find("body:contains(未找到符合选定条件的数据)") // 不正常
+
+	EngSelection1 := dom.Find("body:contains(Report)")
+	EngSelection2 := dom.Find("body:contains('Group By')")
+
+	//fmt.Println("eeeeeee",HtmlFile,EngSelection1.Length())
+	//fmt.Println("eeeeeee",HtmlFile,EngSelection2.Length())
+	//fmt.Println("csvvvvvvvvv",HtmlFile,cvSelection.Length(),OtherChiSele1.Length(),OtherChiSele2.Length())
+
+	if cvSelection.Size() < 1 || (EngSelection1.Size() >= 1 && EngSelection2.Size() >= 1) {
+		return 8
+	}
+
+	if OtherChiSele1.Size() >= 1 || OtherChiSele2.Size() >= 1 {
+		return 7
+	}
+
+	CommCells := dom.Find("body:contains(CommCell)")
+	CommCells.Each(func(i int, selection *goquery.Selection) {
+		if i == 0 {
+			//fmt.Printf("CommCell :%+v\n", selection.Text())
+			ss := strings.Split(strings.Split(selection.Text(), "CommCell:")[1], "--")[0]
+			//fmt.Printf("CommCell :%+v\n", ss)
+			CommCell = strings.TrimSpace(ss)
+		}
+
+	})
+	//fmt.Println(CommCell)
+
+	// 生成的时间
+	//GenTimeSource := dom.Find("body:contains(备份作业摘要报告)")
+	cvSelection.Each(func(i int, selection *goquery.Selection) {
+		if i == 0 {
+			//fmt.Println(HtmlFile,selection.Text())
+			//fmt.Println(strings.Contains(selection.Text(),"generated"))
+
+			ss := strings.Split(strings.Split(selection.Text(), "备份作业摘要报告")[1], "上生成的报表版本")[0]
+			//fmt.Println(strings.Split(selection.Text(), "备份作业摘要报告")[1])
+			//fmt.Println(strings.Split(selection.Text(), "备份作业摘要报告"))
+			//fmt.Println(ss)
+			if strings.Contains(ss, "\n") {
+				ss = strings.Split(ss, "\n")[1]
+			}
+			GenTime = formatStr(ss)
+			//strings.TrimSpace(ss)
+			//GenTime = strings.Replace(ss, "\n", "", -1)
+			//fmt.Printf("GenTime :%+v\n", ss)
+		}
+	})
+
+	//fmt.Println(GenTime)
+
+	//FiledsHeader := new([]string) // 列头，序号为KEY
+
+	SummaryDomFindStr := "body > table:nth-child(10) > tbody > tr"
+	Summary_tbodyHeader := dom.Find(SummaryDomFindStr + ":nth-child(2) > td")
+
+	detailDomFindStr := "body > table:nth-child(13) > tbody > tr"
+	detail_tbodyHeader := dom.Find(detailDomFindStr + ":nth-child(1) > td")
+
+	version := 11
+	//有三种格式的HTML
+	switch true {
+	case len(detail_tbodyHeader.Nodes) == 0:
+		version = 8
+		GenTime = strings.Split(GenTime, "CommCell")[0]
+		GenTime = strings.Split(GenTime, "生成于")[1]
+		GenTime = strings.TrimSpace(GenTime)
+
+		detailDomFindStr = "body > table:nth-child(12) > tbody > tr"
+		detail_tbodyHeader = dom.Find(detailDomFindStr + ":nth-child(1) > td")
+		break
+	case len(Summary_tbodyHeader.Nodes) == 18:
+		version = 10
+		break
+	default:
+		version = 11
+	}
+	Version = version
+
+	GenTime = FormatTime(GenTime)
+
+	Log.Info("htmfile:%s, commcell:%s, version:%d,len(sum):%d, len(detail):%d\n", filepath.Base(HtmlFile), CommCell, version, len(Summary_tbodyHeader.Nodes), len(detail_tbodyHeader.Nodes))
+	//fmt.Println()
+	//fmt.Println(CommCell)
+	//fmt.Println(GenTime)
+	//fmt.Println(cv8)
+
+	//var rn int
+
+	// 先插入detail数据
+	//fmt.Println(len(detail_tbodyHeader.Nodes), VersionCols[Version].DetailCol)
+	if len(detail_tbodyHeader.Nodes) != VersionCols[Version].DetailCol { // //比对是不是与定义好的 列数一样
+		return 10
+	}
+
+	switch Version {
+	case 11:
+		GenDetailData(detailDomFindStr, dom, DetailFieldsMap, Log) // 生成 详细数据,version 11 使用默认DetailFieldsMap
+
+		//FiledsHeader = SortKeysMap(DetailFieldsMap)
+	case 10:
+		GenDetailData(detailDomFindStr, dom, DetailFieldsMap, Log) // 生成 详细数据,version 10 使用默认DetailFieldsMap
+		//FiledsHeader = SortKeysMap(DetailFieldsMap)
+		fmt.Println(DetailFieldsMap)
+		//fmt.Println(FiledsHeader)
+		//fmt.Println(Data)
+	case 8:
+		GenDetailData(detailDomFindStr, dom, DetailFieldsMapCv8, Log) // 生成 详细数据,version 8 使用默认DetailFieldsMap
+		//FiledsHeader = SortKeysMap(DetailFieldsMapCv8)
+	}
+
+	if len(DetailSqlArr) >0{
+		rn = GenSqls(DetailSqlArr, DetailTable)
+	}else{
+		Log.Error("htmlfile:%s,没有产生SQL\n",HtmlFile)
+		return 10
+	}
+
+	return 0
+}
+func SortKeysMap(FiledsHeader map[int]string) (Fields *[]string) {
+
+	tmpFields := make([]string, 0)
+	var keys []int
+	for k := range FiledsHeader {
+		keys = append(keys, k)
+	}
+	sort.Ints(keys)
+	//fmt.Println(keys)
+
+	for _, k := range keys {
+		//fmt.Println("Key:", k, "Value:", FiledsHeader[k])
+		tmpFields = append(tmpFields, FiledsHeader[k])
+	}
+	return &tmpFields
+}
+
+func GenDetailData(domstr string, dom *goquery.Document, FiledsHeader map[int]string, Log *nxlog4go.Logger) {
+
+	var t_tbodyData *goquery.Selection
+
+	t_tbodyData = dom.Find(domstr)
+	//MaxRows:=len(t_tbodyData.Nodes)
+	//body > table:nth-child(13) > tbody > tr
+	//fmt.Println(t_tbodyData.Html())
+
+	//headlen := len(FiledsHeader)
+	//Data = new([][]string, 0)
+	//循环表格数据
+	t_tbodyData.Each(func(i int, rowsele *goquery.Selection) {
+		if i == 0 { // 0行是列名
+			return
+		}
+		//var rowjobtype string
+		//var rowstarttimeformat string //  行格式化后的 unixstamp
+		//var rowsubclient string
+		//var rowReasonforfailure string //行 失败原因
+		//var rowsolvetype string        // 行解决状态
+
+		//需要判断是不是 超过最大行数
+
+		//tmpSubData := make([]string, 0)
+		tmpSubData := make(map[string]string, 0)
+		cols := rowsele.Find("td")
+
+		if Version != 8 {
+			if len(FiledsHeader) != len(cols.Nodes) {
+				//Log.Error("htmfile:%s ,no eq rows:%d", HtmlFile, i)
+				return
+			}
+		} else {
+			if len(FiledsHeader) != len(cols.Nodes)-1 { // 备份大小列 跳过
+				//Log.Error("htmfile:%s ,no eq rows:%d", HtmlFile, i)
+				return
+			}
+
+		}
+
+		cols.Each(func(colnum int, colsele *goquery.Selection) {
+			if Version == 8 && colnum == 9 {
+				return
+			}
+			ss1 := colsele.Text()
+			//fmt.Println(selection.Attr("bgcolor"))
+			//switch true {
+			//case strings.Contains(ss1,"N/A"):
+			//	ss1=strings.Replace(ss1,"N/A","",-1)
+			//}
+
+			ss1 = formatDetailValues(colnum, ss1, Log) // todo 格式化 数据
+
+			//fmt.Println(i,colnum,FiledsHeader[colnum],strings.Contains(FiledsHeader[colnum],"Failed Folder"))
+
+			//
+			//fmt.Println(strings.Split())
+			tmpSubData[FiledsHeader[colnum]] = ss1
+			//tmpSubData = append(tmpSubData, ss1)
+			//fmt.Println(i,ss1)
+		})
+		//tmpSubData = append(tmpSubData, []string{HtmlFile, strconv.FormatInt(time.Now().Unix(), 10) + "000", CommCell, ApplicationSize, Subclient, StartTime}...)
+		tmpSubData[DetailFieldsMapPlus[17]] = CommCell
+		tmpSubData[DetailFieldsMapPlus[18]] = StartTime
+		tmpSubData[DetailFieldsMapPlus[19]] = Subclient
+		tmpSubData[DetailFieldsMapPlus[20]] = ApplicationSize
+		tmpSubData[DetailFieldsMapPlus[21]] = HtmlFile
+		tmpSubData[DetailFieldsMapPlus[22]] = strconv.FormatInt(time.Now().Unix(), 10) + "000"
+
+		//tmpSubData = append(tmpSubData, []string{CommCell, GenTime, rowjobtype, StartTime, Subclient, rowReasonforfailure, rowsolvetype}...)
+		//fmt.Printf("%+v\n", tmpSubData)
+		//fmt.Println()
+		DetailSqlArr = append(DetailSqlArr, &tmpSubData)
+
+	})
+	//fmt.Println(Data)
+}
+func sliceToStringValue(sl *(map[string]string)) (returnstring string) {
+	//sl1 := sl[0:len(sl)]
+	var keys []string = make([]string, 0)
+	for k, _ := range *sl {
+		keys = append(keys, k)
+
+	}
+	sort.Strings(keys)
+	valueStr := ""
+	colsStr := ""
+	for i, v := range keys {
+		if (*sl)[v] == "NULL" || (*sl)[v] == "" {
+			continue
+		}
+		switch true {
+		case i == len(*sl)-1:
+			//returnstring = returnstring
+			//returnstring = returnstring + "\"" + sl1[i] + "\"" + ")"
+			colsStr = colsStr + "\"" + v + "\")"
+			valueStr = valueStr + "'" + (*sl)[v] + "')"
+
+			break
+		case i < len(*sl)-1:
+			//returnstring = returnstring
+			colsStr = colsStr + "\"" + v + "\"" + ","
+			valueStr = valueStr + "'" + (*sl)[v] + "'" + ","
+			break
+		}
+
+	}
+	//fmt.Println(len(keys),len(sl))
+	returnstring = colsStr + " values(" + valueStr
+
+	return
+}
+
+func updatesliceToString(sl *(map[string]string)) (returnstring string) {
+
+	var keys []string = make([]string, 0)
+	for k, _ := range *sl {
+		keys = append(keys, k)
+
+	}
+	sort.Strings(keys)
+	wherestring := ""
+	colsStr := ""
+	for i, v := range keys {
+		if (*sl)[v] == "NULL" || (*sl)[v] == "" ||  v == "INSERTTIME" || v== "HTMLFILE" {
+			continue
+		}
+		switch true {
+		case i == len(*sl)-1:
+			//returnstring = returnstring
+			//returnstring = returnstring + "\"" + sl1[i] + "\"" + ")"
+			colsStr = colsStr + "\"" + v + "\"='" + (*sl)[v] + "'"
+			wherestring = wherestring + "\"" + v + "\"='" + (*sl)[v] + "'"
+
+			break
+		case i < len(*sl)-1:
+			//returnstring = returnstring
+			colsStr = colsStr + "\"" + v + "\"='" + (*sl)[v] + "',"
+			wherestring = wherestring + "\"" + v + "\"='" + (*sl)[v] + "' and "
+			break
+		}
+
+	}
+	returnstring = colsStr + " where " + wherestring
+	return
+}
+func GenSqls(DetailSqlArrCopy []*map[string]string, tablename string) (resultNum int) {
+
+	baseSql := "insert into " + tablename + "("
+	updateSql := "update " + tablename + " set "
+	//fmt.Println(Data)
+	//fmt.Println(updateSql)
+	//fmt.Println(baseSql)
+	sqlArr := new([]map[string]string)
+	for _, value := range DetailSqlArrCopy {
+		tmpmap := make(map[string]string, 0)
+		//fmt.Println(index, baseSql+sliceToString(value))
+		valueStr := sliceToStringValue(value)
+		//fmt.Println(valueStr)
+		//sqlArr = append(sqlArr, baseSql+valueStr)
+		tmpmap["insert"] = baseSql + valueStr
+		tmpmap["update"] = updateSql + updatesliceToString(value)
+		*sqlArr = append(*sqlArr, tmpmap)
+	}
+	//for _, v := range sqlArr {
+	//fmt.Println(v["insert"])
+	//fmt.Println(v["update"])
+	//}
+	return stmtSql(sqlArr, tablename)
+	//return 1
+}
+
+func stmtSql(sqlArr *([]map[string]string), tablename string) (resultNum int) {
+	os.Setenv("NLS_LANG", "")
+	//if len(os.Args) != 2 {
+	//	log.Fatalln(os.Args[0] + " user/password@host:port/sid")
+	//}
+
+	db, err := sql.Open("oci8", OracleDsn)
+	//fmt.Printf("%+v\n",db)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	defer db.Close()
+
+	var updatenum, insertnum int
+	//insertnum := 0
+	if len(*sqlArr) == 0 {
+		return 10
+	}
+	//ss := []string{"to_date('2019-08-25 22:11:11','yyyy-mm-dd hh24:mi:ss')"}
+	for i := 0; i < len(*sqlArr); i++ {
+		//fmt.Println(sqlArr[i]["update"])
+		//fmt.Println((*sqlArr)[i]["update"])
+		//fmt.Println(fmt.Sprintf(sqlArr[i]["insert"]+",%s)", StartTimeArr[i]))
+		//fmt.Println(sqlArr[i]["insert"]+",:1)",StartTimeArr[i])
+		//r, err := db.Exec(fmt.Sprintf("insert into HF_BACKUPDETAIL(\"START TIME\") values(%s)", "to_date('2019-08-25 22:11:11','yyyy-mm-dd hh24:mi:ss')"))
+		//fmt.Println(r,err)
+		//ctx,cancel:=context.WithTimeout(context.Background(),20*time.Second)
+		//r,err:=db.ExecContext(ctx,sqlArr[i]["insert"]+",:1)",StartTimeArr[i])
+		//cancel()
+		Result, err := db.Exec((*sqlArr)[i]["update"])
+		//fmt.Println(Result.LastInsertId())
+		//fmt.Println(Result.RowsAffected())
+		//fmt.Println("===========", r, err)
+		if err != nil {
+			//fmt.Println((*sqlArr)[i]["update"])
+			Log.Error("HtmlFile:%s ,Sql Exec Err:%s", HtmlFile, err)
+			resultNum = 10
+			continue
+		}
+
+		r, e := Result.RowsAffected()
+		if err != nil {
+			Log.Error("HtmlFile:%s ,Sql Exec Err:%s", HtmlFile, e)
+			resultNum = 10
+			continue
+		}
+		//fmt.Println(r,e)
+		if r == 0 {
+			_, err := db.Exec((*sqlArr)[i]["insert"])
+
+			if err != nil {
+				fmt.Println((*sqlArr)[i]["insert"])
+				Log.Error("HtmlFile:%s ,Sql Exec Err:%s", HtmlFile, err)
+				resultNum = 10
+				continue
+			}
+			insertnum = insertnum + 1
+		} else {
+			updatenum = updatenum + 1
+		}
+
+	}
+	Log.Info("htmlfile : %s ,tablname:%s,total sql:%d,success update sql:%d,insert sql:%d\n", filepath.Base(HtmlFile), tablename, len(*sqlArr), updatenum, insertnum)
+	return
+
+}

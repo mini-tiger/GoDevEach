@@ -1,0 +1,25 @@
+1.下载安装 protoc命令
+	https://github.com/protocolbuffers/protobuf/releases
+    unzip proto-3.13.x_linux.zip
+
+2. 下载安装 protoc-gen-micro
+ git clone https://github.com/micro/protoc-gen-micro.git
+ cd protoc-gen-micro/
+ go build  //生成的protoc-gen-go命令在GOBIN 或 GOPATH/bin 目录下
+
+3. 下载安装 protoc-gen-go
+git clone https://github.com/golang/protobuf.git
+cd protobuf/protoc-gen-go/
+go build
+go install  //生成的protoc-gen-go命令在GOBIN 或 GOPATH/bin 目录下
+
+4. micro命令安装 
+
+ git clone https://github.com/micro/micro.git
+ cd micro/
+ go build -o micro main.go
+
+5. 生成 文件
+
+pushd /home/go/GoDevEach/go-micro/messageStudy/message
+protoc --proto_path=. --go_out=. --micro_out=. message/message.proto

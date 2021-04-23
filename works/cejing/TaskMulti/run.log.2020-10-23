@@ -1,0 +1,781 @@
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/crud/model_config/read
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getJH
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:36:33	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1(1951-3400).txt,math:不匹配  
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:36:33	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1A组合表层.txt,math:不匹配  
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:36:33	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1A（9-230）.txt,math:不匹配  
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:36:33	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1B组合一次中完.txt,math:不匹配  
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:36:33	[33mWARN[0m	funcs/wheel.go:124	model:储层智能识别922,well:双庙1,qxwjm:双庙1B（184-1973）.txt,math:匹配
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/saveTask
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/saveTask
+2020-10-23 13:36:33	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:35	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/crud/model_config/read
+2020-10-23 13:37:35	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:35	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getJH
+2020-10-23 13:37:35	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:35	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:37:35	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:35	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:35	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:35	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1(1951-3400).txt,math:不匹配  
+2020-10-23 13:37:35	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:35	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:35	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1A组合表层.txt,math:不匹配  
+2020-10-23 13:37:35	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:35	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:35	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1A（9-230）.txt,math:不匹配  
+2020-10-23 13:37:35	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:35	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:35	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1B组合一次中完.txt,math:不匹配  
+2020-10-23 13:37:35	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:36	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:36	[33mWARN[0m	funcs/wheel.go:124	model:储层智能识别922,well:双庙1,qxwjm:双庙1B（184-1973）.txt,math:匹配
+2020-10-23 13:37:36	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/saveTask
+2020-10-23 13:37:36	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:36	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/saveTask
+2020-10-23 13:37:36	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1C（1935-2500）.txt,math:不匹配  
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1D二次中完（1951-3400）.txt,math:不匹配  
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1F组合三次中完.txt,math:不匹配  
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1G组合完井.txt,math:不匹配  
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1井完井段测井数据（3508-4484）.txt,math:不匹配  
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:川25,qxwjm:川25井完井地质柱状图（8-1）.txt,math:不匹配  
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:川岳84,qxwjm:川84井标准测井图(2440-4680).txt,math:不匹配  
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:川岳84,qxwjm:川岳84井标准测井图(46000-51750分米).txt,math:不匹配  
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:川岳84,qxwjm:川岳84井测井曲线图（500-26000）.txt,math:不匹配  
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光101-2H,qxwjm:中完组合成果,math:不匹配  
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光101-2H,qxwjm:侧钻后完井组合成果,math:不匹配  
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光101-3,qxwjm:组合不含盐膏层,math:不匹配  
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H中完(垂深）.wis,math:不匹配  
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H中完(海拔深度）.wis,math:不匹配  
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H中完标准测井曲线图.wis,math:不匹配  
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[33mWARN[0m	funcs/wheel.go:124	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H中完组合成果图.wis,math:匹配
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/saveTask
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/saveTask
+2020-10-23 13:37:46	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:56	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H井侧钻前气测录井.wis,math:不匹配  
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:56	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H井侧钻前海拔深度.wis,math:不匹配  
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:56	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H井尾管固井.wis,math:不匹配  
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:56	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H井技术套管固井.wis,math:不匹配  
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:56	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H井构造倾角.wis,math:不匹配  
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:56	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H井沉积倾角.wis,math:不匹配  
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:56	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H侧钻前完井标准测井曲线图.wis,math:不匹配  
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:56	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H侧钻前完井组合成果图.wis,math:不匹配  
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:56	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H侧钻后完井标准测井曲线图.wis,math:不匹配  
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:56	[33mWARN[0m	funcs/wheel.go:124	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H侧钻后完井组合成果图.wis,math:匹配
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/saveTask
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/saveTask
+2020-10-23 13:37:56	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H侧钻后气测录井.wis,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H侧钻后海拔深度.wis,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H回接套管固井.wis,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1 井生套固井质量测井图(回接段).txt,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井中完标准测井曲线图.txt,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井完井地层倾角井径井斜.txt,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井完井地层倾角微电阻率.txt,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井完井地层倾角构造成果图.txt,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井技术套管固井质量测井图.txt,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井生套固井质量测井图(尾管段).txt,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井表层套管固井质量测井图.txt,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井表层套管固井质量测井图.wis,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井表层标准测井曲线图.txt,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井表层标准测井曲线图.wis,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-2,qxwjm:完井,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光103-1,qxwjm:完井组合曲线,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光105-2,qxwjm:完井组合成果,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光106-2H,qxwjm:完井组合成果,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光107-1H,qxwjm:完井组合成果,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光2,qxwjm:普光2声波密度(2987.86-5363.985.txt,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光301-3,qxwjm:井中完成果,math:不匹配  
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:06	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:07	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光303-2,qxwjm:井中完组合,math:不匹配  
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:07	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光303-2,qxwjm:井完井组合,math:不匹配  
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:07	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光4,qxwjm:完井,math:不匹配  
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:07	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光6,qxwjm:PG6构造倾角dip.wis,math:不匹配  
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:07	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光6,qxwjm:普光6组合.txt,math:不匹配  
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:07	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝3,qxwjm:毛坝3A组合表层.txt,math:不匹配  
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:07	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝3,qxwjm:毛坝3B组合一次中完.txt,math:不匹配  
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:07	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝3,qxwjm:毛坝3C组合二次中完.txt,math:不匹配  
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:07	[33mWARN[0m	funcs/wheel.go:124	model:储层智能识别922,well:毛坝3,qxwjm:毛坝3D组合完井.txt,math:匹配
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/saveTask
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/saveTask
+2020-10-23 13:38:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝3,qxwjm:毛坝3中间固井.wis,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝3,qxwjm:毛坝3二次中完固井.wis,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝3,qxwjm:毛坝3补测固井.wis,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝3,qxwjm:毛坝3表层固井.wis,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井固井质量测井图.wis,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井地层倾角构造成果图.txt,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井地层倾角构造成果图.wis,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井地层倾角沉积成果图.txt,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井地层倾角沉积成果图.wis,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井岩石力学参数分析图.txt,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井岩石力学参数分析图.wis,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井测井成果图.txt,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井测井成果图.wis,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井测井标准图.txt,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井测井标准图.wis,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井测井组合图.txt,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井自然伽马能谱测井图.wis,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:马3,qxwjm:马3井常规曲线数据（851-3778米）.txt,math:不匹配  
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:226	任务结束
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getJH
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:双庙1,qxwjm:双庙1(1951-3400).txt,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:双庙1,qxwjm:双庙1A组合表层.txt,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:双庙1,qxwjm:双庙1A（9-230）.txt,math:不匹配  
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:124	model:渗透率模型（回归）,well:双庙1,qxwjm:双庙1B组合一次中完.txt,math:匹配
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/saveTask
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[31mERROR[0m	funcs/wheel.go:88	任务失败,原因: interface conversion: interface {} is float64, not string
+2020-10-23 13:38:17	[33mWARN[0m	funcs/wheel.go:89	任务结束
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getJH
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:38:17	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:41:58	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/crud/model_config/read
+2020-10-23 13:41:58	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:41:58	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getJH
+2020-10-23 13:41:58	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:41:58	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:41:59	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1(1951-3400).txt,math:不匹配  
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:41:59	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1A组合表层.txt,math:不匹配  
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:41:59	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1A（9-230）.txt,math:不匹配  
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:41:59	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1B组合一次中完.txt,math:不匹配  
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:41:59	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1B（184-1973）.txt,math:不匹配  
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:41:59	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1C（1935-2500）.txt,math:不匹配  
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:41:59	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1D二次中完（1951-3400）.txt,math:不匹配  
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:41:59	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1F组合三次中完.txt,math:不匹配  
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:41:59	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1G组合完井.txt,math:不匹配  
+2020-10-23 13:41:59	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:双庙1,qxwjm:双庙1井完井段测井数据（3508-4484）.txt,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:川25,qxwjm:川25井完井地质柱状图（8-1）.txt,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:川岳84,qxwjm:川84井标准测井图(2440-4680).txt,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:川岳84,qxwjm:川岳84井标准测井图(46000-51750分米).txt,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:川岳84,qxwjm:川岳84井测井曲线图（500-26000）.txt,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光101-2H,qxwjm:中完组合成果,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光101-2H,qxwjm:侧钻后完井组合成果,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光101-3,qxwjm:组合不含盐膏层,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H中完(垂深）.wis,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H中完(海拔深度）.wis,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H中完标准测井曲线图.wis,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H中完组合成果图.wis,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H井侧钻前气测录井.wis,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H井侧钻前海拔深度.wis,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H井尾管固井.wis,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H井技术套管固井.wis,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H井构造倾角.wis,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H井沉积倾角.wis,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H侧钻前完井标准测井曲线图.wis,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H侧钻前完井组合成果图.wis,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H侧钻后完井标准测井曲线图.wis,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H侧钻后完井组合成果图.wis,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H侧钻后气测录井.wis,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H侧钻后海拔深度.wis,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光101-2H回接套管固井.wis,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1 井生套固井质量测井图(回接段).txt,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井中完标准测井曲线图.txt,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井完井地层倾角井径井斜.txt,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井完井地层倾角微电阻率.txt,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井完井地层倾角构造成果图.txt,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井技术套管固井质量测井图.txt,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井生套固井质量测井图(尾管段).txt,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井表层套管固井质量测井图.txt,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井表层套管固井质量测井图.wis,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:00	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井表层标准测井曲线图.txt,math:不匹配  
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:00	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-1,qxwjm:普光102-1井表层标准测井曲线图.wis,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光102-2,qxwjm:完井,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光103-1,qxwjm:完井组合曲线,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光105-2,qxwjm:完井组合成果,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光106-2H,qxwjm:完井组合成果,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光107-1H,qxwjm:完井组合成果,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光2,qxwjm:普光2声波密度(2987.86-5363.985.txt,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光301-3,qxwjm:井中完成果,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光303-2,qxwjm:井中完组合,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光303-2,qxwjm:井完井组合,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光4,qxwjm:完井,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光6,qxwjm:PG6构造倾角dip.wis,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:普光6,qxwjm:普光6组合.txt,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝3,qxwjm:毛坝3A组合表层.txt,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝3,qxwjm:毛坝3B组合一次中完.txt,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝3,qxwjm:毛坝3C组合二次中完.txt,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝3,qxwjm:毛坝3D组合完井.txt,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝3,qxwjm:毛坝3中间固井.wis,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝3,qxwjm:毛坝3二次中完固井.wis,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝3,qxwjm:毛坝3补测固井.wis,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝3,qxwjm:毛坝3表层固井.wis,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井固井质量测井图.wis,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井地层倾角构造成果图.txt,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井地层倾角构造成果图.wis,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井地层倾角沉积成果图.txt,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井地层倾角沉积成果图.wis,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井岩石力学参数分析图.txt,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井岩石力学参数分析图.wis,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井测井成果图.txt,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井测井成果图.wis,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井测井标准图.txt,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井测井标准图.wis,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:01	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井测井组合图.txt,math:不匹配  
+2020-10-23 13:42:01	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:02	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:毛坝502-1,qxwjm:毛坝4井自然伽马能谱测井图.wis,math:不匹配  
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:02	[33mWARN[0m	funcs/wheel.go:168	model:储层智能识别922,well:马3,qxwjm:马3井常规曲线数据（851-3778米）.txt,math:不匹配  
+2020-10-23 13:42:02	[33mWARN[0m	funcs/wheel.go:226	任务结束
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getJH
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:02	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:双庙1,qxwjm:双庙1(1951-3400).txt,math:不匹配  
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:02	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:双庙1,qxwjm:双庙1A组合表层.txt,math:不匹配  
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:02	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:双庙1,qxwjm:双庙1A（9-230）.txt,math:不匹配  
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:02	[33mWARN[0m	funcs/wheel.go:124	model:渗透率模型（回归）,well:双庙1,qxwjm:双庙1B组合一次中完.txt,math:匹配
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/saveTask
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/saveTask
+2020-10-23 13:42:02	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:双庙1,qxwjm:双庙1B（184-1973）.txt,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:双庙1,qxwjm:双庙1C（1935-2500）.txt,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:双庙1,qxwjm:双庙1D二次中完（1951-3400）.txt,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:双庙1,qxwjm:双庙1F组合三次中完.txt,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:双庙1,qxwjm:双庙1G组合完井.txt,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:双庙1,qxwjm:双庙1井完井段测井数据（3508-4484）.txt,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:川25,qxwjm:川25井完井地质柱状图（8-1）.txt,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:川岳84,qxwjm:川84井标准测井图(2440-4680).txt,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:川岳84,qxwjm:川岳84井标准测井图(46000-51750分米).txt,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:川岳84,qxwjm:川岳84井测井曲线图（500-26000）.txt,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光101-2H,qxwjm:中完组合成果,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光101-2H,qxwjm:侧钻后完井组合成果,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光101-3,qxwjm:组合不含盐膏层,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光101-2H中完(垂深）.wis,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光101-2H中完(海拔深度）.wis,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光101-2H中完标准测井曲线图.wis,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光101-2H中完组合成果图.wis,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光101-2H井侧钻前气测录井.wis,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光101-2H井侧钻前海拔深度.wis,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光101-2H井尾管固井.wis,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光101-2H井技术套管固井.wis,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光101-2H井构造倾角.wis,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光101-2H井沉积倾角.wis,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光101-2H侧钻前完井标准测井曲线图.wis,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光101-2H侧钻前完井组合成果图.wis,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光101-2H侧钻后完井标准测井曲线图.wis,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光101-2H侧钻后完井组合成果图.wis,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光101-2H侧钻后气测录井.wis,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光101-2H侧钻后海拔深度.wis,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光101-2H回接套管固井.wis,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光102-1 井生套固井质量测井图(回接段).txt,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光102-1井中完标准测井曲线图.txt,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:07	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光102-1井完井地层倾角井径井斜.txt,math:不匹配  
+2020-10-23 13:42:07	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:08	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:08	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光102-1井完井地层倾角微电阻率.txt,math:不匹配  
+2020-10-23 13:42:08	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:08	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:08	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光102-1井完井地层倾角构造成果图.txt,math:不匹配  
+2020-10-23 13:42:08	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:08	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:08	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光102-1井技术套管固井质量测井图.txt,math:不匹配  
+2020-10-23 13:42:08	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:08	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:08	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光102-1井生套固井质量测井图(尾管段).txt,math:不匹配  
+2020-10-23 13:42:08	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:08	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:08	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光102-1井表层套管固井质量测井图.txt,math:不匹配  
+2020-10-23 13:42:08	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:08	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:08	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光102-1井表层套管固井质量测井图.wis,math:不匹配  
+2020-10-23 13:42:08	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:08	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:08	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光102-1井表层标准测井曲线图.txt,math:不匹配  
+2020-10-23 13:42:08	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist
+2020-10-23 13:42:08	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:08	[33mWARN[0m	funcs/wheel.go:168	model:渗透率模型（回归）,well:普光102-1,qxwjm:普光102-1井表层标准测井曲线图.wis,math:不匹配  
+2020-10-23 13:42:08	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getwellflist
+2020-10-23 13:42:08	[35mDEBUG[0m	modules/http.go:83	请求成功
+2020-10-23 13:42:08	[35mDEBUG[0m	modules/http.go:40	开始 请求Url:http://127.0.0.1:3008/CJQX/api/getidxlist

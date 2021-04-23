@@ -1,0 +1,10 @@
+{
+  "master_url": "http://t.avlang2.xyz/",
+  "master_dir": "g:\\image_wolf\\",
+  "pages": 3,
+  "max_old": 15,
+  "downloadInterval":200,
+  "exist_cover": false,
+  "use_proxy": false,
+  "proxy_url": "http://127.0.0.1:1080"
+}

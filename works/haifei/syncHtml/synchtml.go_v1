@@ -1,0 +1,842 @@
+package main
+
+import (
+	"database/sql"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"gitee.com/taojun319/tjtools/db/oracle"
+	"gitee.com/taojun319/tjtools/file"
+	logDiy "gitee.com/taojun319/tjtools/logDiyNew"
+	"gitee.com/taojun319/tjtools/utils"
+	"github.com/PuerkitoBio/goquery"
+	"github.com/ccpaging/nxlog4go"
+	_ "github.com/mattn/go-oci8"
+	"haifei/syncHtml/g"
+	"log"
+	"os"
+	"path/filepath"
+	"regexp"
+	"strconv"
+	"strings"
+	"time"
+)
+
+//https://github.com/360EntSecGroup-Skylar/excelize
+// 中文 https://xuri.me/excelize/zh-hans/
+// https://godoc.org/github.com/360EntSecGroup-Skylar/excelize#File.GetSheetName
+
+const (
+	//ReadFile    = "10.155.2.4_yuebao_English.html"
+	//htmlfileReg = "C:\\work\\go-dev\\src\\godev\\works\\haifei\\*.html"
+	//htmlBakDir  = "C:\\work\\go-dev\\src\\godev\\works\\haifei\\bak\\"
+	//timeinter   = 10
+	timeLayout = "2006-01-02 15:04:05"
+	FieldsLen  = 21 // 列一共有几列,使用时 要 减一
+	ConfigJson = "/home/go/GoDevEach/works/haifei/syncHtml/synchtml.json"
+	//ConfigJson = "D:\\work\\project-dev\\GoDevEach\\works\\haifei\\syncHtml\\synchtml.json"
+)
+
+var NeedFields []string = []string{"DATACLIENT", "AgentInstance", "BackupSetSubclient", "Job ID (CommCell)(Status)",
+	"Type", "Scan Type", "Start Time(Write Start Time)", "End Time or Current Phase", "Size of Application"}
+
+var MoveBakFileChan chan string = make(chan string, 0)
+var MoveFailFileChan chan string = make(chan string, 0)
+
+var startRunTime = time.Now().Unix()
+var (
+	CommCell        string // 客户端名
+	GenTime         string
+	StartTime       string
+	ApplicationSize string
+	Subclient       string
+	StartTimeArr    []string = make([]string, 0)
+)
+
+var Log *nxlog4go.Logger
+var c Config
+
+type Config struct {
+	HtmlfileReg string `json:"htmlfileReg"`
+	HtmlBakDir  string `json:"htmlBakDir"`
+	HtmlFailDir string `json:"htmlFailDir"`
+	Logfile     string `json:"logfile"`
+	LogMaxDays  int    `json:"logMaxDays"`
+	Timeinter   int    `json:"timeinter"`
+	OracleDsn   string `json:"oracledsn"`
+}
+
+func CheckConfig(fp string) (e error, conf string) {
+	if file.IsExist(ConfigJson) {
+		return nil, ConfigJson
+	} else {
+		dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
+		if file.IsExist(filepath.Join(dir, fp)) {
+			return nil, filepath.Join(dir, fp)
+		} else {
+			return errors.New(fmt.Sprintf("confile :%s Not Found", fp)), ""
+		}
+	}
+
+}
+
+func readconfig(cfgfile string) {
+	cfgstr := g.ParseConfig(cfgfile)
+	err := json.Unmarshal([]byte(cfgstr), &c)
+	if err != nil {
+		log.Fatalln("parse config file fail:", err)
+	}
+}
+
+func main() {
+
+	e, confile := CheckConfig("synchtml.json")
+	if e == nil {
+		readconfig(confile)
+	} else {
+		log.Fatalln("config file fail:", e)
+	}
+
+	// 初始化 日志
+	Log = logDiy.InitLog1(c.Logfile, c.LogMaxDays, true)
+	//Log = g.InitLog(c.Logfile,c.LogMaxDays)
+	//Log = logDiy.Logger()
+
+	// 打印配置
+	Log.Info("读取配置: %+v\n", c)
+
+	go waitMovefile()
+
+	dir, err := filepath.Abs(filepath.Dir(c.HtmlfileReg))
+	if err != nil || !file.IsExist(dir) {
+		Log.Fatalln("HTMLFile Dir 不存在")
+	}
+
+	for {
+		if oracle.CheckOracleConn(c.OracleDsn) != nil {
+			Log.Error("oracle 连接失败,wait %d 秒后,重试\n", c.Timeinter)
+			time.Sleep(time.Duration(c.Timeinter) * time.Second)
+			continue
+		}
+
+		loopStartTime := time.Now()
+		//files, _ := filepath.Glob(c.HtmlfileReg)
+		files, err := file.GetFileList(c.HtmlfileReg) // 遍历目录 包括子目录
+		if err != nil {
+			Log.Fatalln("HTMLFile Dir Error:", err)
+		}
+
+		//fmt.Println(files) // contains a list of all files in the current directory
+		d, h, m, s := utils.GetTime(time.Now().Unix() - startRunTime)
+		Log.Info("本次读取到 %d个文件\n", len(files))
+		Log.Info("开始运行时间 %s,已经运行%d天%d小时%d分钟%d秒\n", time.Unix(startRunTime, 0).Format(timeLayout), d, h, m, s)
+		if len(files) >= 1 {
+			waitHtmlFile(files)
+		}
+		Log.Info("本次处理 %d个文件,共用时 %.4f 秒\n", len(files), time.Now().Sub(loopStartTime).Seconds())
+		time.Sleep(time.Duration(c.Timeinter) * time.Second)
+	}
+}
+
+func NewDateFileName(oldfileAbs string, bakdir string) string {
+
+	filename := filepath.Base(oldfileAbs)
+	ext := filepath.Ext(oldfileAbs)
+
+	filenameOnly := strings.TrimSuffix(filename, ext)
+	//fmt.Println(oldfileAbs)
+	//fmt.Println(filepath.Join(bakdir,fmt.Sprintf("%s_%s%s",filenameOnly,time.Now().Format("2006-01-02"),ext)))
+
+	return filepath.Join(bakdir, fmt.Sprintf("%s_%d%s", filenameOnly, time.Now().UnixNano(), ext))
+	// 同一天的目录中有 相同文件名， 文件名中加入 日期
+	// /home/go/GoDevEach/works/haifei/syncHtml/htmlData/1monthReport/cv10/cv10-bj1/14day_4copy.html
+	// /home/go/GoDevEach/works/haifei/syncHtml/htmlData/HisData/bak/2019-11-08/14day_4copy_2019-11-08.html
+
+}
+
+func MoveFile(oldfile string, dir string) {
+
+	bakDir := filepath.Join(dir, time.Now().Format("2006-01-02"))
+	err := os.MkdirAll(bakDir, 0777)
+	if err != nil {
+		Log.Error("mkdir Error DIR: %s, err:%s", bakDir, err)
+	}
+
+	//fmt.Printf("fileBak:%s\n", filepath.Join(bakDir, path.Base(oldfile)))
+	//fmt.Println("fileBak:", filepath.Join(bakDir, filepath.Base(oldfile)), file.IsExist(filepath.Join(bakDir, filepath.Base(oldfile))))
+
+	if file.IsExist(filepath.Join(bakDir, filepath.Base(oldfile))) { // 备份文件夹中是否存在相同名字要 备份的文件
+		//fmt.Println("dddddddd")
+		NewName := NewDateFileName(oldfile, bakDir)
+		//fmt.Println("dddddddddddd",NewName)
+		err := os.Rename(oldfile, NewName)
+		if err != nil {
+			Log.Error("osRename html File Error DIR: %s, err:%s\n", bakDir, err)
+		} else {
+			Log.Info("move file old:%s,new:%s\n", oldfile, NewName)
+		}
+	} else {
+		_, fileName := filepath.Split(oldfile)
+		Log.Info("move file old:%s,new:%s\n", oldfile, filepath.Join(bakDir, fileName))
+		err = os.Rename(oldfile, filepath.Join(bakDir, fileName))
+		if err != nil {
+			Log.Error("osRename html File Error DIR: %s, err:%s\n", bakDir, err)
+		}
+	}
+
+}
+
+func waitMovefile() {
+
+	for {
+		select {
+		case f, ok := <-MoveBakFileChan:
+			if ok {
+				go MoveFile(f, c.HtmlBakDir)
+			} else {
+				break
+			}
+		case f, ok := <-MoveFailFileChan:
+			if ok {
+				go MoveFile(f, c.HtmlFailDir)
+			} else {
+				break
+			}
+		}
+	}
+}
+
+func waitHtmlFile(files []string) {
+
+	for _, file := range files {
+		Log.Info("begin covert file:%s\n", file)
+		//fmt.Println(string(file[len(file)-4:]))
+		if strings.ToUpper(file[len(file)-4:]) != "HTML" {
+			Log.Error("file :%s, ExtName not html\n", file)
+			//time.Sleep(time.Duration(3 * time.Second))
+			MoveFailFileChan <- file
+			continue
+		}
+
+		resultNum := ReadHtml(file)
+		switch resultNum {
+		case 1:
+			Log.Error("htmlFile %s, ERR:%s\n", file, "col not enough")
+			time.Sleep(time.Duration(3 * time.Second))
+			MoveFailFileChan <- file
+			break
+		case 2:
+			Log.Error("htmlFile %s, ERR:%s\n", file, "col not English")
+			MoveFailFileChan <- file
+			break
+		case 3:
+			Log.Error("htmlFile %s, ERR:%s\n", file, "sql Gen err,sqlarr len is 0")
+			MoveFailFileChan <- file
+			break
+		case 4:
+			Log.Error("htmlFile %s, ERR:%s\n", file, "insert or update have err")
+			time.Sleep(time.Duration(3 * time.Second))
+			MoveFailFileChan <- file
+			break
+		case 5:
+			Log.Error("htmlFile %s, ERR:%s\n", file, "NeedField not enough")
+			time.Sleep(time.Duration(3 * time.Second))
+			MoveFailFileChan <- file
+			break
+		case 6:
+			Log.Error("htmlFile %s\n", file)
+			time.Sleep(time.Duration(3 * time.Second))
+			MoveFailFileChan <- file
+			break
+		case 7:
+			Log.Error("htmlFile %s, ERR:%s\n", file, "不正确的中文格式")
+			MoveFailFileChan <- file
+			break
+		case 8:
+			Log.Error("htmlFile %s, ERR:%s\n", file, "中文线程中是英文HTML File")
+			MoveFailFileChan <- file
+			break
+		case 9:
+			Log.Error("htmlFile %s, ERR:%s\n", file, "中文列与定义好的版本列数不同")
+			MoveFailFileChan <- file
+			break
+		case 10:
+			Log.Error("htmlFile %s, ERR:%s\n", file, "中文文件出错")
+			MoveFailFileChan <- file
+			break
+		default:
+			MoveBakFileChan <- file
+			Log.Info("finish covert file:%s\n", file)
+		}
+
+	}
+
+}
+
+func formatFields(index int, s string, cv int) (rstr string) {
+	switch true {
+	case index == 0 && strings.Contains(s, "Client"):
+		rstr = "DATACLIENT"
+		break
+	case strings.Contains(s, "Phase(Write End Time)"):
+
+		rstr = strings.Replace(s, "(Write End Time)", "", -1)
+
+		break
+	case index == 7 && cv == 101:
+
+		rstr = "End Time or Current Phase" // cv 101
+		break
+
+	case index == 10 && cv == 101:
+		rstr = "Data Written"
+		break
+
+	case strings.Contains(s, "(Compression") && strings.Contains(s,"Rate)"):
+		//rstr = strings.Replace(s, " (Compression Rate)", "", -1)
+		rstr = "Size of Application"
+		break
+	case strings.Contains(s, "Data Transferred"):
+		//rstr = strings.Replace(s, " (Compression Rate)", "", -1)
+		rstr = "Data Transferred"
+		break
+	case strings.Contains(s, "(Space Saving Percentage)"):
+		rstr = strings.Replace(s, "(Space Saving Percentage)", "", -1)
+		break
+
+	case strings.Contains(s, "(Current)"):
+		rstr = strings.Replace(s, "(Current)", "", -1)
+		break
+	case s == "Agent /Instance":
+		rstr = "AgentInstance"
+		break
+	case s == "Backup Set /Subclient":
+		rstr = "BackupSetSubclient"
+		break
+
+	default:
+		rstr = strings.TrimSpace(s)
+	}
+	//fmt.Println(rstr)
+	rstr = strings.TrimSpace(rstr)
+	rstr = strings.Replace(rstr, "\n", "", -1)
+
+	return
+}
+
+func formatTime(toBeCharge string) string {
+	//toBeCharge := "09/04/2019 11:03:16"                             //待转化为时间戳的字符串 注意 这里的小时和分钟还要秒必须写 因为是跟着模板走的 修改模板的话也可以不写
+	timeLayout := "01/02/2006 15:04:05"                             //转化所需模板
+	loc, _ := time.LoadLocation("Local")                            //重要：获取时区
+	theTime, _ := time.ParseInLocation(timeLayout, toBeCharge, loc) //使用模板在对应时区转化为time.time类型
+	sr := theTime.Unix()                                            //转化为时间戳 类型是int64
+	//fmt.Println(theTime)                                            //打印输出theTime 2015-01-01 15:15:00 +0800 CST
+	//fmt.Println(sr)
+	return strconv.FormatInt(sr, 10)
+}
+func formatValues(index int, s string) (rstr string) {
+	//fmt.Println(index, s)
+	if strings.Contains(s, "N/A") {
+		rstr = strings.Replace(s, "N/A", "", -1)
+		s = rstr
+	} else {
+		rstr = s
+	}
+	if strings.Contains(s, "%") {
+		rstr = strings.Replace(s, "%", "%%", -1)
+		s = rstr
+	} else {
+		rstr = s
+	}
+
+	switch true {
+	//case strings.Contains(s, "N/A"):
+	//	rstr = strings.Replace(s, "N/A", "", -1)
+	//	s = rstr
+	case index == 2: // subclient
+
+		tmpstr := s
+		switch true {
+		case strings.Contains(tmpstr, "/"):
+			tmpstr = strings.Split(s, "/")[1]
+			//fallthrough
+			if strings.Contains(tmpstr, "Logcommand line") {
+				Subclient = "Logcommand line"
+			} else {
+				Subclient = tmpstr
+			}
+			break
+		default:
+			Subclient = s
+
+		}
+		//fmt.Println("333333333333",index, s, Subclient)
+		break
+
+	case index == 6: // starttime 赋值 全局变量，对应自定义列
+		StartTimeValue := ""
+		if strings.Contains(s, "(") {
+			StartTimeValue = strings.Split(s, "(")[0]
+		} else {
+			StartTimeValue = s
+		}
+
+		StartTimeValue = strings.TrimSpace(StartTimeValue)
+		//StartTimeValue = fmt.Sprint("to_date('" + StartTimeValue + "','mm/dd/yyyy hh24:mi:ss')")
+		StartTimeValue = formatTime(StartTimeValue)
+		StartTimeArr = append(StartTimeArr, fmt.Sprintf("%s000", StartTimeValue))
+		//StartTime = "%s"
+
+		//StartTime = fmt.Sprintf("to date(%s mm/dd/yyyy hh24:mi:ss)",StartTime)
+		//StartTime = "2019-08-12 04:00:00"
+		break
+	case index == 8:
+		as := ""
+		if strings.Contains(s, "(") {
+			as = strings.Split(s, "(")[0]
+		} else {
+			as = s
+		}
+
+		switch true {
+		case strings.Contains(as, "TB"):
+			as = strings.Split(as, " TB")[0]
+			fl, err := strconv.ParseFloat(as, 64)
+			if err != nil {
+				Log.Error("应用程序大小转换float失败 err:%s\n", err)
+				break
+			}
+
+			//am:=strconv.FormatFloat(fl*1024,'E',-1,64)
+			ApplicationSize = fmt.Sprintf("%.2f", fl*1024*1014)
+		case strings.Contains(as, "GB"):
+			as = strings.Split(as, " GB")[0]
+			fl, err := strconv.ParseFloat(as, 64)
+			if err != nil {
+				Log.Error("应用程序大小转换float失败 err:%s\n", err)
+				break
+			}
+
+			//am:=strconv.FormatFloat(fl*1024,'E',-1,64)
+			ApplicationSize = fmt.Sprintf("%.2f", fl*1024)
+
+		case strings.Contains(as, "MB"):
+			as = strings.Split(as, " MB")[0]
+			fl, err := strconv.ParseFloat(as, 64)
+			if err != nil {
+				Log.Error("应用程序大小转换float失败 err:%s\n", err)
+				break
+			}
+			ApplicationSize = fmt.Sprintf("%.2f", fl)
+		case strings.Contains(as, "KB"):
+			as = strings.Split(as, " KB")[0]
+			fl, err := strconv.ParseFloat(as, 64)
+			if err != nil {
+				Log.Error("应用程序大小转换float失败 err:%s\n", err)
+				break
+			}
+			ApplicationSize = fmt.Sprintf("%.2f", fl/1024)
+		case strings.Contains(as, "Bytes"):
+			as = strings.Split(as, " Bytes")[0]
+			fl, err := strconv.ParseFloat(as, 64)
+			if err != nil {
+				Log.Error("应用程序大小转换float失败 err:%s\n", err)
+				break
+			}
+			ApplicationSize = fmt.Sprintf("%.2f", fl/1024/1024)
+		case strings.Contains(as, "Not Run because of another job running for the same subclient"):
+			break
+		default:
+			p := `(\d+)\.(\d+)`
+			floatNum, _ := regexp.MatchString(p, as)
+			//fmt.Println(i,err)
+			p = `(\d+)`
+			intNum, _ := regexp.MatchString(p, as)
+			if floatNum || intNum {
+				ApplicationSize = as
+				break
+			}
+
+			application, e := strconv.Atoi(strings.TrimSpace(as))
+			if e != nil {
+				Log.Error("change type string:%s,err:%s\n", as, e)
+			}
+			if application == 0 {
+				ApplicationSize = "0"
+			}
+
+		}
+
+		break
+	}
+	return
+}
+
+func ReadHtml(htmlfile string) (resultNum int) {
+
+	Data := make([][]string, 0)
+	FiledsHeader := new([]string) // 列头，序号为KEY
+	cv := 0
+	defer func() {
+		if err := recover(); err != nil {
+			Log.Fatalf("htmlfile:%s, err:%s\n", htmlfile, err)
+			return
+		}
+
+	}()
+	f, err := os.OpenFile(htmlfile, os.O_RDONLY, 0755)
+	if err != nil {
+		Log.Error("file open err:%s\n", err)
+		return
+	}
+	defer func() {
+		f.Close()
+	}()
+
+	dom, err := goquery.NewDocumentFromReader(f)
+	if err != nil {
+		//log.Fatal(err)
+		Log.Error("dom err:%s", err)
+	}
+
+	zhStr := dom.Find("body:contains(报)")
+
+	//fmt.Println(htmlfile,"zh:",zhStr.Length())
+
+	if zhStr.Length() >= 1 {
+		Log.Info("Html:%s ; 进入中文处理线程\n", htmlfile)
+
+		//return 2
+		return g.ReadChiHtml(Log, htmlfile, c.OracleDsn)
+
+	}
+
+	CommCells := dom.Find("body:contains(CommCell)")
+
+	CommCells.Each(func(i int, selection *goquery.Selection) {
+		if i == 0 {
+			//fmt.Printf("CommCell :%+v\n", selection.Text())
+			ss := strings.Split(strings.Split(selection.Text(), "CommCell:")[1], "--")[0]
+			//fmt.Printf("CommCell :%+v\n", ss)
+			CommCell = strings.TrimSpace(ss)
+		}
+
+	})
+
+	// 生成的时间
+	GenTimeSource := dom.Find("body:contains(on)")
+
+	GenTimeSource.Each(func(i int, selection *goquery.Selection) {
+		if i == 0 {
+			//fmt.Println(htmlfile,selection.Text())
+			//fmt.Println(strings.Contains(selection.Text(),"generated"))
+			ss := strings.Split(strings.Split(selection.Text(), "generated on")[1], "Version")[0]
+			//fmt.Println(ss)
+			//fmt.Printf("GenTime :%+v\n", ss)
+			GenTime = strings.TrimSpace(ss)
+		}
+	})
+
+	t_tbodyHeader := dom.Find("body > table:nth-child(13) > tbody > tr:nth-child(1) > td")
+
+	if len(t_tbodyHeader.Nodes) == 0 {
+		cv = 101
+		// 特殊的CV10
+		//t_tbodyHeader = dom.Find("body > table > tbody:nth-child(1) > tr:nth-child(1) > td[bgcolor='#cccccc']"  )
+		t_tbodyHeader = dom.Find("body > table:nth-child(19) > tbody > tr:nth-child(1) > td")
+	}
+
+	//cv8 := false
+	//有两种格式的HTML ,代表是CV8
+	if len(t_tbodyHeader.Nodes) == 0 {
+		cv = 8
+		t_tbodyHeader = dom.Find("body > table:nth-child(12) > tbody > tr:nth-child(1) > td")
+	}
+
+	// 循环找出列头
+	t_tbodyHeader.Each(func(i int, s *goquery.Selection) {
+		sa := s.Text()
+		sa = formatFields(i, sa, cv) // todo 格式化 列头
+		*FiledsHeader = append(*FiledsHeader, sa)
+	})
+
+	// 如果是CV8版本，手动修改列名, 删除 size of Backup cols 这列
+	switch cv {
+	case 8:
+		tmp := make([]string, 16)
+		copy(tmp[:], (*FiledsHeader)[:])
+
+		*FiledsHeader = tmp[0:9]
+		//fmt.Println(*FiledsHeader)
+		//*FiledsHeader = append(*FiledsHeader, []string{"Data Transferred", "Data Written"}...)
+		//fmt.Println(*FiledsHeader)
+		*FiledsHeader = append(*FiledsHeader, tmp[10:]...)
+		//fmt.Println(*FiledsHeader)
+		(*FiledsHeader)[3] = "Job ID (CommCell)(Status)"
+
+		//GenTime = strings.TrimSpace(strings.Split(GenTime,"CommCell")[0])
+		break
+	case 101:
+		break
+	default:
+		break
+	}
+	//if cv8 {
+
+	//}
+	//fmt.Println("222222222",*FiledsHeader)
+	//for i := 0; i < len(*FiledsHeader); i++ {
+	//	fmt.Printf("%d, value:%s\n", i, (*FiledsHeader)[i])
+	//}
+
+	fmt.Printf("%+v\n", *FiledsHeader)
+	switch true {
+	case len(*FiledsHeader) < FieldsLen-6: // col not enough,运维报告中不用判断
+		//fmt.Println(FiledsHeader)
+		//fmt.Println(len(*FiledsHeader))
+		return 1
+	case (*FiledsHeader)[0] != "DATACLIENT": // col not English
+		return 2
+	}
+
+	//fmt.Println(CommCell)
+	//fmt.Println(GenTime)
+	//fmt.Println(*FiledsHeader)
+	// 与 定义好的 9列进行比对， 这9列必须存在
+	for i := 0; i < len(NeedFields); i++ {
+		//fmt.Println((*FiledsHeader)[i])
+		if NeedFields[i] != (*FiledsHeader)[i] {
+			if !strings.Contains((*FiledsHeader)[i], NeedFields[i]) { // 包含关键字即可
+				//fmt.Printf("%+v\n", NeedFields[i])
+				return 5
+			}
+
+		}
+	}
+
+	//添加自定义列
+	*FiledsHeader = append(*FiledsHeader, []string{"HTMLFILE", "INSERTTIME", "COMMCELL", "APPLICATIONSIZE", "DATASUBCLIENT", "START TIME"}...)
+
+	var t_tbodyData *goquery.Selection
+
+	switch cv {
+
+	case 8:
+		t_tbodyData = dom.Find("body > table:nth-child(12) > tbody > tr")
+		break
+	case 101:
+		t_tbodyData = dom.Find("body > table:nth-child(19) > tbody > tr")
+		break
+	default:
+		t_tbodyData = dom.Find("body > table:nth-child(13) > tbody > tr ")
+	}
+
+	//fmt.Println(cv)
+
+	//fmt.Println(t_tbodyData.Html())
+
+	headlen := len(*FiledsHeader)
+
+	//循环表格数据
+	t_tbodyData.Each(func(i int, s *goquery.Selection) {
+		if i == 0 { // 0行是列名
+			return
+		}
+		tmpSubData := make([]string, 0)
+		sa := s.Find("td")
+		sa.Each(func(i int, selection *goquery.Selection) {
+			ss1 := selection.Text()
+			//fmt.Println(selection.Attr("bgcolor"))
+			//switch true {
+			//case strings.Contains(ss1,"N/A"):
+			//	ss1=strings.Replace(ss1,"N/A","",-1)
+			//}
+
+			ss1 = formatValues(i, ss1) // todo 格式化 数据
+			tmpSubData = append(tmpSubData, ss1)
+			//fmt.Println(i,ss1)
+		})
+		tmpSubData = append(tmpSubData, []string{htmlfile, strconv.FormatInt(time.Now().Unix(), 10) + "000", CommCell, ApplicationSize, Subclient}...)
+		switch cv {
+		case 8:
+			if len(tmpSubData) == headlen { // 因为列头删除了一列
+				tmp := tmpSubData[:]
+				tmpSubData = tmp[0:9]
+				//tmpSubData = append(tmpSubData, []string{"", ""}...)
+				tmpSubData = append(tmpSubData, tmp[10:]...)
+				//fmt.Printf("%d,%v\n",len(tmpSubData),tmpSubData)
+				Data = append(Data, tmpSubData)
+			}
+			break
+		case 101:
+			if len(tmpSubData) == headlen-1 { // 数据列数要与 列头一样长,少了start time
+				Data = append(Data, tmpSubData)
+			}
+			break
+		default:
+
+			if len(tmpSubData) == headlen-1 { // 数据列数要与 列头一样长,少了start time
+				Data = append(Data, tmpSubData)
+			}
+
+		}
+
+	})
+
+	//f.Close()
+	//fmt.Println(FiledsHeader)
+	//fmt.Println(Data[0])
+	//fmt.Println(FiledsHeader)
+	return GenSqls(Data, FiledsHeader, htmlfile) // 这里应该包括数据库插入 ，可以是后台 go 后面
+	//return 0
+}
+
+func sliceToString(sl []string) (returnstring string) {
+	sl1 := sl[0:len(sl)]
+	for i := 0; i < len(sl1); i++ {
+		switch true {
+		case i == len(sl1)-1:
+			returnstring = returnstring
+			returnstring = returnstring + "\"" + sl1[i] + "\"" + ")"
+			//returnstring = returnstring + "\"" + sl1[i] + "\""
+			break
+		case i < len(sl)-1:
+			returnstring = returnstring
+			returnstring = returnstring + "\"" + sl1[i] + "\"" + ","
+			break
+		}
+	}
+	return
+}
+
+func sliceToStringValue(sl []string) (returnstring string) {
+	sl1 := sl[0:len(sl)]
+	for i := 0; i < len(sl1); i++ {
+		switch true {
+		case i == len(sl1)-1:
+			returnstring = returnstring
+			//returnstring = returnstring + "\"" + sl1[i] + "\"" + ")"
+			returnstring = returnstring + "\"" + sl1[i] + "\""
+			break
+		case i < len(sl)-1:
+			returnstring = returnstring
+			returnstring = returnstring + "\"" + sl1[i] + "\"" + ","
+			break
+		}
+	}
+	return
+}
+
+func updatesliceToString(sl []string, value []string) (returnstring string) {
+	wherestring := ""
+	//fmt.Println(len(sl),len(value))
+	if len(sl)-1 == len(value) { // header  多start time
+		for i := 0; i < len(sl); i++ {
+
+			if len(value) > i {
+				if value[i] == "" || sl[i] == "INSERTTIME" || sl[i] == "HTMLFILE" { // 空值路过
+					continue
+				}
+			}
+
+			if i == len(sl)-1 {
+				//returnstring = returnstring + "\"" + sl[i] + "\"" + "='" + value[i] + "'"
+				//wherestring = wherestring + "\"" + sl[i] + "\"" + "='" + value[i] + "'"
+				returnstring = returnstring + "\"" + sl[i] + "\"" + "=%s"
+				wherestring = wherestring + "\"" + sl[i] + "\"" + "=%s"
+			} else {
+				returnstring = returnstring + "\"" + sl[i] + "\"" + "='" + value[i] + "',"
+				wherestring = wherestring + "\"" + sl[i] + "\"" + "='" + value[i] + "' and "
+			}
+
+		}
+	}
+	returnstring = returnstring + " where " + wherestring
+	return
+}
+
+func GenSqls(Data [][]string, header *[]string, htmlfile string) (resultNum int) {
+	//fmt.Println(header)
+	baseSql := "insert into HF_BACKUPDETAIL(" + sliceToString(*header) + " values("
+	updateSql := "update HF_BACKUPDETAIL set "
+	//fmt.Println(Data)
+	//fmt.Println(updateSql)
+	//fmt.Println(baseSql)
+	sqlArr := make([]map[string]string, 0)
+	for _, value := range Data {
+		tmpmap := make(map[string]string, 0)
+		//fmt.Println(index, baseSql+sliceToString(value))
+		valueStr := strings.Replace(sliceToStringValue(value), "\"", "'", -1)
+		//fmt.Println(valueStr)
+		//sqlArr = append(sqlArr, baseSql+valueStr)
+		tmpmap["insert"] = baseSql + valueStr
+		tmpmap["update"] = updateSql + updatesliceToString(*header, value)
+		sqlArr = append(sqlArr, tmpmap)
+	}
+
+	return stmtSql(&sqlArr, htmlfile)
+}
+
+func stmtSql(sqlArr *([]map[string]string), htmlfile string) (resultNum int) {
+	os.Setenv("NLS_LANG", "")
+	//if len(os.Args) != 2 {
+	//	log.Fatalln(os.Args[0] + " user/password@host:port/sid")
+	//}
+
+	db, err := sql.Open("oci8", c.OracleDsn)
+	//fmt.Printf("%+v\n",db)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	defer db.Close()
+
+	updatenum := 0
+	insertnum := 0
+	if len(*sqlArr) == 0 {
+		return 3
+	}
+	//ss := []string{"to_date('2019-08-25 22:11:11','yyyy-mm-dd hh24:mi:ss')"}
+	for i := 0; i < len(*sqlArr); i++ {
+		//fmt.Println(fmt.Sprintf((*sqlArr)[i]["update"], StartTimeArr[i], StartTimeArr[i]))
+		//fmt.Println(fmt.Sprintf(sqlArr[i]["insert"]+",%s)", StartTimeArr[i]))
+		//fmt.Println(sqlArr[i]["insert"]+",:1)",StartTimeArr[i])
+		//r, err := db.Exec(fmt.Sprintf("insert into HF_BACKUPDETAIL(\"START TIME\") values(%s)", "to_date('2019-08-25 22:11:11','yyyy-mm-dd hh24:mi:ss')"))
+		//fmt.Println(r,err)
+		//ctx,cancel:=context.WithTimeout(context.Background(),20*time.Second)
+		//r,err:=db.ExecContext(ctx,sqlArr[i]["insert"]+",:1)",StartTimeArr[i])
+		//cancel()
+		Result, err := db.Exec(fmt.Sprintf((*sqlArr)[i]["update"], StartTimeArr[i], StartTimeArr[i]))
+		//fmt.Println(Result.LastInsertId())
+		//fmt.Println(Result.RowsAffected())
+		//fmt.Println("===========", r, err)
+		if err != nil {
+			Log.Error("HtmlFile:%s ,Sql Exec Err:%s", htmlfile, err)
+			resultNum = 4
+			continue
+		}
+
+		r, e := Result.RowsAffected()
+		if err != nil {
+			Log.Error("HtmlFile:%s ,Sql Exec Err:%s", htmlfile, e)
+			resultNum = 4
+			continue
+		}
+
+		if r == 0 {
+			_, err := db.Exec(fmt.Sprintf((*sqlArr)[i]["insert"]+",%s)", StartTimeArr[i]))
+			if err != nil {
+				Log.Error("HtmlFile:%s ,Sql Exec Err:%s", htmlfile, err)
+				resultNum = 4
+				continue
+			}
+			insertnum = insertnum + 1
+		} else {
+			updatenum = updatenum + 1
+		}
+
+	}
+	Log.Info("htmlfile : %s ,total sql:%d,success update sql:%d,insert sql:%d\n", filepath.Base(htmlfile), len(*sqlArr), updatenum, insertnum)
+	return
+
+}

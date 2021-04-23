@@ -1,0 +1,3 @@
+2020-09-24 11:09:01	[34mINFO[0m	ZapLog/分割按日期.go:81	log 初始化成功	{"serviceName": "serviceName"}
+2020-09-24 11:09:01	[34mINFO[0m	ZapLog/分割按日期.go:82	无法获取网址	{"serviceName": "serviceName", "url": "http://www.baidu.com", "attempt": 3, "backoff": 1}
+2020-09-24 11:09:01	[35mDEBUG[0m	ZapLog/分割按日期.go:88	Trying to hit GET request for www.baidu.com	{"serviceName": "serviceName"}

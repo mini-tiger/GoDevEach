@@ -1,0 +1,15 @@
+syntax = 'proto3';
+package message;
+
+//学生数据体
+message Student {
+    string name = 1; //姓名
+    string classes = 2; //班级
+    int32 grade = 3; //分数
+    string phone = 4; //手机号
+}
+
+//请求数据体定义
+message StudentRequest {
+    string name = 1;
+}

@@ -1,0 +1,14 @@
+{
+    "debug": true,
+    "oracledsn": "test1/test1@192.168.43.236:1521/orcl",
+	"redis":{
+		"dsn":"192.168.43.11:6379",
+		"password":"",
+		"poolsize":10
+	},
+	"daemon":false,
+	"logfile":"run.log",
+	"logmaxdays":7,
+	"traininterval":60,
+	"loopinterval":10
+}

@@ -1,0 +1,38 @@
+// [START declaration]
+syntax = "proto3";
+// package addressbook;
+
+// [END declaration]
+
+// [START messages]
+message Person {
+    string name = 1;
+    int32 id = 2;  // Unique ID number for this person.
+    string email = 3;
+
+    enum PhoneType { //枚举类型
+        MOBILE = 0;
+        HOME = 1;
+        WORK = 2;
+    }
+
+    message PhoneNumber {
+        string number = 1;
+        PhoneType type = 2;
+    }
+
+    repeated PhoneNumber phones = 4;
+}
+
+// Our address book file is just one of these.
+message AddressBook {
+    repeated Person people = 1;
+}
+// [END messages]
+
+
+ //   syntax设置语法类型，有proto2和proto3两种语法。
+ //   package addressbook可以设置生成的golang代码的包名。
+ //   message对应于golang中的struct，可以看到文件中一共定义了Person，PhoneNumber，AddressBook3个message，其中PhoneNumber是Person的嵌套类型。
+ //   message中有字段，可以是int，string，枚举或者其他消息类型。
+ //   repeated表示该字段可以不止一个，类似于golang中的slice。

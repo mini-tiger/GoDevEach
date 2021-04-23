@@ -1,0 +1,51 @@
+package db
+
+import (
+	"fmt"
+	"github.com/open-falcon/falcon-plus/common/model"
+	"github.com/open-falcon/falcon-plus/modules/ubs/g"
+	"log"
+)
+
+func UpdateAgent(agentInfo *model.AgentUpdateInfo) {
+	sql := ""
+	if g.Config().Hosts == "" {
+		sql = fmt.Sprintf(
+			"insert into host(hostname, ip, agent_version, plugin_version, Manufacturer, ProductName, Version, SerialNumber) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s') on duplicate key update ip='%s', agent_version='%s', plugin_version='%s', Manufacturer='%s', ProductName='%s', Version='%s', SerialNumber='%s'",
+			agentInfo.ReportRequest.Hostname,
+			agentInfo.ReportRequest.IP,
+			agentInfo.ReportRequest.AgentVersion,
+			agentInfo.ReportRequest.PluginVersion,
+			agentInfo.ReportRequest.Manufacturer,
+			agentInfo.ReportRequest.ProductName,
+			agentInfo.ReportRequest.SystemVersion,
+			agentInfo.ReportRequest.SerialNumber,
+			agentInfo.ReportRequest.IP,
+			agentInfo.ReportRequest.AgentVersion,
+			agentInfo.ReportRequest.PluginVersion,
+			agentInfo.ReportRequest.Manufacturer,
+			agentInfo.ReportRequest.ProductName,
+			agentInfo.ReportRequest.SystemVersion,
+			agentInfo.ReportRequest.SerialNumber,
+		)
+	} else {
+		// sync, just update
+		sql = fmt.Sprintf(
+			"update host set ip='%s', agent_version='%s', plugin_version='%s', Manufacturer='%s', ProductName='%s', Version='%s', SerialNumber='%s' where hostname='%s'",
+			agentInfo.ReportRequest.IP,
+			agentInfo.ReportRequest.AgentVersion,
+			agentInfo.ReportRequest.PluginVersion,
+			agentInfo.ReportRequest.Manufacturer,
+			agentInfo.ReportRequest.ProductName,
+			agentInfo.ReportRequest.SystemVersion,
+			agentInfo.ReportRequest.SerialNumber,
+			agentInfo.ReportRequest.Hostname,
+		)
+	}
+	log.Println("exec", sql)
+	_, err := DB.Exec(sql)
+	if err != nil {
+		log.Println("exec", sql, "fail", err)
+	}
+
+}

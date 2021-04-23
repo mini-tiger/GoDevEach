@@ -1,0 +1,9 @@
+{
+  "master_url": "http://thz5.cc/",
+  "master_dir": "g:\\image\\",
+  "pages": 3,
+  "max_old": 5,
+  "exist_cover": true,
+  "use_proxy": false,
+  "proxy_url": "http://192.168.1.100:1080"
+}

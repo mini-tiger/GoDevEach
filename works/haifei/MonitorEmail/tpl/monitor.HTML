@@ -1,0 +1,472 @@
+{{ define "mail" }}
+<html><head>
+<base target="_blank">
+<style type="text/css">
+::-webkit-scrollbar{ display: none; }
+</style>
+<style id="cloudAttachStyle" type="text/css">
+#divNeteaseBigAttach, #divNeteaseBigAttach_bak{display:none;}
+</style>
+
+</head>
+<body tabindex="0" role="listitem">
+
+
+
+<div id="content" class="netease_mail_readhtml">
+
+
+<blockquote style="margin-Top: 0px; margin-Bottom: 0px; margin-Left: 0.5em; margin-Right: inherit"><div>&nbsp;</div>
+
+                <div class="FoxDiv20200818093611884337">
+
+ {{ if .CommCellVisible }}
+<table class="gridtable" align="center" border="1" cellspacing="0" style="font-family: 微软雅黑; font-size: 13px; color: rgb(51, 51, 51); border-width: 1px; border-color: rgb(153, 153, 153); border-collapse: collapse;">
+<tbody><tr>
+<th colspan="22" bgcolor="#FF3366" style="border: 1px solid rgb(102, 102, 102); padding: 5px;">本次自动巡检作业的未上传主控个数是{{ .CommCellTotal }}个（巡检主控数量不正确）</th></tr>
+<tr>
+{{/*    <td style="border: 1px solid rgb(102, 102, 102); padding: 3px;">bj1</td>*/}}
+{{range  .CommCell}}
+    <td style="border: 1px solid rgb(102, 102, 102); padding: 3px;">{{.COMMCELL}}</td>
+{{end}}
+</tr>
+    </tbody>
+</table>
+{{end}}
+
+
+    <table align="center" border="1" cellpadding="3" cellspacing="0" style="border-collapse:collapse">
+
+            <tbody>
+            <tr>
+        <td colspan="1" bgcolor="#000080" valign="top" align="CENTER" border="0"><font color="#FFFFFF">订单编号</font></td>
+        <td colspan="1" bgcolor="#000080" valign="top" align="CENTER" border="0"><font color="#FFFFFF">备份主控名</font></td>
+        <td colspan="1" bgcolor="#000080" valign="top" align="CENTER" border="0"><font color="#FFFFFF">主机名</font></td>
+        <td colspan="1" bgcolor="#000080" valign="top" align="CENTER" border="0"><font color="#FFFFFF">失败</font></td>
+        <td colspan="1" bgcolor="#000080" valign="top" align="CENTER" border="0"><font color="#FFFFFF">完成但有错误</font></td>
+        <td colspan="1" bgcolor="#000080" valign="top" align="CENTER" border="0"><font color="#FFFFFF">完成但有警告</font></td>
+        <td colspan="1" bgcolor="#000080" valign="top" align="CENTER" border="0"><font color="#FFFFFF">已终止</font></td>
+        <td colspan="1" bgcolor="#000080" valign="top" align="CENTER" border="0"><font color="#FFFFFF">HANG</font></td>
+        <td colspan="1" bgcolor="#000080" valign="top" align="CENTER" border="0"><font color="#FFFFFF">卡住</font></td>
+        <td colspan="1" bgcolor="#000080" valign="top" align="CENTER" border="0"><font color="#FFFFFF">已延迟</font></td>
+        <td colspan="1" bgcolor="#000080" valign="top" align="CENTER" border="0"><font color="#FFFFFF">活动</font></td>
+        <td colspan="1" bgcolor="#000080" valign="top" align="CENTER" border="0"><font color="#FFFFFF">提交</font></td>
+        <td colspan="1" bgcolor="#000080" valign="top" align="CENTER" border="0"><font color="#FFFFFF">未运行</font></td>
+        <td colspan="1" bgcolor="#000080" valign="top" align="CENTER" border="0"><font color="#FFFFFF">失败文夹</font></td>
+        <td colspan="1" bgcolor="#000080" valign="top" align="CENTER" border="0"><font color="#FFFFFF">失败对象</font></td>
+            </tr>
+
+        {{range .TotalData}}
+            {{$fo:=FailtoNum . "Failed Objects"}}
+            <tr height="22" style="height: 16.5pt;">
+                <td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0"><font size="2">{{ .BIANMA}}</font></td>
+                <td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0"><font size="2">{{ .COMMCELL}}</font></td>
+                <td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0"><font size="2">{{ .CLIENT}}</font></td>
+                <td colspan="1" bgcolor={{Color .UNSUCCESSFUL }} valign="top" align="LEFT" border="0"><font size="2">{{ .UNSUCCESSFUL}}</font></td>
+                <td colspan="1" bgcolor={{Color .COMPLETEDWITHERRORS }} valign="top" align="LEFT" border="0"><font size="2">{{ .COMPLETEDWITHERRORS}}</font></td>
+                <td colspan="1" bgcolor={{Color .COMPLETEDWITHWARNINGS }} valign="top" align="LEFT" border="0"><font size="2">{{ .COMPLETEDWITHWARNINGS}}</font></td>
+                <td colspan="1" bgcolor={{Color .KILLED }} valign="top" align="LEFT" border="0"><font size="2">{{ .KILLED}}</font></td>
+                <td colspan="1" bgcolor={{Color .HANG }} valign="top" align="LEFT" border="0"><font size="2">{{ .HANG}}</font></td>
+                <td colspan="1" bgcolor={{Color .STUCK }} valign="top" align="LEFT" border="0"><font size="2">{{ .STUCK}}</font></td>
+                <td colspan="1" bgcolor={{Color .DELAYED }} valign="top" align="LEFT" border="0"><font size="2">{{ .DELAYED}}</font></td>
+                <td colspan="1" bgcolor={{Color .RUNNING }} valign="top" align="LEFT" border="0"><font size="2">{{ .RUNNING}}</font></td>
+                <td colspan="1" bgcolor={{Color .SUBMIT }} valign="top" align="LEFT" border="0"><font size="2">{{ .SUBMIT}}</font></td>
+                <td colspan="1" bgcolor={{Color .NORUN }} valign="top" align="LEFT" border="0"><font size="2">{{ .NORUN}}</font></td>
+                <td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0"><font size="2">{{ FailtoNum . "Failed Folders"}}</font></td>
+                <td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0"><font size="2">{{ $fo}}</font></td>
+
+            </tr>
+        {{end}}
+{{/*            <tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#FF9999" valign="top" align="LEFT" border="0"><font size="2">haieredw08</font></td><td colspan="1" bgcolor="#FF9999" valign="top" align="LEFT" border="0"><font size="2">0</font></td><td colspan="1" bgcolor="#FF9999" valign="top" align="LEFT" border="0"><font size="2">0</font></td><td colspan="1" bgcolor="#FF9999" valign="top" align="LEFT" border="0"><font size="2">0</font></td><td colspan="1" bgcolor="#FF9999" valign="top" align="LEFT" border="0"><font size="2">0</font></td><td colspan="1" bgcolor="#FF9999" valign="top" align="LEFT" border="0"><font size="2">1</font></td><td colspan="1" bgcolor="#FF9999" valign="top" align="LEFT" border="0"><font size="2">0</font></td><td colspan="1" bgcolor="#FF9999" valign="top" align="LEFT" border="0"><font size="2">1</font></td><td colspan="1" bgcolor="#FF9999" valign="top" align="LEFT" border="0"><font size="2">494.86 GB (62.98%)</font></td><td colspan="1" bgcolor="#FF9999" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 06:30:11</font></td><td colspan="1" bgcolor="#FF9999" valign="top" align="LEFT" border="0"><font size="2">当前</font></td><td colspan="1" bgcolor="#FF9999" valign="top" align="LEFT" border="0"><font size="2">18</font></td><td colspan="1" bgcolor="#FF9999" valign="top" align="LEFT" border="0"><font size="2">0</font></td><td colspan="1" bgcolor="#FF9999" valign="top" align="LEFT" border="0"><font size="2">0</font></td><td colspan="1" bgcolor="#FF9999" valign="top" align="LEFT" border="0"><font size="2">lc3</font></td><td colspan="1" bgcolor="#FF9999" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 08:31:11</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">qdhrappnr1new</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1.16 TB (5.77%)</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/17 23:05:14</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">当前</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1874588</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">dmz01</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 08:30:11</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">dzyxpzscnew</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">18.32 TB (21.43%)</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/07/15 22:00:11</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">当前</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">407921979</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">dx06</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 08:31:13</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">pecmpapp04</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1.26 TB (4.05%)</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/14 22:00:15</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">当前</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">14482837</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">dx06</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 08:31:13</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">prrsldb03</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">7.07 TB (0%)</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/17 01:50:04</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">当前</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">12</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">dx06</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 08:31:13</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">ump_dev</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">302.12 GB (12.47%)</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 01:00:15</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">当前</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1300591</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">dx06</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 08:31:13</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">win-oo1786p3v1o</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">1</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0 (0%)</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">2020/08/18 02:40:16</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">当前</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">dx06</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">2020/08/18 08:31:13</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">HICCCPRO_RAC_3.16</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1.36 TB (67.83%)</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 3:00:17</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">当前</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">13</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">dxc01</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 8:30:10</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">gpmsdsj05</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1.11 TB (80.27%)</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 05:00:04</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">当前</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">lc3</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 08:31:11</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">GVSHEP_28.205</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">1</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">3.36 GB (80.89%)</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">2020/08/18 07:30:00</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">当前</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">32</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">lc3</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">2020/08/18 08:31:11</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">gvsho5db_RAC</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">1</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0 (0%)</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">2020/08/18 08:30:13</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">当前</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">lc3</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">2020/08/18 08:31:11</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">jushhsvr08</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">1</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0 (0%)</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">2020/08/18 08:30:13</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">当前</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">lc3</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">2020/08/18 08:31:11</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">rrswlnetjkpt01</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">6.11 TB (0%)</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/15 22:00:17</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">当前</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">3</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">lc3</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 08:31:11</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">sltdev</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">1</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0 (0%)</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">2020/08/18 08:30:13</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">当前</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">lc3</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*            <font size="2">2020/08/18 08:31:11</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">BWP_HANA_10.138.92.1</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">6</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">412.75 GB (67.15%)</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 1:37:18</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">当前</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1402</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">lc5</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 8:31:05</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">HANA_10.138.232.150</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">5.27 GB (93.72%)</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 7:30:01</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">当前</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">37</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">lc5</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 8:31:05</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">HPD_HANA_10.138.23.210</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">14.69 GB (90.50%)</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 3:44:22</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">当前</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">87</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">lc5</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 8:31:05</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">HPP_HANA_10.138.92.21</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">3</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">6.57 GB (80.23%)</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 2:09:04</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">当前</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">118</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">lc5</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 8:31:05</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">omsdb01</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">34.53 GB (75.18%)</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/17 20:01:07</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">当前</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">5</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">yd1</font></td><td colspan="1" bgcolor="#99FFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 08:31:17</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">cosmoplat-1iim</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1.10 TB (0.08%)</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/15 03:00:10</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">当前</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">182215</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">yd2</font></td><td colspan="1" bgcolor="#FFFFFF" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 08:31:11</font></td></tr><tr height="22" style="height: 16.5pt;"><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">phopmongo1</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">1.74 TB (0.52%)</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 01:00:07</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">当前</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">301</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">0</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">yd2</font></td><td colspan="1" bgcolor="#d9d6c3" valign="top" align="LEFT" border="0">*/}}
+{{/*                <font size="2">2020/08/18 08:31:11</font></td></tr></tbody></table><table align="center" border="1" cellpadding="4" cellspacing="0">*/}}
+{{/*<tbody>*/}}
+{{/*<tr>*/}}
+{{/*    <td bgcolor="#FF3366" valign="top" align="center" border="0" width="100"><font size="1">不成功</font></td>*/}}
+{{/*<td bgcolor="#FF99CC" valign="top" align="center" border="0" width="100"><font size="1">已终止</font></td>*/}}
+{{/*<td bgcolor="#FFCC99" valign="top" align="center" border="0" width="100"><font size="1">完成但有错误</font></td>*/}}
+{{/*<td bgcolor="#00FFCC" valign="top" align="center" border="0" width="100"><font size="1">完成但有警告</font></td>*/}}
+{{/*<td bgcolor="#CC99FF" valign="top" align="center" border="0" width="100"><font size="1">已延迟</font></td>*/}}
+{{/*<td bgcolor="#FF9999" valign="top" align="center" border="0" width="100"><font size="1">未运行</font></td>*/}}
+{{/*<td bgcolor="#CC9999" valign="top" align="center" border="0" width="100"><font size="1">失败文件夹和失败对象</font></td>*/}}
+{{/*<td bgcolor="#FFFF99" valign="top" align="center" border="0" width="100"><font size="1">作业超1H无流量</font></td>*/}}
+{{/*<td bgcolor="#d9d6c3" valign="top" align="center" border="0" width="100"><font size="1">无法判断是否卡住</font></td>*/}}
+{{/*<td bgcolor="#99FFFF" valign="top" align="center" border="0" width="100"><font size="1">作业超10小时</font></td>*/}}
+{{/*<td bgcolor="#FFFFFF" valign="top" align="center" border="0" width="100"><font size="1">作业不到10小时</font></td>*/}}
+{{/*</tr>*/}}
+            </tbody></table><br><br>
+
+{{/*       详细数据              */}}
+
+{{/*                    <table align="center" border="1" cellpadding="4" cellspacing="0">*/}}
+{{/*                        <tbody><tr><td colspan="1" bgcolor="#CCCCCC" valign="top" align="CENTER" border="0"><font size="2">严重性</font></td>*/}}
+{{/*                            <td colspan="1" bgcolor="#CCCCCC" valign="top" align="CENTER" border="0"><font size="2">事件ID</font></td><td colspan="1" bgcolor="#CCCCCC" valign="top" align="CENTER" border="0"><font size="2">作业ID</font></td><td colspan="1" bgcolor="#CCCCCC" valign="top" align="CENTER" border="0"><font size="2">时间</font></td><td colspan="1" bgcolor="#CCCCCC" valign="top" align="CENTER" border="0"><font size="2">程序</font></td><td colspan="1" bgcolor="#CCCCCC" valign="top" align="CENTER" border="0"><font size="2">计算机</font></td><td colspan="1" bgcolor="#CCCCCC" valign="top" align="CENTER" border="0"><font size="2">事件代码</font></td><td colspan="1" bgcolor="#CCCCCC" valign="top" align="CENTER" border="0"><font size="2">说明</font></td><td colspan="1" bgcolor="#CCCCCC" valign="top" align="CENTER" border="0"><font size="2">备份主控</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">关键</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">3393161</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">1516036</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 08:06:17</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">DataAging</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">hfserverlc2</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">18:38</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">客户端 [rrsfwzldb03] 上 Oracle 实例 [wlsqm1] 的 RMAN 反复检查失败。</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">lc2</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">关键</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">3393160</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">1516036</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 08:06:17</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">DataAging</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">hfserverlc2</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">18:110</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">交叉检查过程中建立连接客户端服务失败。请确保此产品服务 [rrsfwzldb03bk*rrsfwzldb03*8400*8402] 在客户端上运行，并检查客户端和CommServe之间的网络连接。</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">lc2</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">关键</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">2418828</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">906638</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 08:10:22</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">DataAging</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">hfserverdx06</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">18:38</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">客户端 [tmsdb06] 上 Oracle 实例 [zhwldb2] 的 RMAN 反复检查失败。</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">dx06</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">关键</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">1530501</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">541980</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 08:11:33</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">DataAging</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">hfserverdx03</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">18:38</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">客户端 [pjdedb02] 上 Oracle 实例 [RDSDB2] 的 RMAN 反复检查失败。</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">dx03</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">关键</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">1530486</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">541980</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 08:01:06</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">DataAging</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">hfserverdx03</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">18:38</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">客户端 [zhwlkfptdb03] 上 Oracle 实例 [OPMS] 的 RMAN 反复检查失败。</font></td><td colspan="1" bgcolor="#FF3366" valign="top" align="LEFT" border="0"><font size="2">dx03</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">主要</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">205666</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">66680</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 08:04:37</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">ORASBT</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">pora1202</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">18:43</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">Oracle 备份进程无法与 Oracle 客户端代理进程 ClOraAgent 通信。</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">yd2</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">主要</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">1424937</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">438939</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 08:01:03</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">ClOraAgent</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">ptyqxdb01</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">18:106</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">RMAN 脚本执行失败，发生错误 [ORA-00245: control file backup failed; target is likely on a local file system]。请查看日志，了解更多详细信息。</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">yd1</font></td></tr><tr bgcolor="#FFFF99"></tr><tr bgcolor="#FFFF99"></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">主要</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">3297202</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2"></font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 08:27:11</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaManager</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">hfserverlc3</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">32:56</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaAgent [hfserverlc3] 上磁盘库 [RN4220-LC2-2] 的所有处于联机状态的装载路径总剩余可用空间 [4441116] MB 小于低水印 [5716064] MB。</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">lc3</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">主要</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">3297184</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2"></font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 08:11:12</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaManager</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">hfserverlc3</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">32:56</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaAgent [hfserverlc3] 上磁盘库 [RN4220-LC2-2] 的所有处于联机状态的装载路径总剩余可用空间 [4441116] MB 小于低水印 [5716064] MB。</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">lc3</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">主要</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">3297134</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2"></font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 07:55:11</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaManager</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">hfserverlc3</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">32:56</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaAgent [hfserverlc3] 上磁盘库 [RN4220-LC2-2] 的所有处于联机状态的装载路径总剩余可用空间 [4489673] MB 小于低水印 [5716064] MB。</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">lc3</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">主要</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">3297116</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2"></font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 07:39:12</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaManager</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">hfserverlc3</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">32:56</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaAgent [hfserverlc3] 上磁盘库 [RN4220-LC2-2] 的所有处于联机状态的装载路径总剩余可用空间 [4489673] MB 小于低水印 [5716064] MB。</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">lc3</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">主要</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">3393162</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">1516036</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 08:06:40</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">DataAging</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">hfserverlc2</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">13:6</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">因出错而退出 - 有些文件可能尚未删节。</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">lc2</font></td></tr><tr bgcolor="#FFFF99"></tr><tr bgcolor="#FFFF99"></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">主要</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">327257</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">40940</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 8:07:12</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">ClOraAgent</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">zxyydb1</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">18:106</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">RMAN 脚本执行失败，发生错误 [ORA-03135: connection lost contact]。请查看日志，了解更多详细信息。</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">dxc01</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">主要</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2418833</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2"></font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 08:15:14</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaManager</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">hfserverdx06</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">32:56</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaAgent [hfserverdx06] 上磁盘库 [NAS_4312] 的所有处于联机状态的装载路径总剩余可用空间 [253807] MB 小于低水印 [3810709] MB。</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">dx06</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">主要</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2418829</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">906638</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 08:10:23</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">DataAging</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">hfserverdx06</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">13:6</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">因出错而退出 - 有些文件可能尚未删节。</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">dx06</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">主要</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2418815</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2"></font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 07:59:14</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaManager</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">hfserverdx06</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">32:56</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaAgent [hfserverdx06] 上磁盘库 [NAS_4312] 的所有处于联机状态的装载路径总剩余可用空间 [253807] MB 小于低水印 [3810709] MB。</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">dx06</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">主要</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2418811</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2"></font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 07:43:15</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaManager</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">hfserverdx06</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">32:56</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaAgent [hfserverdx06] 上磁盘库 [NAS_4312] 的所有处于联机状态的装载路径总剩余可用空间 [262758] MB 小于低水印 [3810709] MB。</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">dx06</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">主要</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">1530502</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">541980</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 08:11:56</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">DataAging</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">hfserverdx03</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">13:6</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">因出错而退出 - 有些文件可能尚未删节。</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">dx03</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">主要</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">1530464</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2"></font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 08:00:14</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">JobManager</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">hfserverdx03</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">19:169</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">客户端 [prrsapp01] 和应用程序类型 [Oracle Database] 的许可证将在 [6] 天后过期。</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">dx03</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">主要</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">1530453</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2"></font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 08:00:12</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">JobManager</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">hfserverdx03</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">19:169</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">客户端 [prrsapp02] 和应用程序类型 [MySQL] 的许可证将在 [6] 天后过期。</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">dx03</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">主要</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">141442</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2"></font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 08:30:02</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaManager</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">hfserverdmz01</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">32:56</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaAgent [hfserverdmz01] 上磁盘库 [CV_DISK_POOL_DMZ01] 的所有处于联机状态的装载路径总剩余可用空间 [2518718] MB 小于低水印 [3989157] MB。</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">dmz01</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">主要</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">141439</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2"></font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 08:15:02</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaManager</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">hfserverdmz01</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">32:56</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaAgent [hfserverdmz01] 上磁盘库 [CV_DISK_POOL_DMZ01] 的所有处于联机状态的装载路径总剩余可用空间 [2579618] MB 小于低水印 [3989157] MB。</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">dmz01</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">主要</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">141438</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2"></font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 07:59:02</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaManager</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">hfserverdmz01</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">32:56</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaAgent [hfserverdmz01] 上磁盘库 [CV_DISK_POOL_DMZ01] 的所有处于联机状态的装载路径总剩余可用空间 [2579618] MB 小于低水印 [3989157] MB。</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">dmz01</font></td></tr><tr bgcolor="#FFFF99"><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">主要</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">141437</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2"></font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">2020/08/18 07:44:02</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaManager</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">hfserverdmz01</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">32:56</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">MediaAgent [hfserverdmz01] 上磁盘库 [CV_DISK_POOL_DMZ01] 的所有处于联机状态的装载路径总剩余可用空间 [2651649] MB 小于低水印 [3989157] MB。</font></td><td colspan="1" bgcolor="#FFFF99" valign="top" align="LEFT" border="0"><font size="2">dmz01</font></td></tr></tbody></table>*/}}
+{{/*<table align="center" border="1" cellpadding="4" cellspacing="0" width="60%">*/}}
+{{/*<tbody><tr><td bgcolor="#FF3366" valign="top" align="center" border="0" width="15%"><font size="1">关键</font></td>*/}}
+{{/*<td bgcolor="#FFFF99" valign="top" align="center" border="0" width="15%"><font size="1">主要</font></td>*/}}
+{{/*<td bgcolor="#FFCC99" valign="top" align="center" border="0" width="15%"><font size="1">次要</font></td>*/}}
+{{/*<td bgcolor="#99FFFF" valign="top" align="center" border="0" width="15%"><font size="1">信息[不显示]</font></td>*/}}
+{{/*</tr></tbody></table>*/}}
+{{/*<table align="center" border="1" cellpadding="4" cellspacing="0" width="100%">*/}}
+{{/*<tbody><tr>*/}}
+{{/*<td valign="center" align="center" border="0" width="15%"><font size="1">说明：</font></td>*/}}
+{{/*<td valign="top" align="left" border="0" width="85%"><font size="1">已忽略的代码:<br>*/}}
+{{/*72:142 [Commserve 无法处理企业度量报告服务器脚本。] <br>*/}}
+{{/*72:146 [Commserve未能上传数据到云度量报告服务器。如果HTTP配置了代理服务器，更新HTTP控制面板的代理信息-&gt; Internet选项--&gt; HTTP代理。]</font></td>*/}}
+{{/*</tr>*/}}
+{{/*</tbody></table>*/}}
+<br>--------------------------------------------------------------------------<br>
+自动发送<br><br></div>
+</div></blockquote>
+
+
+</div>
+
+<script>
+var _c=document.getElementById('content');
+_c.innerHTML=(_c.innerHTML||'').replace(/(href|formAction|onclick|javascript)/ig, '__$1').replace(/<\/?marquee>/ig,'');
+var _s = _c.getElementsByTagName('style');
+for(var i=0;i<_s.length;i++){ var _st = _s[i].innerHTML.split('}'); for(var j=0;j<_st.length-1;j++){ _st[j] = '.netease_mail_readhtml '+_st[j]; } _s[i].innerHTML = _st.join('}'); }
+</script>
+<style type="text/css">
+body{font-size:14px;font-family:arial,verdana,sans-serif;line-height:1.666;padding:0;margin:0;overflow:auto;white-space:normal;word-wrap:break-word;min-height:100px}
+td, input, button, select, body{font-family:Helvetica, 'Microsoft Yahei', verdana}
+pre {white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;width:95%}
+th,td{font-family:arial,verdana,sans-serif;line-height:1.666}
+img{ border:0}
+header,footer,section,aside,article,nav,hgroup,figure,figcaption{display:block}
+blockquote{margin-right:0px}
+</style>
+
+
+
+<style id="netease_mail_footer_style" type="text/css">#netease_mail_footer{display:none;}</style>
+
+
+<style id="ntes_link_color" type="text/css">a,td a{color:#064977}</style>
+
+
+<script type="text/javascript">
+window.r_a_h=function(){return [{'id':'3','filename':'_'},{'id':'4','filename':'_'},{'id':'5','filename':'_'}];};
+</script>
+
+</body></html>
+{{ end }}
