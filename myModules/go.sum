@@ -1,5 +1,7 @@
 gitee.com/taojun319/tjtools v0.0.0-20191104140612-dfffa49e0289 h1:xNj/BOCZ3HjZnQYSykM4e6v84vlUNh9Ba5p5Um9TEGE=
 gitee.com/taojun319/tjtools v0.0.0-20191104140612-dfffa49e0289/go.mod h1:oidR4ATYa98tNvxmziw6Q/VkeUDGmMOgSnaD7tqwlng=
+github.com/mini-tiger/tjtools v0.0.0-20210222071915-576ede5e858f h1:LuhBxS2ddBRs5o/VGvmMXS+zthkZ7jPUAwxN9pB4q2c=
+github.com/mini-tiger/tjtools v0.0.0-20210222071915-576ede5e858f/go.mod h1:4zCOeP2cr/Xb5bnVWOHJ+uZXciL+//JaU0514pL9PlM=
 github.com/robfig/cron v1.2.0 h1:ZjScXvvxeQ63Dbyxy76Fj3AT3Ut0aKsyd2/tl3DTMuQ=
 github.com/robfig/cron v1.2.0/go.mod h1:JGuDeoQd7Z6yL4zQhZ3OPEVHB7fL6Ka6skscFHfmt2k=
 github.com/robfig/cron/v3 v3.0.1 h1:WdRxkvbJztn8LMz/QEvLN5sBU+xKpSqwwUO1Pjr4qDs=

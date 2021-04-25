@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	lm "gitee.com/taojun319/tjtools/LinkedMap"
+	//lm "gitee.com/taojun319/tjtools/LinkedMap"
+	lm "github.com/mini-tiger/tjtools/LinkedMap"
 	"strconv"
 )
 
