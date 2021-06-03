@@ -10,7 +10,7 @@ func LoadRoute(router *gin.Engine) {
 
 	// Hello World
 	router.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "Hello, World")
+		c.String(http.StatusOK, "Hello, World,Taojun First Deploy for KubeSphere")
 	})
 
 	//xxx gin 自带 json parse方式 https://cloud.tencent.com/developer/article/1689928
