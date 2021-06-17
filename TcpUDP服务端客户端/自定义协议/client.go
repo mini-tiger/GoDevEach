@@ -23,7 +23,7 @@ func main() {
 		return
 	}
 	defer conn.Close()
-	for i := 0; i < 20; i++ {
+	for i := 0; i < 1120; i++ {
 		msg := fmt.Sprintf(`num:%d,Hello, Hello. How are you?`, i)
 		data, err := proto.Encode(msg) // xxx 消息编码
 		if err != nil {
