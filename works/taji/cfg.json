@@ -1,0 +1,12 @@
+{
+  "redisAddr": "192.168.43.177",
+  "redisDB": 0,
+  "redisPwd": "123456",
+  "loglevel": "DEBUG",
+  "stdout": true,
+  "logfile": "run.log",
+  "validHours": 3,
+  "logMaxDays": 7,
+  "SubChan": "tajiRealTimeData",
+  "mongoUri": "mongodb://towercloud:towercloud@192.168.40.127:27017/?serverSelectionTimeoutMS=5000&connectTimeoutMS=10000&authSource=tower_crane"
+}

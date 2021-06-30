@@ -5,31 +5,34 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"taji/g"
 	"time"
 )
+
+var Mgo *MongoConn
 
 // 连接设置
 type MongoConn struct {
 	MongoClient *mongo.Client
 }
 
-// xxx 插入数据 https://blog.csdn.net/zhangyexinaisurui/article/details/87372728
-func NewMongoConn() (*MongoConn, error) {
+func NewMongoConn() (err error) {
 	//uri := "mongodb+srv://用户名:密码@官方给的.mongodb.net"
-	uri := "mongodb://auto:auto@192.168.40.124:27017/?serverSelectionTimeoutMS=5000&connectTimeoutMS=10000&authSource=server_auto"
+	uri := g.GetConfig().MongoUri
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	MongoClient, err := mongo.Connect(ctx, options.Client().ApplyURI(uri)) // 连接池
 	if err != nil {
-		return nil, err
+		return err
 	}
 	// 检查连接
 	err = MongoClient.Ping(context.TODO(), nil)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return &MongoConn{MongoClient: MongoClient}, err
+	Mgo = &MongoConn{MongoClient: MongoClient}
+	return nil
 	//log.Println("Connected to MongoDB!")
 }
 
@@ -76,6 +79,13 @@ func (m *MongoConn) CollectionFilter(db, coll string,
 	cur.Close(context.TODO())
 
 	return results, nil
+}
+
+func (m *MongoConn) InsertOne(database, col string, value interface{}) (*mongo.InsertOneResult, error) {
+
+	collection := m.MongoClient.Database(database).Collection(col)
+
+	return collection.InsertOne(context.TODO(), value)
 }
 
 func (m *MongoConn) DisableConn() error {
