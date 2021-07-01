@@ -49,9 +49,9 @@ func LoopRecvPubSub() {
 
 				if err := json.Unmarshal([]byte(msg.Payload), Real); err == nil {
 					//fmt.Printf("%+v\n",*Real)
-					g.GetLog().Debug("json Unmarshal:%+v\n", *Real)
 					Real.InsertTime = time.Now().Unix()
 
+					g.GetLog().Debug("json Unmarshal:%+v\n", *Real)
 					//fmt.Printf("%+v\n", *Real) //打印结果：{Tom 123456 [Li Fei]}
 					//fmt.Println(modules.Mgo.CollectionCount("tower_crane","auto_user"))
 					_, err := modules.Mgo.InsertOne("tower_crane", "log_deviceRealTime", Real)

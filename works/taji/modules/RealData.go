@@ -1,6 +1,7 @@
 package modules
 
 import (
+	"go.mongodb.org/mongo-driver/bson"
 	"sync"
 )
 
@@ -25,14 +26,14 @@ type RealDataSub struct {
 }
 
 type RealDataEntity struct {
-	Userid     string        `bson:"userid" json:"userid"`
-	Username   string        `bson:"username" json:"username"`
-	TowerId    string        `bson:"towerId" json:"towerId"`
-	MID        string        `bson:"MID" json:"MID"`
-	ProjectID  string        `bson:"projectID" json:"projectID"`
-	PanbanId   string        `bson:"paibanId" json:"paibanId"`
-	InsertTime int64         `bson:"insertTime"`
-	Data       []interface{} `bson:"data" json:"data"`
+	Userid     string `bson:"userid" json:"userid"`
+	Username   string `bson:"username" json:"username"`
+	TowerId    string `bson:"towerId" json:"towerId"`
+	MID        string `bson:"MID" json:"MID"`
+	ProjectID  string `bson:"projectID" json:"projectID"`
+	PanbanId   string `bson:"paibanId" json:"paibanId"`
+	InsertTime int64  `bson:"insertTime"`
+	Data       bson.A `bson:"data" json:"data"`
 }
 
 var RealDataEntityFree = sync.Pool{
