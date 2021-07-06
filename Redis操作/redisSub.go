@@ -4,6 +4,7 @@ import (
 	"context"
 	redis "github.com/go-redis/redis/v8"
 	"os"
+	"time"
 
 	"fmt"
 )
@@ -32,16 +33,16 @@ func main() {
 	}
 
 	go func() {
-		ps := rdb.Subscribe(ctx, "abc")
+		ps := rdb.Subscribe(ctx, "tajiRealTimeData")
 		_, err := ps.Receive(ctx)
+		ch := ps.Channel()
 		if err != nil {
 			panic(err)
 		}
 		for {
 
-			ch := ps.Channel()
 			for msg := range ch {
-				fmt.Println(msg.Channel, msg.Payload)
+				fmt.Printf("%s : %s\n", time.Now(), msg.Payload)
 			}
 		}
 

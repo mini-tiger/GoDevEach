@@ -34,6 +34,9 @@ func Conn() error {
 
 func LoopRecvPubSub() {
 	var ctx = context.Background()
+
+	modules.Mgo.SetCollection("tower_crane", "log_deviceRealTime")
+
 	go func() {
 		ps := RDB.Subscribe(ctx, g.GetConfig().SubChan)
 		_, err := ps.Receive(ctx)
@@ -54,7 +57,8 @@ func LoopRecvPubSub() {
 					g.GetLog().Debug("json Unmarshal:%+v\n", *Real)
 					//fmt.Printf("%+v\n", *Real) //打印结果：{Tom 123456 [Li Fei]}
 					//fmt.Println(modules.Mgo.CollectionCount("tower_crane","auto_user"))
-					_, err := modules.Mgo.InsertOne("tower_crane", "log_deviceRealTime", Real)
+					_, err := modules.Mgo.Collection.InsertOne(context.TODO(), Real)
+
 					if err != nil {
 						g.GetLog().Error("Insert mongo err:%s\n", err)
 					}
