@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/terminal"
 	"io"
+	"log"
 	"net"
 	"os"
 	"time"
@@ -58,12 +58,14 @@ func (c Cli) Run(shell string) (string, error) {
 
 //连接
 func (c *Cli) connect() error {
+	//var hostKey ssh.PublicKey
 	config := ssh.ClientConfig{
 		User: c.Username,
 		Auth: []ssh.AuthMethod{ssh.Password(c.Password)},
 		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
 			return nil
 		},
+		//HostKeyCallback: ssh.FixedHostKey(hostKey),
 		Timeout: 10 * time.Second,
 	}
 	addr := fmt.Sprintf("%s:%d", c.IP, c.Port)
@@ -88,37 +90,39 @@ func (c *Cli) RunTerminal(shell string, stdout, stderr io.Writer) error {
 	}
 	defer session.Close()
 
-	fd := int(os.Stdin.Fd())
-	oldState, err := terminal.MakeRaw(fd)
-	if err != nil {
-		panic(err)
-	}
-	defer terminal.Restore(fd, oldState)
+	//fd := int(os.Stdin.Fd())
+	//oldState, err := terminal.MakeRaw(fd)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//defer terminal.Restore(fd, oldState)
 
 	session.Stdout = stdout
 	session.Stderr = stderr
 	session.Stdin = os.Stdin
 
-	termWidth, termHeight, err := terminal.GetSize(fd)
-	if err != nil {
-		panic(err)
-	}
+	//termWidth, termHeight, err := terminal.GetSize(fd)
+	//if err != nil {
+	//	panic(err)
+	//}
 	// Set up terminal modes
-	modes := ssh.TerminalModes{
+	modes := ssh.TerminalModes{ // https://ftp.gnu.org/old-gnu/Manuals/glibc-2.2.3/html_node/libc_355.html
 		ssh.ECHO:          1,     // enable echoing
 		ssh.TTY_OP_ISPEED: 14400, // input speed = 14.4kbaud
 		ssh.TTY_OP_OSPEED: 14400, // output speed = 14.4kbaud
 	}
 
 	// Request pseudo terminal
-	if err := session.RequestPty("xterm-256color", termHeight, termWidth, modes); err != nil {
+	if err := session.RequestPty("xterm-256color", 40, 80, modes); err != nil {
 		return err
 	}
 
-	session.Run(shell)
+	if err := session.Run(shell); err != nil {
+		log.Fatalf("session err:%+v\n", err)
+	}
 	return nil
 }
 func main() {
-	cli := New("192.168.40.100", "root", "W3b5Ev!c3", 22)
+	cli := New("192.168.43.112", "root", "123.com", 22)
 	cli.RunTerminal("top", os.Stdout, os.Stdin)
 }
