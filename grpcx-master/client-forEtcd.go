@@ -14,7 +14,7 @@ import (
 
 var (
 	serv = flag.String("service", "hello_service", "service name")
-	reg  = flag.String("reg", "http://127.0.0.1:2379", "register etcd address")
+	reg  = flag.String("reg", "http://192.168.43.28:2379", "register etcd address")
 )
 
 func main() {
