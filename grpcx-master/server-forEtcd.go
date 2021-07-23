@@ -35,7 +35,7 @@ func main() {
 		panic(err)
 	}
 
-	err = grpclb.Register(*serv, "127.0.0.1", *port, *reg, time.Second*10, 15) // 15秒过期 keepalive
+	err = grpclb.Register(*serv, "192.168.43.28", *port, *reg, time.Second*10, 15) // 15秒过期 keepalive
 	if err != nil {
 		panic(err)
 	}
