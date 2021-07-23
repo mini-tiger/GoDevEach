@@ -18,7 +18,8 @@ import (
 )
 
 // xxx   etcd-3.3.10
-// https://github.com/wwcd/grpc-lb
+// xxx 参考 https://github.com/wwcd/grpc-lb
+// xxx proto 3.6.1
 
 var (
 	serv = flag.String("service", "hello_service", "service name")

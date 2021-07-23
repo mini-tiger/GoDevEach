@@ -39,10 +39,10 @@ func Register(name string, host string, port int, target string, interval time.D
 			// minimum lease TTL is ttl-second
 			resp, _ := client.Grant(context.TODO(), int64(ttl))
 			// should get first, if not exist, set it
-			_, err := client.Get(context.Background(), serviceKey)
+			_, err := client.Get(context.Background(), serviceKey) //获取 key ，第一次新建key
 			if err != nil {
 				if err == rpctypes.ErrKeyNotFound {
-					if _, err := client.Put(context.TODO(), serviceKey, serviceValue, etcd3.WithLease(resp.ID)); err != nil {
+					if _, err := client.Put(context.TODO(), serviceKey, serviceValue, etcd3.WithLease(resp.ID)); err != nil { //续期
 						log.Printf("grpclb: set service '%s' with ttl to etcd3 failed: %s", name, err.Error())
 					}
 				} else {
