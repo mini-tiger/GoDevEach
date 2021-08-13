@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"GinDemo/modules"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -89,23 +90,33 @@ func MysqlFind(c *gin.Context) {
 }
 
 func PostSpeed1(c *gin.Context) {
+	fmt.Println(c.Request.Body)
+	fmt.Println(c.Request.Header)
 	bytes, err := c.GetRawData() // 接收json数据
 	if err != nil {
 		ResponseError(c, err) //统一返回
 		return
 	}
 	//data := string(bytes)
+	fmt.Println(string(bytes))
 
 	if !gjson.GetBytes(bytes, "user").Exists() || !gjson.GetBytes(bytes, "password").Exists() {
 		ResponseError(c, errors.New("params err")) //统一返回
 		return
 	}
 
+	var mapResult map[string]interface{} // json To map
+	err = json.Unmarshal(bytes, &mapResult)
+	if err != nil {
+		fmt.Println("JsonToMapDemo err: ", err)
+	}
+
 	u := gjson.GetBytes(bytes, "user")
 	if u.String() == "taojun" {
 		c.JSON(http.StatusOK, gin.H{
-			"status":     http.StatusOK,
-			"statusText": "ok",
+			"status":        http.StatusOK,
+			"statusText":    "ok",
+			"requestParams": mapResult, // response  reqParams
 		})
 		return
 	}
@@ -174,7 +185,16 @@ func GetHisMissionDetail(c *gin.Context) {
 	filter = map[string]interface{}{"schemaName": TableName, "data.taskid.iv": gjson.Get(data, "data.taskid").Int()}
 
 	// xxx mongodb 的筛选 和 输出 都可以是 bson.M  bson.D 等
+
 	result, err := mongoClient.CollectionFilter("server_auto", "dms-content", bson.M(filter), findOptions)
+
+	//result, err := mongoClient.CollectionFilter("server_auto", "dms-content",bson.D{{
+	//	"data.taskid.iv",
+	//	bson.D{{
+	//		"$in",
+	//		bson.A{"Alice", "Bob"},
+	//	}},
+	//}}, findOptions)
 
 	if err != nil {
 		ResponseError(c, err) //统一返回
