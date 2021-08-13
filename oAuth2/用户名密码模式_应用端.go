@@ -18,10 +18,10 @@ var (
 	config = oauth2.Config{
 		ClientID:     "222222",
 		ClientSecret: "22222222",
-		Scopes:       []string{"all"},
-		RedirectURL:  "http://localhost:9094/oauth2",
+		//Scopes:       []string{"all"},
+		//RedirectURL:  "http://localhost:9094/oauth2",
 		Endpoint: oauth2.Endpoint{
-			AuthURL:  authServerURL + "/oauth/authorize",
+			//AuthURL:  authServerURL + "/oauth/authorize",
 			TokenURL: authServerURL + "/oauth/token",
 		},
 	}
@@ -50,7 +50,13 @@ func main() {
 	})
 
 	http.HandleFunc("/pwd", func(w http.ResponseWriter, r *http.Request) {
-		token, err := config.PasswordCredentialsToken(context.Background(), "test", "test")
+		r.ParseForm() //解析url传递的参数，对于POST则解析响应包的主体（request body）
+		//注意:如果没有调用ParseForm方法，下面无法获取表单的数据
+		username := r.FormValue("username")
+		//fmt.Println(username)
+		password := r.FormValue("password")
+
+		token, err := config.PasswordCredentialsToken(context.Background(), username, password)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

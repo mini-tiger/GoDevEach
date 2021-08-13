@@ -63,8 +63,8 @@ func main() {
 	srv := server.NewServer(server.NewConfig(), manager)
 
 	srv.SetPasswordAuthorizationHandler(func(username, password string) (userID string, err error) {
-		if username == "test" && password == "test" {
-			userID = "test"
+		if username != "" && password != "" {
+			userID = fmt.Sprintf("userid_%s", username)
 		}
 		return
 	})
