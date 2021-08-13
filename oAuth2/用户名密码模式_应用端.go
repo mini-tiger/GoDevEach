@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -17,7 +18,7 @@ const (
 var (
 	config = oauth2.Config{
 		ClientID:     "222222",
-		ClientSecret: "22222222",
+		ClientSecret: "22222222", // xxx 这里要和 “用户名密码模式_认证服务器.go ” line 34 一样
 		//Scopes:       []string{"all"},
 		//RedirectURL:  "http://localhost:9094/oauth2",
 		Endpoint: oauth2.Endpoint{
@@ -57,6 +58,7 @@ func main() {
 		password := r.FormValue("password")
 
 		token, err := config.PasswordCredentialsToken(context.Background(), username, password)
+		fmt.Println(config.Endpoint.AuthStyle)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
