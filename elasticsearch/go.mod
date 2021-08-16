@@ -1,10 +1,8 @@
 module elasticsearch
 
-go 1.14
+go 1.16
 
 require (
-	github.com/elastic/go-elasticsearch/v6 v6.8.10 // indirect
-	github.com/mailru/easyjson v0.7.7 // indirect
-	github.com/olivere/elastic v6.2.35+incompatible // indirect
-	github.com/pkg/errors v0.9.1 // indirect
+	github.com/elastic/go-elasticsearch/v7 v7.14.0 // indirect
+	github.com/olivere/elastic/v7 v7.0.4 // indirect
 )

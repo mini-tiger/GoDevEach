@@ -5,9 +5,22 @@ import (
 	"elasticsearch/g"
 	"encoding/json"
 	"fmt"
-	"github.com/olivere/elastic"
+	"github.com/olivere/elastic/v7"
 	"reflect"
 )
+
+var (
+	subject   Subject
+	indexName = g.IndexName
+	typeName  = g.TypeName
+	servers   = g.Servers
+)
+
+type Subject struct {
+	ID     int      `json:"id"`
+	Title  string   `json:"title"`
+	Genres []string `json:"genres"`
+}
 
 func PrintQuery(src interface{}) {
 	//fmt.Println("*****")
@@ -22,7 +35,7 @@ func SearchFunc(client *elastic.Client, ctx context.Context, termQuery *elastic.
 
 	searchResult, err := client.Search().
 		Index(indexName).
-		Type(typeName).
+		//Type(typeName).
 		Query(termQuery).
 		Sort("id", true). // 按id升序排序
 		From(0).Size(10). // 拿前10个结果
@@ -47,7 +60,11 @@ func SearchFunc(client *elastic.Client, ctx context.Context, termQuery *elastic.
 
 func main() {
 	ctx := context.Background()
-	client, err := elastic.NewClient(elastic.SetURL(g.Servers...))
+	client, err := elastic.NewClient(
+		elastic.SetURL(g.Servers...),
+		elastic.SetSniff(false), //docker es
+
+	)
 	if err != nil {
 		panic(err)
 	}

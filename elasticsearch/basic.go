@@ -2,20 +2,18 @@ package main
 
 import (
 	"context"
+	"elasticsearch/g"
 	"encoding/json"
 	"fmt"
+	"github.com/olivere/elastic/v7"
 	"reflect"
 	"strconv"
-
-	"elasticsearch/g"
-	"github.com/olivere/elastic"
 )
 
 // xxx https://www.bookstack.cn/read/topgoer/82d8230568a4be5b.md
 const mapping = `
 {
 	"mappings": {
-		"online": {
 		"properties": {
 			"id": {
 				"type": "long"
@@ -26,7 +24,7 @@ const mapping = `
 			"genres": {
 				"type": "keyword"
 			}
-		}}
+		}
 	}
 }`
 
@@ -49,7 +47,7 @@ func Search(client *elastic.Client, ctx context.Context, genre string) {
 	termQuery := elastic.NewTermQuery("genres", genre)
 	searchResult, err := client.Search().
 		Index(indexName).
-		Type(typeName).
+		//Type(typeName).
 		Query(termQuery).
 		Sort("id", true). // 按id升序排序
 		From(0).Size(10). // 拿前10个结果
@@ -74,7 +72,11 @@ func Search(client *elastic.Client, ctx context.Context, genre string) {
 
 func main() {
 	ctx := context.Background()
-	client, err := elastic.NewClient(elastic.SetURL(servers...))
+	client, err := elastic.NewClient(
+		elastic.SetURL(servers...),
+		elastic.SetSniff(false), //docker es
+
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -100,7 +102,7 @@ func main() {
 	// 写入
 	doc, err := client.Index().
 		Index(indexName).
-		Type(typeName).
+		//Type(typeName).
 		Id(strconv.Itoa(subject.ID)).
 		BodyJson(subject).
 		Refresh("wait_for").
@@ -118,7 +120,7 @@ func main() {
 	fmt.Println(string(subject.ID))
 	doc, err = client.Index().
 		Index(indexName).
-		Type(typeName).
+		//Type(typeName).
 		Id(strconv.Itoa(subject.ID)).
 		BodyJson(subject).
 		Refresh("wait_for").
@@ -129,9 +131,10 @@ func main() {
 	}
 
 	// 获取
+	fmt.Println("获取subject Id", subject.ID)
 	result, err := client.Get().
 		Index(indexName).
-		Type(typeName).
+		//Type(typeName).
 		Id(strconv.Itoa(subject.ID)).
 		Do(ctx)
 	if err != nil {
@@ -140,7 +143,7 @@ func main() {
 	if result.Found {
 		fmt.Printf("Got document %v (version=%d, index=%s, type=%s)\n",
 			result.Id, result.Version, result.Index, result.Type)
-		err := json.Unmarshal(*result.Source, &subject)
+		err := json.Unmarshal(result.Source, &subject)
 		if err != nil {
 			panic(err)
 		}
@@ -155,7 +158,7 @@ func main() {
 	// 删除
 	res, err := client.Delete().
 		Index(indexName).
-		Type(typeName).
+		//Type(typeName).
 		Id("1").
 		Refresh("wait_for").
 		Do(ctx)

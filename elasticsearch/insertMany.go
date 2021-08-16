@@ -4,14 +4,18 @@ import (
 	"context"
 	"elasticsearch/g"
 	"fmt"
-	"github.com/olivere/elastic"
+	"github.com/olivere/elastic/v7"
 	"reflect"
 	"strconv"
 )
 
 func main() {
 	ctx := context.Background()
-	client, err := elastic.NewClient(elastic.SetURL(g.Servers...))
+	client, err := elastic.NewClient(
+		elastic.SetURL(g.Servers...),
+		elastic.SetSniff(false), //docker es
+
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -42,7 +46,7 @@ func main() {
 	failed := response.Failed()
 	l := len(failed)
 	if l > 0 {
-		fmt.Printf("Error(%d)", l, response.Errors)
+		fmt.Printf("Error(%d),%v", l, response.Errors)
 	}
 
 	// xxx 方法二
