@@ -26,10 +26,17 @@ func LoadRoute(router *gin.Engine) {
 	hgApi.POST("/mysqlFind", controllers.MysqlFind)           // mysql example  https://gorm.io/zh_CN/docs/sql_builder.html
 	hgApi.POST("/singleupload", controllers.SingleUpLoad)     //
 
+	// work auth
 	authApi := router.Group("/oauth")
 	authApi.POST("/token", controllers.Token)
 
 	cfgApi := router.Group("/config")
 	cfgApi.POST("/register", controllers.Register)
+	cfgApi.POST("/initClient", controllers.InitClient)
+	cfgApi.POST("/updateClient", controllers.UpdateClient)
+	cfgApi.POST("/deleteClient", controllers.DeleteClient)
 
+	// work api
+	Api := router.Group("/api")
+	Api.POST("/queryByEs", controllers.QueryByEs)
 }

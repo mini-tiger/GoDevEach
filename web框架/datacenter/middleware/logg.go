@@ -21,7 +21,8 @@ func Logmiddleware() gin.HandlerFunc {
 		// xxx c.Next以下是返回时的运行
 		//end:=time.Now()
 		//fmt.Println(end)
-		log.Printf("%s | %s | %s | %d | %s",
+		log.Printf("%s | %s | %s | %s | %d | %s",
+			" RequestLog ",
 			path,
 			c.ClientIP(),
 			c.Request.Method,

@@ -54,8 +54,8 @@ func Search(client *elastic.Client, ctx context.Context) {
 	//boolQuery := elastic.NewBoolQuery().Must()
 	//
 	//// 创建term查询
-	//termQuery := elastic.NewTermQuery("Author", "tizi")
-	//matchQuery := elastic.NewMatchQuery("Title", "golang es教程")
+	//termQuery := elastic.NewTermQuery("Author", "tizi") // xxx 精确查找
+	//matchQuery := elastic.NewMatchQuery("Title", "golang es教程") //xxx 类似模糊查询  全文搜索
 	//
 	//// 设置bool查询的should条件, 组合了两个子查询
 	//// 表示搜索Author=tizi或者Title匹配"golang es教程"的文档

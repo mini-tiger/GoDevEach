@@ -1,0 +1,8 @@
+{
+  "mysqldsn": "root:+mysql2016@tcp(192.168.43.179:3306)/datacenter_auth?charset=utf8&parseTime=True&loc=Local",
+  "debug": false,
+  "stdout": true,
+  "logfile": "run.log",
+  "logMaxDays": 7,
+  "es_server": ["http://192.168.43.201:9200"]
+}

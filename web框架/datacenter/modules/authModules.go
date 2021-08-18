@@ -24,7 +24,7 @@ func (User) TableName() string {
 }
 
 type OauthClientDetails struct {
-	ClientId              string `json:"client_id"`
+	ClientId              string `json:"client_id" gorm:"primary_key"`
 	ResourceIds           string `json:"resource_ids"`
 	ClientSecret          string `json:"client_secret"`
 	Scope                 string `json:"scope"`

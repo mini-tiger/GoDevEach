@@ -1,6 +1,7 @@
 package authfunc
 
 import (
+	"datacenter/g"
 	"datacenter/modules"
 	"encoding/base64"
 	"errors"
@@ -25,25 +26,21 @@ import (
  * @Date: 2021/8/16 下午3:26
  */
 var (
-	dumpvar     bool
-	idvar       string
-	secretvar   string
-	domainvar   string
-	portvar     int
 	OAuthSrv    *server.Server
 	Mstore      *mysql.Store
 	ClientStore *store.ClientStore
 )
 
-func init() {
+func InitoAuth2() {
 	manager := manage.NewDefaultManager()
 	manager.SetAuthorizeCodeTokenCfg(manage.DefaultAuthorizeCodeTokenCfg)
 
 	// token store
 
 	// use mysql token store
+	//fmt.Println(g.GetConfig().Mysqldsn)
 	Mstore = mysql.NewDefaultStore(
-		mysql.NewConfig("root:+mysql2016@tcp(192.168.43.179:3306)/myapp_test?charset=utf8"),
+		mysql.NewConfig(g.GetConfig().Mysqldsn),
 	)
 
 	manager.MapTokenStorage(Mstore)
@@ -56,11 +53,11 @@ func init() {
 
 	ClientStore = store.NewClientStore()
 
-	ClientStore.Set("client", &models.Client{
-		ID:     "client",
-		Secret: "123456",
-		//Domain: domainvar,
-	})
+	//ClientStore.Set("client", &models.Client{
+	//	ID:     "client",
+	//	Secret: "123456",
+	//	//Domain: domainvar,
+	//})
 
 	manager.MapClientStorage(ClientStore)
 
@@ -68,7 +65,7 @@ func init() {
 
 	//OAuthSrv.SetUserAuthorizationHandler(userAuthorizeHandler)
 	OAuthSrv.SetPasswordAuthorizationHandler(func(username, password string) (userID string, err error) {
-
+		// 1 通过 username 分解 name  client
 		sDec, err := base64.StdEncoding.DecodeString(username)
 		if err != nil {
 			return "", err
@@ -82,13 +79,32 @@ func init() {
 			err = errors.New(fmt.Sprintf("username not Contains |"))
 			return
 		}
-		//fmt.Println(ucList)
+		fmt.Println(ucList)
 		// 2 用 username and client 查询userid,   es or  mysql
 		var u modules.User
 		modules.MysqlDb.Table("user").Select("*").Where(" name=? and  client=?", username, client).Find(&u)
 		userID = strconv.FormatInt(u.Id, 10)
 		return
 	})
+}
+
+func DBLoadClient() {
+	var clientdetailList []modules.OauthClientDetails
+	modules.MysqlDb.Table("oauth_client_details").Select("*").Find(&clientdetailList)
+	for _, cd := range clientdetailList {
+		InsertClientStoreUser(cd)
+	}
+}
+
+func InsertClientStoreUser(clientdetail modules.OauthClientDetails) (err error) {
+
+	// clientStore insert
+	err = ClientStore.Set(clientdetail.ClientId, &models.Client{
+		ID:     clientdetail.ClientId,
+		Secret: clientdetail.ClientSecret,
+		Domain: clientdetail.WebServerRedirectUri,
+	})
+	return err
 }
 
 func userAuthorizeHandler(w http.ResponseWriter, r *http.Request) (userID string, err error) {
