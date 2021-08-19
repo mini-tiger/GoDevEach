@@ -61,9 +61,6 @@ func main() {
 	// xxx 加载路由
 	routers.LoadRoute(r)
 
-	// xxx 加载clientid
-	//funcs.DBLoadClient()
-
 	funcs.InitES()
 
 	r.Run(":8001")
