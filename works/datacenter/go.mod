@@ -11,7 +11,6 @@ require (
 	github.com/go-session/session v3.1.2+incompatible
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/gopherjs/gopherjs v0.0.0-20181103185306-d547d1d9531e // indirect
 	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/lib/pq v1.2.0 // indirect
 	github.com/mattn/go-sqlite3 v1.14.6 // indirect
