@@ -1,5 +1,6 @@
 {
   "mysqldsn": "root:+mysql2016@tcp(192.168.43.179:3306)/datacenter_auth?charset=utf8&parseTime=True&loc=Local",
+  "clientTableName": "oauth_client_details",
   "debug": false,
   "stdout": true,
   "logfile": "run.log",

@@ -15,12 +15,13 @@ var cfg Config
 var configLock = new(sync.RWMutex)
 
 type Config struct {
-	Mysqldsn   string   `json:"mysqldsn"`
-	Logfile    string   `json:"logfile"`
-	LogMaxDays int      `json:"logMaxDays"`
-	Debug      bool     `json:"debug"`
-	Stdout     bool     `json:"stdout"`
-	EsServer   []string `json:"es_server"`
+	ClientTableName string   `json:"clientTableName"`
+	Mysqldsn        string   `json:"mysqldsn"`
+	Logfile         string   `json:"logfile"`
+	LogMaxDays      int      `json:"logMaxDays"`
+	Debug           bool     `json:"debug"`
+	Stdout          bool     `json:"stdout"`
+	EsServer        []string `json:"es_server"`
 }
 
 func ParseConfig(cfg string) string {

@@ -285,9 +285,12 @@ func InitClient(c *gin.Context) {
 
 	var db *gorm.DB
 	// 查询存在
-	var clientDetail modules.OauthClientDetails
-	db = modules.MysqlDb.Table("oauth_client_details").Select("*").Where("client_id=?", client_id).First(&clientDetail)
+	var clientDetail *modules.OauthClientDetails
+	//db = modules.MysqlDb.Table("oauth_client_details").Select("*").Where("client_id=?", client_id).First(&clientDetail)
 
+	clientDetail, db = funcs.CStore.GetDetailByID(client_id)
+
+	//fmt.Println(clientDetail)
 	var u modules.User // 准备用户数据
 	u.Name = client_id
 	u.Password = utils.Md5V3(secret)
@@ -323,7 +326,9 @@ func InitClient(c *gin.Context) {
 		clientDetail.RefreshTokenValidity = rtv
 		clientDetail.ResourceIds = resource_ids
 		clientDetail.Scope = scope
-		db = modules.MysqlDb.Table("oauth_client_details").Create(&clientDetail)
+
+		//db = modules.MysqlDb.Table("oauth_client_details").Create(&clientDetail)
+		db = funcs.CStore.CreateDetail(clientDetail)
 		//fmt.Printf("%+v\n", u)
 		//fmt.Printf("%+v\n", db)
 		if db.RowsAffected == 0 {
@@ -350,15 +355,17 @@ func DeleteClient(c *gin.Context) {
 	//fmt.Println(client_id)
 	//fmt.Println(secret)
 	var db *gorm.DB
-	clientDetailDB := modules.MysqlDb.Table("oauth_client_details")
+	//clientDetailDB := modules.MysqlDb.Table("oauth_client_details")
 	userDB := modules.MysqlDb.Table("user")
 	//fmt.Println(secret)
 
 	// 查询存在
-	var clientDetail modules.OauthClientDetails
-	db = clientDetailDB.Select("*").Where("client_id=? and client_secret=?", client_id, secret).First(&clientDetail)
+	var clientDetail *modules.OauthClientDetails
+	//db = modules.MysqlDb.Table("oauth_client_details").Select("*").Where("client_id=?", client_id).First(&clientDetail)
+	clientDetail, db = funcs.CStore.GetDetailByWhere(fmt.Sprintf("client_id='%s' and client_secret='%s'", client_id, secret))
+
 	if db.RowsAffected > 0 {
-		clientDetailDB.Delete(&clientDetail)
+		funcs.CStore.Delete(clientDetail)
 
 		userDB.Where("name=? and source='client_users'", client_id).Delete(&modules.User{})
 		//modules.MysqlDb.Raw("DELETE from user  where name=? and source='client_users'", client_id).Rows()
@@ -384,12 +391,14 @@ func UpdateClient(c *gin.Context) {
 	client_id := c.PostForm("client_id")
 
 	var db *gorm.DB
-	clientDetailDB := modules.MysqlDb.Table("oauth_client_details")
+	//clientDetailDB := modules.MysqlDb.Table("oauth_client_details")
 	userDB := modules.MysqlDb.Table("user")
 
 	// 查询存在
-	var clientDetail modules.OauthClientDetails
-	db = clientDetailDB.Select("*").Where("client_id=?", client_id).First(&clientDetail)
+	var clientDetail *modules.OauthClientDetails
+	//db = modules.MysqlDb.Table("oauth_client_details").Select("*").Where("client_id=?", client_id).First(&clientDetail)
+
+	clientDetail, db = funcs.CStore.GetDetailByID(client_id)
 
 	var u modules.User // 准备用户数据
 
@@ -413,7 +422,7 @@ func UpdateClient(c *gin.Context) {
 		clientDetail.Scope = scope
 
 		//fmt.Println(clientDetail)
-		db = clientDetailDB.Save(&clientDetail)
+		db = funcs.CStore.Save(clientDetail)
 
 		if db.RowsAffected > 0 { //没有改动 这里是0
 			// 查找默认用户 没有则创建

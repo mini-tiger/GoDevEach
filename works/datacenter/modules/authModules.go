@@ -1,5 +1,7 @@
 package modules
 
+import "datacenter/g"
+
 /**
  * @Author: Tao Jun
  * @Description: modules
@@ -24,19 +26,40 @@ func (User) TableName() string {
 }
 
 type OauthClientDetails struct {
-	ClientId              string `json:"client_id" gorm:"primary_key"`
+	ClientId              string `json:"client_id" gorm:"primary_key;type:varchar(250)"`
 	ResourceIds           string `json:"resource_ids"`
 	ClientSecret          string `json:"client_secret"`
 	Scope                 string `json:"scope"`
 	AuthorizedGrantTypes  string `json:"authorized_grant_types"`
 	WebServerRedirectUri  string `json:"web_server_redirect_uri"`
 	Authorities           string `json:"authorities"`
-	AccessTokenValidity   int    `json:"access_token_validity"`
-	RefreshTokenValidity  int    `json:"refresh_token_validity"`
+	AccessTokenValidity   int    `json:"access_token_validity" gorm:"type:int(11)" `
+	RefreshTokenValidity  int    `json:"refresh_token_validity" gorm:"type:int(11)"`
 	AdditionalInformation string `json:"additional_information"`
 	Autoapprove           string `json:"autoapprove"`
 }
 
 func (OauthClientDetails) TableName() string {
-	return "oauth_client_details"
+	//return "oauth_client_details"
+	return g.GetConfig().ClientTableName
+}
+
+// GetID client id
+func (c *OauthClientDetails) GetID() string {
+	return c.ClientId
+}
+
+// GetSecret client domain
+func (c *OauthClientDetails) GetSecret() string {
+	return c.ClientSecret
+}
+
+// GetDomain client domain
+func (c *OauthClientDetails) GetDomain() string {
+	return c.WebServerRedirectUri
+}
+
+// GetUserID user id  默认用户 与 clientid 一样
+func (c *OauthClientDetails) GetUserID() string {
+	return c.ClientId
 }

@@ -51,7 +51,10 @@ func main() {
 	r.Use(gin.Recovery())
 
 	// 初始化mysql conn
-	modules.MysqlInitConn()
+	err := modules.MysqlInitConn()
+	if err != nil {
+		panic(err)
+	}
 
 	// 初始化oAuth2
 	funcs.InitoAuth2()
@@ -59,7 +62,7 @@ func main() {
 	routers.LoadRoute(r)
 
 	// xxx 加载clientid
-	funcs.DBLoadClient()
+	//funcs.DBLoadClient()
 
 	funcs.InitES()
 

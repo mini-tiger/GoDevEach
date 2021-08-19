@@ -8,9 +8,10 @@ import (
 	"fmt"
 	"github.com/go-oauth2/mysql/v4"
 	"github.com/go-oauth2/oauth2/v4/manage"
-	"github.com/go-oauth2/oauth2/v4/models"
 	"github.com/go-oauth2/oauth2/v4/server"
-	"github.com/go-oauth2/oauth2/v4/store"
+	"time"
+
+	//"github.com/go-oauth2/oauth2/v4/store"
 	"github.com/go-session/session"
 	_ "github.com/go-sql-driver/mysql"
 	"net/http"
@@ -26,19 +27,24 @@ import (
  * @Date: 2021/8/16 下午3:26
  */
 var (
-	OAuthSrv    *server.Server
-	Mstore      *mysql.Store
-	ClientStore *store.ClientStore
+	OAuthSrv *server.Server
+	Mstore   *mysql.Store
+	CStore   *ClientStore
 )
 
 func InitoAuth2() {
 	manager := manage.NewDefaultManager()
-	manager.SetAuthorizeCodeTokenCfg(manage.DefaultAuthorizeCodeTokenCfg)
+	//manager.SetAuthorizeCodeTokenCfg(&manage.Config{
+	//	AccessTokenExp: time.Hour * 10, RefreshTokenExp: time.Hour * 24 * 7, IsGenerateRefresh: true})
 
+	manager.SetPasswordTokenCfg(&manage.Config{
+		AccessTokenExp: time.Hour * 24, RefreshTokenExp: time.Hour * 24 * 7, IsGenerateRefresh: true})
 	// token store
 
 	// use mysql token store
 	//fmt.Println(g.GetConfig().Mysqldsn)
+
+	// tokenStorage
 	Mstore = mysql.NewDefaultStore(
 		mysql.NewConfig(g.GetConfig().Mysqldsn),
 	)
@@ -51,15 +57,21 @@ func InitoAuth2() {
 	// manager.MapAccessGenerate(generates.NewJWTAccessGenerate("", []byte("00000000"), jwt.SigningMethodHS512))
 	//manager.MapAccessGenerate(generates.NewAccessGenerate())
 
-	ClientStore = store.NewClientStore()
+	//ClientStore = store.NewClientStore()
 
 	//ClientStore.Set("client", &models.Client{
 	//	ID:     "client",
 	//	Secret: "123456",
 	//	//Domain: domainvar,
 	//})
+	var err error
+	CStore, err = NewClientStore(modules.MysqlDb, g.GetConfig().ClientTableName)
 
-	manager.MapClientStorage(ClientStore)
+	if err != nil {
+		g.GetLog().Panicf("ClientStore Fail %+v\n", err)
+	}
+	// ClientStorage
+	manager.MapClientStorage(CStore)
 
 	OAuthSrv = server.NewServer(server.NewConfig(), manager)
 
@@ -88,24 +100,20 @@ func InitoAuth2() {
 	})
 }
 
-func DBLoadClient() {
-	var clientdetailList []modules.OauthClientDetails
-	modules.MysqlDb.Table("oauth_client_details").Select("*").Find(&clientdetailList)
-	for _, cd := range clientdetailList {
-		InsertClientStoreUser(cd)
-	}
-}
-
-func InsertClientStoreUser(clientdetail modules.OauthClientDetails) (err error) {
-
-	// clientStore insert
-	err = ClientStore.Set(clientdetail.ClientId, &models.Client{
-		ID:     clientdetail.ClientId,
-		Secret: clientdetail.ClientSecret,
-		Domain: clientdetail.WebServerRedirectUri,
-	})
-	return err
-}
+//func DBLoadClient() {
+//	var clientdetailList []modules.OauthClientDetails
+//	modules.MysqlDb.Table("oauth_client_details").Select("*").Find(&clientdetailList)
+//	for _, cd := range clientdetailList {
+//		InsertClientStoreUser(&cd)
+//	}
+//}
+//
+//func InsertClientStoreUser(clientdetail *modules.OauthClientDetails) (err error) {
+//
+//	// clientStore insert
+//	err = CStore.Create(clientdetail)
+//	return err
+//}
 
 func userAuthorizeHandler(w http.ResponseWriter, r *http.Request) (userID string, err error) {
 	fmt.Println(r)
