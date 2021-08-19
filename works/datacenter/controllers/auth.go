@@ -81,8 +81,14 @@ func QueryByEs(c *gin.Context) {
 	//var queryCond *elastic.BoolQuery=elastic.NewBoolQuery()
 
 	searchFusion := funcs.EsClient.Search().Index(indexName)
-	searchSource := elastic.NewSearchSource() // 打印日志 非必须
 
+	searchSource := elastic.NewSearchSource()
+
+	// page
+	searchSource.From((pageIndex - 1) * pageSize).Size(pageSize)
+	searchFusion.SearchSource(searchSource)
+
+	// querycrond
 	switch true {
 	case queryKeyLen == 1:
 		if _, or_ok := queryMap["or"]; or_ok {
@@ -90,7 +96,7 @@ func QueryByEs(c *gin.Context) {
 			boolQuery := elastic.NewBoolQuery()
 			for key, value := range queryMap["or"].(map[string]interface{}) {
 				termQuery := elastic.NewMatchQuery(key, value)
-				fmt.Println(key, value)
+				//fmt.Println(key, value)
 				boolQuery.Should(termQuery)
 			}
 			searchFusion.Query(boolQuery)
@@ -102,7 +108,7 @@ func QueryByEs(c *gin.Context) {
 				termQuery := elastic.NewMatchQuery(key, v)
 				//fmt.Println(key, value)
 				//queryCond.Should(termQuery)
-				searchFusion.Query(termQuery)
+				//searchFusion.Query(termQuery)
 				searchSource.Query(termQuery)
 			}
 
@@ -113,10 +119,10 @@ func QueryByEs(c *gin.Context) {
 		boolQuery := elastic.NewBoolQuery()
 		for key, value := range queryMap {
 			termQuery := elastic.NewMatchQuery(key, value)
-			fmt.Println(key, value)
+			//fmt.Println(key, value)
 			boolQuery.Must(termQuery)
 		}
-		searchFusion.Query(boolQuery)
+		//searchFusion.Query(boolQuery)
 		searchSource.Query(boolQuery)
 
 	}
@@ -129,6 +135,7 @@ func QueryByEs(c *gin.Context) {
 		if c.PostForm("sortDirection") == "-1" {
 			sortQuery = sortQuery.Desc()
 		}
+		searchSource.SortBy(sortQuery)
 		searchFusion.SortBy(sortQuery)
 	}
 
@@ -138,12 +145,9 @@ func QueryByEs(c *gin.Context) {
 	if ok {
 
 		fsc := elastic.NewFetchSourceContext(true).Include(strings.Split(fields, ",")...)
-
 		searchFusion.FetchSourceContext(fsc)
+		searchSource.FetchSourceContext(fsc)
 	}
-
-	// page
-	searchFusion.From((pageIndex - 1) * pageSize).Size(pageSize)
 
 	//termQuery := elastic.NewTermQuery("park_name", "实测交大停车场") // 不会对搜索词进行分词处理，而是作为一个整体与目标字段进行匹配
 
@@ -190,6 +194,12 @@ func QueryByEs(c *gin.Context) {
 	//	FetchSourceContext(fsc).
 	//	Do(context.Background()) // 执行
 
+	//searchFusion := funcs.EsClient.Search().Index(indexName)
+	//searchFusion:=elastic.NewSearchService(funcs.EsClient)
+
+	//searchFusion.Index(indexName)
+	//searchFusion.Source(searchSource)
+
 	searchResult, err := searchFusion.Do(context.Background())
 
 	if err != nil {
@@ -209,7 +219,7 @@ func QueryByEs(c *gin.Context) {
 				fmt.Printf("err:%v\n", err)
 				continue
 			}
-			fmt.Printf("doc %+v\n", item)
+			//fmt.Printf("doc %+v\n", item)
 		}
 	} else {
 		ResponseError(c, errors.New("Not Found Data!"))
@@ -223,9 +233,10 @@ func QueryByEs(c *gin.Context) {
 	//pageinfo["totalCount"]=total
 
 	body, _ := searchSource.Source()
-	mjson, _ := json.Marshal(body)
+	mjson, _ := json.MarshalIndent(body, "", "\t")
+	//fmt.Println("return data:",len(result))
+	g.GetLog().Debug("QueryByEs query :%+v\n", string(mjson))
 
-	g.GetLog().Printf("QueryByEs query :%+v\n", string(mjson))
 	ResponseSuccess(c, ResultData{Pageinfo: map[string]interface{}{
 		"pageIndex": pageIndex, "pageSize": pageSize, "totalCount": total},
 		List: result})
@@ -286,7 +297,6 @@ func InitClient(c *gin.Context) {
 
 	// 1. 存在则创建 项目 默认用户
 	if db.RowsAffected > 0 {
-
 		modules.MysqlDb.Table("user").Select("id").Where(" name=? and  source='client_users'", client_id).First(&u)
 		if u.Id == 0 {
 
@@ -334,11 +344,11 @@ func InitClient(c *gin.Context) {
 
 }
 func DeleteClient(c *gin.Context) {
-	fmt.Println(c.PostForm("client_secret"))
+	//fmt.Println(c.PostForm("client_secret"))
 	secret := utils.Md5V3(c.PostForm("client_secret"))
 	client_id := c.PostForm("client_id")
-	fmt.Println(client_id)
-	fmt.Println(secret)
+	//fmt.Println(client_id)
+	//fmt.Println(secret)
 	var db *gorm.DB
 	clientDetailDB := modules.MysqlDb.Table("oauth_client_details")
 	userDB := modules.MysqlDb.Table("user")
@@ -406,7 +416,7 @@ func UpdateClient(c *gin.Context) {
 		db = clientDetailDB.Save(&clientDetail)
 
 		if db.RowsAffected > 0 { //没有改动 这里是0
-			// 查找用户 没有则创建
+			// 查找默认用户 没有则创建
 			db = userDB.Select("id").Where(" name=? and  source='client_users'", client_id).First(&u)
 
 			if db.RowsAffected == 0 {
@@ -421,7 +431,6 @@ func UpdateClient(c *gin.Context) {
 					return
 				}
 			} else {
-
 				fmt.Printf("%+v\n", u)
 				db.Model(&u).Select("name", "password").Updates(modules.User{Name: client_id, Password: secret})
 				fmt.Printf("%+v\n", db)
