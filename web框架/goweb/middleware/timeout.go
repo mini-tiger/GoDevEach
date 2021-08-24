@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"context"
-	"goweb教程/controllers"
+	"goweb/controllers"
 	"net/http"
 	"time"
 )

@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"fmt"
-	"goweb教程/models"
+	"goweb/models"
 	"net/http"
 )
 

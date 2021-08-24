@@ -2,9 +2,9 @@ package main
 
 import (
 	_ "github.com/go-sql-driver/mysql"
-	"goweb教程/controllers"
-	"goweb教程/middleware"
-	_ "goweb教程/models"
+	"goweb/controllers"
+	"goweb/middleware"
+	_ "goweb/models"
 	"log"
 	"net/http"
 	_ "net/http/pprof"

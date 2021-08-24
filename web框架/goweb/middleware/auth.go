@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"goweb教程/controllers"
+	"goweb/controllers"
 	"net/http"
 )
 
