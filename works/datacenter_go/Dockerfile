@@ -1,5 +1,5 @@
 #xxxx 设置基础镜像,Harbor服务器pull镜像
-FROM harbor.od.com/library/glibc:bash
+FROM harbor.od.com/library/alpine:3.13.6
 #创建app目录,保存我们的代码
 RUN mkdir -p /usr/src/datacenter_go
 #设置工作目录
@@ -14,4 +14,6 @@ COPY ./config.json /usr/src/datacenter_go/
 EXPOSE 8001
 #ENV mysqluser root
 #运行命令
-CMD ["sh","-c","./main >server.log 2>&1"]
+#CMD ["sh","-c","./main >server.log 2>&1"]
+# 日志打印在 标准输出
+CMD ["sh","-c","./main"]

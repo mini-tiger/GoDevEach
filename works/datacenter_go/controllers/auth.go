@@ -10,11 +10,13 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/go-oauth2/oauth2/v4"
 	"github.com/olivere/elastic/v7"
 	"gorm.io/gorm"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 /**
@@ -26,7 +28,7 @@ import (
  */
 
 type ResultData struct {
-	Pageinfo map[string]interface{}   `json:"pageinfo"`
+	PageInfo map[string]interface{}   `json:"pageinfo"`
 	List     []map[string]interface{} `json:"list"`
 }
 
@@ -48,6 +50,7 @@ func QueryByEs(c *gin.Context) {
 	} else {
 		pageIndex, _ = strconv.Atoi(c.PostForm("pageIndex"))
 	}
+
 	//queryFields := c.PostForm("queryFields")
 
 	_, ok = c.GetPostForm("pageSize")
@@ -55,6 +58,11 @@ func QueryByEs(c *gin.Context) {
 		pageSize = 10
 	} else {
 		pageSize, _ = strconv.Atoi(c.PostForm("pageSize"))
+	}
+
+	if pageIndex <= 0 || pageSize <= 0 {
+		ResponseError(c, errors.New("page params err"))
+		return
 	}
 
 	// 构建查询语句
@@ -237,20 +245,93 @@ func QueryByEs(c *gin.Context) {
 	//fmt.Println("return data:",len(result))
 	g.GetLog().Debug("QueryByEs query :%+v\n", string(mjson))
 
-	ResponseSuccess(c, ResultData{Pageinfo: map[string]interface{}{
+	ResponseSuccess(c, &ResultData{PageInfo: map[string]interface{}{
 		"pageIndex": pageIndex, "pageSize": pageSize, "totalCount": total},
 		List: result})
 
 }
 
-func Token(c *gin.Context) {
+func CheckToken(c *gin.Context) {
 
+	srv := funcs.OAuthSrv
+	//fmt.Println(c.Request.FormValue("access_token"))
+	//c.Request.FormValue("to")
+	//fmt.Println(c.Request.Form)
+
+	//fmt.Printf("%+v\n",c.Request.Body)
+	err := c.Request.ParseForm()
+	if err != nil {
+		ResponseAuthError(c, err)
+	}
+	at := c.Request.Form["token"]
+	c.Request.Form["access_token"] = at
+	//fmt.Println(at)
+
+	token, err := srv.ValidationBearerToken(c.Request)
+	if err != nil {
+		ResponseAuthError(c, err)
+		return
+	}
+	//fmt.Printf("%+v\n",token)
+	//resp:=make(map[string]interface{},6)
+	//resp["active"]=true
+	//resp["scope"]=[]string{"all"}
+
+	//userDB := modules.MysqlDb.Table("user")
+	var u modules.User
+	modules.MysqlDb.Table("user").Select("*").Where(" id=? ", token.GetUserID()).First(&u)
+
+	//fmt.Println(u)
+	//fmt.Println(id)
+	resp := map[string]interface{}{
+		"active":      true,
+		"scope":       []string{"all"},
+		"exp":         int64(token.GetAccessCreateAt().Add(token.GetAccessExpiresIn()).Sub(time.Now()).Seconds()),
+		"client_id":   token.GetClientID(),
+		"user_id":     token.GetUserID(),
+		"user_name":   u.Name,
+		"authorities": strings.Split(u.Roles, ","),
+	}
+
+	ResponseBasic(c, http.StatusOK, resp)
+}
+
+func Token(c *gin.Context) {
+	//fmt.Println(c.Request.ParseForm())
+	//fmt.Println(c.Request.Form)
 	s := funcs.OAuthSrv
 	gt, tgr, err := s.ValidationTokenRequest(c.Request)
 	if err != nil {
 		ResponseError(c, err)
 		return
 	}
+	//fmt.Println(tgr)
+	//username, password := c.Request.FormValue("username"), c.Request.FormValue("password")
+	//fmt.Println(username,password)
+	//fmt.Println(strings.Split(tgr.UserID,"_")[1])
+	//fmt.Printf("%+v\n",tgr)
+
+	switch gt {
+
+	case oauth2.PasswordCredentials:
+		var u modules.User
+		db := modules.MysqlDb.Table("user").Select("*").Where(" client=? and  name=?", tgr.ClientID, strings.Split(tgr.UserID, "_")[1]).First(&u)
+		//fmt.Println(u)
+		if db.RowsAffected == 0 {
+			ResponseError(c, errors.New(fmt.Sprintf("UserName: %s , ClientId:%s  strong Not Found", strings.Split(tgr.UserID, "_")[1], tgr.ClientID)))
+			return
+		}
+		//fmt.Println(c.Request.FormValue("password"))
+		//fmt.Println(utils.Md5V3(c.Request.FormValue("password")))
+		if u.Password != utils.Md5V3(c.Request.FormValue("password")) {
+			ResponseError(c, errors.New(fmt.Sprintf("UserName: %s , ClientId:%s  password Not Match", strings.Split(tgr.UserID, "_")[1], tgr.ClientID)))
+			return
+		}
+
+	case oauth2.Refreshing:
+
+	}
+
 	tgr.ClientSecret = utils.Md5V3(tgr.ClientSecret)
 	//fmt.Println(tgr)
 	ti, err := s.GetAccessToken(context.Background(), gt, tgr)
@@ -260,10 +341,6 @@ func Token(c *gin.Context) {
 		return
 	}
 
-	if err != nil {
-		ResponseError(c, err)
-		return
-	}
 	//ResponseSuccess(c,	s.GetTokenData(ti))
 	c.JSON(http.StatusOK, s.GetTokenData(ti))
 
@@ -484,7 +561,7 @@ func Register(c *gin.Context) {
 		g.GetLog().Printf("新建用户 %+v\n", u)
 	}
 
-	ResponseSuccess(c, u)
+	ResponseSuccess(c, &u)
 	return
 
 }

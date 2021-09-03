@@ -91,11 +91,12 @@ func InitoAuth2() {
 			err = errors.New(fmt.Sprintf("username not Contains |"))
 			return
 		}
-		fmt.Println(ucList)
+		//fmt.Println(ucList)
+		g.GetLog().Debug("/auth/token username:%s clientId:%s\n", username, client)
 		// 2 用 username and client 查询userid,   es or  mysql
 		var u modules.User
 		modules.MysqlDb.Table("user").Select("*").Where(" name=? and  client=?", username, client).Find(&u)
-		userID = strconv.FormatInt(u.Id, 10)
+		userID = fmt.Sprintf("%s_%s", strconv.FormatInt(u.Id, 10), username)
 		return
 	})
 }

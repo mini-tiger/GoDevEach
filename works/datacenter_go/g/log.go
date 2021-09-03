@@ -3,6 +3,7 @@ package g
 import (
 	nxlog "github.com/ccpaging/nxlog4go"
 	logDiy "github.com/mini-tiger/tjtools/logDiyNew"
+	"path"
 	"sync"
 )
 
@@ -14,7 +15,7 @@ var (
 func InitLog() *nxlog.Logger {
 	// 初始化 日志
 
-	logge = logDiy.InitLog1(cfg.Logfile, cfg.LogMaxDays, true, "DEBUG", cfg.Stdout)
+	logge = logDiy.InitLog1(path.Join(CurrentDir, cfg.Logfile), cfg.LogMaxDays, true, "DEBUG", cfg.Stdout)
 	return logge
 
 }

@@ -36,7 +36,6 @@ func main() {
 	} else {
 		gin.ForceConsoleColor()
 	}
-
 	gin.SetMode("debug")
 	// 创建一个默认的没有任何中间件的路由
 	r := gin.New()
@@ -46,7 +45,7 @@ func main() {
 	// 默认设置 gin.DefaultWriter = os.Stdout
 	// r.Use(gin.Logger())
 	// xxx 自定义日志中间件,和django一样,中间件 往返都要执行
-	r.Use(middleware.Logmiddleware())
+	r.Use(middleware.LogMiddleWare())
 	// xxx 需要将 r.Use(middlewares.Cors()) 在使用路由前进行设置，否则会导致不生效
 	r.Use(middleware.Cors())
 
@@ -66,5 +65,5 @@ func main() {
 
 	funcs.InitES()
 
-	r.Run(":" + strconv.Itoa(g.GetConfig().Port))
+	_ = r.Run(":" + strconv.Itoa(g.GetConfig().Port))
 }

@@ -15,22 +15,6 @@ import (
 	"runtime"
 )
 
-func ResponseSuccess(c *gin.Context, msg interface{}) {
-	c.JSON(http.StatusOK, gin.H{
-		"code": "1",
-		"msg":  "成功",
-		"data": msg,
-	})
-}
-
-func ResponseError(c *gin.Context, err error) {
-	c.JSON(http.StatusOK, gin.H{
-		"code": "0",
-		"msg":  "失败",
-		"data": err.Error(),
-	})
-}
-
 func SingleUpLoad(c *gin.Context) {
 
 	_, filename, _, _ := runtime.Caller(0)

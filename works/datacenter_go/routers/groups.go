@@ -29,6 +29,7 @@ func LoadRoute(router *gin.Engine) {
 	// work auth
 	authApi := router.Group("/oauth")
 	authApi.POST("/token", controllers.Token)
+	authApi.POST("/check_token", controllers.CheckToken)
 
 	cfgApi := router.Group("/config")
 	cfgApi.POST("/register", controllers.Register)

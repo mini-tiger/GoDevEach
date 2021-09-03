@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/ccpaging/nxlog4go v0.9.4
-	github.com/gin-gonic/gin v1.6.3
+	github.com/gin-gonic/gin v1.7.3
 	github.com/go-gorp/gorp v2.2.0+incompatible // indirect
 	github.com/go-oauth2/mysql/v4 v4.0.0
 	github.com/go-oauth2/oauth2/v4 v4.4.1

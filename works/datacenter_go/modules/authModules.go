@@ -26,6 +26,8 @@ func (User) TableName() string {
 }
 
 type OauthClientDetails struct {
+	AccessTokenValidity   int    `json:"access_token_validity" gorm:"type:int(11)" `
+	RefreshTokenValidity  int    `json:"refresh_token_validity" gorm:"type:int(11)"`
 	ClientId              string `json:"client_id" gorm:"primary_key;type:varchar(250)"`
 	ResourceIds           string `json:"resource_ids"`
 	ClientSecret          string `json:"client_secret"`
@@ -33,8 +35,6 @@ type OauthClientDetails struct {
 	AuthorizedGrantTypes  string `json:"authorized_grant_types"`
 	WebServerRedirectUri  string `json:"web_server_redirect_uri"`
 	Authorities           string `json:"authorities"`
-	AccessTokenValidity   int    `json:"access_token_validity" gorm:"type:int(11)" `
-	RefreshTokenValidity  int    `json:"refresh_token_validity" gorm:"type:int(11)"`
 	AdditionalInformation string `json:"additional_information"`
 	Autoapprove           string `json:"autoapprove"`
 }
