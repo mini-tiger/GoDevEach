@@ -1,0 +1,6 @@
+[32m2021-09-03 10:56:07 [DEBG] (oAuthconfig.go LineNo:95) /auth/token username:test8 clientId:dashboard
+[0m2021-09-03 10:56:07 [INFO] (logg.go LineNo:39)     RequestLog  | /oauth/token | 192.168.252.255 | X-Forwarded-For: [] | POST | 200 | 5.380664ms
+2021-09-03 10:57:39 [INFO] (logg.go LineNo:39)     RequestLog  | /oauth/token | 192.168.252.255 | X-Forwarded-For: [] | POST | 200 | 228.258µs
+[0m[31m2021-09-03 10:57:39 [EROR] (logg.go LineNo:61)    ResponseLog  | /oauth/token | 192.168.252.255 | X-Forwarded-For: [] | POST | Req: <nil> | Resp: map[code:0 data:illegal base64 data at input byte 16 msg:失败]
+2021-09-03 10:57:58 [INFO] (logg.go LineNo:39)     RequestLog  | /oauth/token | 192.168.252.255 | X-Forwarded-For: [] | POST | 200 | 137.457µs
+[0m[31m2021-09-03 10:57:58 [EROR] (logg.go LineNo:61)    ResponseLog  | /oauth/token | 192.168.252.255 | X-Forwarded-For: [] | POST | Req: map[grant_type:[password] password:[12345678] username:[dGVzdDh8ZGFzaGJvYX]] | Resp: map[code:0 data:illegal base64 data at input byte 16 msg:失败]
