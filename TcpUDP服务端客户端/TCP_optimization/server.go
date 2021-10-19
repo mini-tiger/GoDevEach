@@ -1,13 +1,13 @@
 package main
 
 import (
+	"TCP_optimization/proto"
 	"bufio"
 	"bytes"
 	"encoding/binary"
 	"fmt"
 	"io"
 	"net"
-	"自定义优化copy/proto"
 )
 
 // xxx https://juejin.cn/post/6844903882108174343

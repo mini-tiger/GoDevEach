@@ -1,12 +1,12 @@
 package main
 
 import (
+	"TCP_optimization/proto"
 	"bytes"
 	"encoding/binary"
 	"fmt"
 	"net"
 	"time"
-	"自定义优化copy/proto"
 )
 
 /**
