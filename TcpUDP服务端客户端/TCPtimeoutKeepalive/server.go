@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/felixge/tcpkeepalive"
 	"log"
 	"net"
@@ -58,10 +59,11 @@ func handleConnection(conn net.Conn) {
 		log.Println("setTcpKeepAlive failed:", err)
 		return
 	}
-	var buffer []byte = []byte("You are welcome. I'm server.")
-	for {
+	var buffer string = "You are welcome. I'm server."
+	for i := 0; i < 100; i++ {
 		time.Sleep(1 * time.Second)
-		n, err := newConn.Write(buffer)
+
+		n, err := newConn.Write([]byte(fmt.Sprintf("%s %d", buffer, i)))
 		if err != nil {
 			log.Println("Write error:", err)
 			break
