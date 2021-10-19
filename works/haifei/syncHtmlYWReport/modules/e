@@ -1,7 +1,0 @@
-	SummaryInsertSuccess int // 插入和更新 成功多少条
-	SummaryUpdateSuccess int
-	SummaryInsertFail    int
-	SummaryUpdateFail    int
-	SummaryFailRow       int // 行数据不正常的个数
-	SummaryTotalRow      int
-	SummaryTbodyDataNum  int // 数据在goquery 节点的位置
