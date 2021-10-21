@@ -6,12 +6,11 @@ import (
 	"datacenter/g"
 	"datacenter/modules"
 	"datacenter/utils"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-oauth2/oauth2/v4"
-	"github.com/olivere/elastic/v7"
+	"github.com/go-oauth2/oauth2/v4/models"
 	"gorm.io/gorm"
 	"net/http"
 	"strconv"
@@ -32,254 +31,27 @@ type ResultData struct {
 	List     []map[string]interface{} `json:"list"`
 }
 
-func QueryByEs(c *gin.Context) {
-	srv := funcs.OAuthSrv
-
-	_, err := srv.ValidationBearerToken(c.Request)
-	if err != nil {
-		ResponseError(c, err)
-		return
-	}
-
-	indexName := c.PostForm("indexName")
-
-	var pageIndex, pageSize int
-	_, ok := c.GetPostForm("pageIndex")
-	if !ok {
-		pageIndex = 1
-	} else {
-		pageIndex, _ = strconv.Atoi(c.PostForm("pageIndex"))
-	}
-
-	//queryFields := c.PostForm("queryFields")
-
-	_, ok = c.GetPostForm("pageSize")
-	if !ok {
-		pageSize = 10
-	} else {
-		pageSize, _ = strconv.Atoi(c.PostForm("pageSize"))
-	}
-
-	if pageIndex <= 0 || pageSize <= 0 {
-		ResponseError(c, errors.New("page params err"))
-		return
-	}
-
-	// 构建查询语句
-	queryCondition, ok := c.GetPostForm("query")
-	queryMap := make(map[string]interface{})
-	if ok {
-
-		err = json.Unmarshal([]byte(queryCondition), &queryMap)
-		if err != nil {
-			ResponseError(c, err)
-			return
-		}
-	}
-
-	//fmt.Println(queryCondition)
-	//fmt.Println(queryMap)
-	//fmt.Printf(indexName)
-	var queryKeyLen int = len(queryMap)
-
-	//if len(queryMap) > 1 {
-	//	fmt.Println(1111)
-	//}
-
-	//var queryCond *elastic.BoolQuery=elastic.NewBoolQuery()
-
-	searchFusion := funcs.EsClient.Search().Index(indexName)
-
-	searchSource := elastic.NewSearchSource()
-
-	// page
-	searchSource.From((pageIndex - 1) * pageSize).Size(pageSize)
-	searchFusion.SearchSource(searchSource)
-
-	// querycrond
-	switch true {
-	case queryKeyLen == 1:
-		if _, or_ok := queryMap["or"]; or_ok {
-
-			boolQuery := elastic.NewBoolQuery()
-			for key, value := range queryMap["or"].(map[string]interface{}) {
-				termQuery := elastic.NewMatchQuery(key, value)
-				//fmt.Println(key, value)
-				boolQuery.Should(termQuery)
-			}
-			searchFusion.Query(boolQuery)
-			searchSource.Query(boolQuery)
-
-		} else {
-			for key, v := range queryMap {
-
-				termQuery := elastic.NewMatchQuery(key, v)
-				//fmt.Println(key, value)
-				//queryCond.Should(termQuery)
-				//searchFusion.Query(termQuery)
-				searchSource.Query(termQuery)
-			}
-
-		}
-
-		break
-	case queryKeyLen > 1:
-		boolQuery := elastic.NewBoolQuery()
-		for key, value := range queryMap {
-			termQuery := elastic.NewMatchQuery(key, value)
-			//fmt.Println(key, value)
-			boolQuery.Must(termQuery)
-		}
-		//searchFusion.Query(boolQuery)
-		searchSource.Query(boolQuery)
-
-	}
-
-	// sort
-	sortBy, sortbyok := c.GetPostForm("sortBy")
-
-	if sortbyok {
-		sortQuery := elastic.NewFieldSort(sortBy).Asc()
-		if c.PostForm("sortDirection") == "-1" {
-			sortQuery = sortQuery.Desc()
-		}
-		searchSource.SortBy(sortQuery)
-		searchFusion.SortBy(sortQuery)
-	}
-
-	// show fields
-	fields, ok := c.GetPostForm("queryFields")
-	//fmt.Println(fields)
-	if ok {
-
-		fsc := elastic.NewFetchSourceContext(true).Include(strings.Split(fields, ",")...)
-		searchFusion.FetchSourceContext(fsc)
-		searchSource.FetchSourceContext(fsc)
-	}
-
-	//termQuery := elastic.NewTermQuery("park_name", "实测交大停车场") // 不会对搜索词进行分词处理，而是作为一个整体与目标字段进行匹配
-
-	//d := elastic.NewMatchQuery("park_name", "交大科技大厦") // 会将搜索词分词
-
-	//andbool:=elastic.NewBoolQuery().Must(termQuery,d) // and
-
-	//orbool := elastic.NewBoolQuery().Should(termQuery, d) // or
-
-	//xxx andbool:=elastic.NewBoolQuery().Must(termQuery,d) // and
-
-	//xxx orbool := elastic.NewBoolQuery().Should(termQuery, d) // or
-
-	// xxx 多条件方法一
-	//timeQ := elastic.NewRangeQuery("@timestamp").From(from).To(End)
-	//componentQ := elastic.NewTermQuery("component", *component)
-	//deploymentQ := elastic.NewTermQuery("deploymentName", deploymentName)
-	//
-	//generalQ := elastic.NewBoolQuery()
-	//generalQ = generalQ.Must(timeQ).Must(componentQ).Must(deploymentQ)
-
-	//xxx 多条件方法二
-	// 创建bool查询
-	//boolQuery := elastic.NewBoolQuery().Must()
-	//
-	//// 创建term查询
-	//termQuery := elastic.NewTermQuery("Author", "tizi")
-	//matchQuery := elastic.NewMatchQuery("Title", "golang es教程")
-	//
-	//// 设置bool查询的should条件, 组合了两个子查询
-	//// 表示搜索Author=tizi或者Title匹配"golang es教程"的文档
-	//boolQuery.Should(termQuery, matchQuery)
-
-	// xxx https://www.coder.work/article/1023959
-	//
-
-	//searchResult, err := funcs.EsClient.Search().
-	//	Index(indexName).
-	//	//Type(typeName).
-	//	Query(termQuery).
-	//	Sort("update_date", true). // 按id升序排序
-	//	From(0).Size(10). // 拿前10个结果
-	//	Pretty(true).
-	//	FetchSourceContext(fsc).
-	//	Do(context.Background()) // 执行
-
-	//searchFusion := funcs.EsClient.Search().Index(indexName)
-	//searchFusion:=elastic.NewSearchService(funcs.EsClient)
-
-	//searchFusion.Index(indexName)
-	//searchFusion.Source(searchSource)
-
-	searchResult, err := searchFusion.Do(context.Background())
-
-	if err != nil {
-		panic(err)
-	}
-	total := searchResult.TotalHits()
-	fmt.Printf("Found %d subjects\n", total)
-
-	var result []map[string]interface{}
-	if total > 0 {
-		for _, hit := range searchResult.Hits.Hits {
-			item := make(map[string]interface{})
-
-			err := json.Unmarshal(hit.Source, &item)
-			result = append(result, item)
-			if err != nil {
-				fmt.Printf("err:%v\n", err)
-				continue
-			}
-			//fmt.Printf("doc %+v\n", item)
-		}
-	} else {
-		ResponseError(c, errors.New("Not Found Data!"))
-		return
-		//fmt.Println("Not found !")
-	}
-
-	//pageinfo:=make(map[string]interface{})
-	//pageinfo["pageIndex"]=pageIndex
-	//pageinfo["pageSize"]=pageSize
-	//pageinfo["totalCount"]=total
-
-	body, _ := searchSource.Source()
-	mjson, _ := json.MarshalIndent(body, "", "\t")
-	//fmt.Println("return data:",len(result))
-	g.GetLog().Debug("QueryByEs query :%+v\n", string(mjson))
-
-	ResponseSuccess(c, &ResultData{PageInfo: map[string]interface{}{
-		"pageIndex": pageIndex, "pageSize": pageSize, "totalCount": total},
-		List: result})
-
-}
-
 func CheckToken(c *gin.Context) {
 
 	srv := funcs.OAuthSrv
-	//fmt.Println(c.Request.FormValue("access_token"))
-	//c.Request.FormValue("to")
-	//fmt.Println(c.Request.Form)
-
-	//fmt.Printf("%+v\n",c.Request.Body)
 	err := c.Request.ParseForm()
 	if err != nil {
 		ResponseAuthError(c, err)
 	}
+
+	// 请求参数 更改为 access_token
 	at := c.Request.Form["token"]
 	c.Request.Form["access_token"] = at
-	//fmt.Println(at)
 
 	token, err := srv.ValidationBearerToken(c.Request)
 	if err != nil {
 		ResponseAuthError(c, err)
 		return
 	}
-	//fmt.Printf("%+v\n",token)
-	//resp:=make(map[string]interface{},6)
-	//resp["active"]=true
-	//resp["scope"]=[]string{"all"}
 
-	//userDB := modules.MysqlDb.Table("user")
 	var u modules.User
-	modules.MysqlDb.Table("user").Select("*").Where(" id=? ", token.GetUserID()).First(&u)
+	//modules.MysqlDb.Table("user").Select("*").Where(" id=? ", token.GetUserID()).First(&u)
+	modules.MysqlDb.Where(" id=? ", token.GetUserID()).First(&u)
 
 	//fmt.Println(u)
 	//fmt.Println(id)
@@ -300,49 +72,94 @@ func Token(c *gin.Context) {
 	//fmt.Println(c.Request.ParseForm())
 	//fmt.Println(c.Request.Form)
 	s := funcs.OAuthSrv
+	if g.GetConfig().IsDebug() {
+		u, p, o := c.Request.BasicAuth()
+		g.GetLog().Debug(fmt.Sprintf("Token BasicAuth client: %s, password: %s, ok: %v\n", u, p, o))
+	}
+
 	gt, tgr, err := s.ValidationTokenRequest(c.Request)
 	if err != nil {
 		ResponseError(c, err)
 		return
 	}
-	//fmt.Println(tgr)
+	//fmt.Printf("gt: %+v\n", gt)
 	//username, password := c.Request.FormValue("username"), c.Request.FormValue("password")
 	//fmt.Println(username,password)
 	//fmt.Println(strings.Split(tgr.UserID,"_")[1])
-	//fmt.Printf("%+v\n",tgr)
+	//fmt.Printf("tgr: %+v\n", tgr)
 
+	var ti oauth2.TokenInfo
 	switch gt {
 
 	case oauth2.PasswordCredentials:
-		var u modules.User
-		db := modules.MysqlDb.Table("user").Select("*").Where(" client=? and  name=?", tgr.ClientID, strings.Split(tgr.UserID, "_")[1]).First(&u)
-		//fmt.Println(u)
-		if db.RowsAffected == 0 {
-			ResponseError(c, errors.New(fmt.Sprintf("UserName: %s , ClientId:%s  strong Not Found", strings.Split(tgr.UserID, "_")[1], tgr.ClientID)))
+		//确认用户存在
+		//var u modules.User
+
+		//udb := modules.MysqlDb.Table("user").Select("*").Where(" client=? and  name=?", tgr.ClientID, strings.Split(tgr.UserID, g.SepStr)[1]).First(&u)
+		//
+		//udb := modules.MysqlDb.Where(" id=? ",  strings.Split(tgr.UserID, g.SepStr)[0]).First(&u)
+		//
+		//if udb.RowsAffected == 0 {
+		//	ResponseError(c, errors.New(fmt.Sprintf("UserName: %s , ClientId:%s  DB Not Found", strings.Split(tgr.UserID, g.SepStr)[1], tgr.ClientID)))
+		//	return
+		//}
+		////确认密码eq
+		//if u.Password != utils.Md5V3(c.Request.FormValue("password")) {
+		//	ResponseError(c, errors.New(fmt.Sprintf("UserName: %s , ClientId:%s  password Not Match", strings.Split(tgr.UserID, g.SepStr)[1], tgr.ClientID)))
+		//	return
+		//}
+
+		//fmt.Println(time.Now().Unix())
+		var tk models.Token
+		tdb := modules.MysqlDb.Table(g.TokenTableName).
+			Select("*").
+			Where(" ClientID=? and  UserID=? and UNIX_TIMESTAMP(AccessCreateAt)+AccessExpiresIn/1000000000  > ?", tgr.ClientID, tgr.UserID, time.Now().Unix()).
+			Take(&tk)
+		//fmt.Printf("tkdb:%+v\n", tkdb)
+		//fmt.Printf("tk:%+v\n", tk)
+
+		if tdb.RowsAffected > 0 {
+			// exist  accessToken
+			//var tm models.Token
+			//err = jsoniter.Unmarshal([]byte(tk.Data), &tm)
+			//if err != nil {
+			//	ResponseError(c, err)
+			//	return
+			//}
+			//fmt.Printf("tm:%+v\n", tk.GetAccessExpiresIn())
+			//fmt.Printf("tm:%+v\n", tk.GetAccessCreateAt())
+			ti = &tk
+			ti.SetAccessExpiresIn(ti.GetAccessCreateAt().Add(ti.GetAccessExpiresIn()).Sub(time.Now()))
+
+			c.JSON(http.StatusOK, s.GetTokenData(ti))
 			return
-		}
-		//fmt.Println(c.Request.FormValue("password"))
-		//fmt.Println(utils.Md5V3(c.Request.FormValue("password")))
-		if u.Password != utils.Md5V3(c.Request.FormValue("password")) {
-			ResponseError(c, errors.New(fmt.Sprintf("UserName: %s , ClientId:%s  password Not Match", strings.Split(tgr.UserID, "_")[1], tgr.ClientID)))
-			return
+		} else {
+			// create    与 refresh 基本逻辑一样
+			if g.GetConfig().IsDebug() {
+				g.GetLog().Debug("新建 Token 记录 %+v\n", tgr)
+			}
+			// xxx 新建记录   删除之前创建的记录
+			modules.MysqlDb.Table(g.TokenTableName).Where(" ClientID=? and  UserID=? and Code='' ", tgr.ClientID, tgr.UserID).Delete(&models.Token{})
 		}
 
 	case oauth2.Refreshing:
-
+		// 与 create 基本逻辑一样
+	default:
+		ResponseError(c, errors.New("grant_type invalid"))
+		return
 	}
 
 	tgr.ClientSecret = utils.Md5V3(tgr.ClientSecret)
-	//fmt.Println(tgr)
-	ti, err := s.GetAccessToken(context.Background(), gt, tgr)
+	//fmt.Printf("tgr:%+v\n", tgr)
 
+	ti, err = s.GetAccessToken(context.Background(), gt, tgr)
+	//fmt.Printf("%#v\n",ti)
 	if err != nil {
 		ResponseError(c, err)
 		return
 	}
-
-	//ResponseSuccess(c,	s.GetTokenData(ti))
 	c.JSON(http.StatusOK, s.GetTokenData(ti))
+	return
 
 }
 
@@ -449,7 +266,7 @@ func DeleteClient(c *gin.Context) {
 		ResponseSuccess(c, "success")
 		return
 	}
-	ResponseError(c, errors.New("Client not Exist"))
+	ResponseError(c, fmt.Errorf("Client not Exist"))
 
 }
 
@@ -527,23 +344,65 @@ func UpdateClient(c *gin.Context) {
 	}
 	ResponseSuccess(c, clientDetail)
 	return
-
 }
 
 func Register(c *gin.Context) {
 
-	username := c.PostForm("username")
-	//fmt.Println(username)
+	var username, source, client, password, role string
 
-	source := c.PostForm("source")
-	client := c.PostForm("client")
-	password := c.PostForm("password")
-	role := c.PostForm("role")
-	//fmt.Println(source)
+	var err error
+
+	if username, err = utils.ParamsVerify(c, "username"); err != nil {
+		ResponseError(c, err)
+		return
+	}
+	if password, err = utils.ParamsVerify(c, "password"); err != nil {
+		ResponseError(c, err)
+		return
+	}
+
+	if source, err = utils.ParamsVerify(c, "source"); err != nil {
+		ResponseError(c, err)
+		return
+	}
+	if client, err = utils.ParamsVerify(c, "client"); err != nil {
+		ResponseError(c, err)
+		return
+	}
+
+	role = c.PostForm("role")
+
+	//if username, ok = c.GetPostForm("username"); !ok {
+	//	ResponseError(c, errors.New("request Params Miss username"))
+	//	return
+	//}
+
+	//if source, ok = c.GetPostForm("source"); !ok {
+	//	ResponseError(c, errors.New("request Params Miss source"))
+	//	return
+	//}
+	//
+	//if client, ok = c.GetPostForm("client"); !ok {
+	//	ResponseError(c, errors.New("request Params Miss client"))
+	//	return
+	//}
+	//if password, ok = c.GetPostForm("password"); !ok {
+	//	ResponseError(c, errors.New("request Params Miss password"))
+	//	return
+	//}
+
+	//to := modules.MysqlDb.Table(g.ClientTableName).Select("*").Where(" client_id=? ", client).Find(&modules.OauthClientDetails{})
+
+	_, tdb := funcs.CStore.GetDetailByWhere(fmt.Sprintf("client_id='%s'", client))
+
+	if tdb.RowsAffected == 0 {
+		ResponseError(c, errors.New(fmt.Sprintf("Not Found Client : %s", client)))
+		return
+	}
 
 	var u modules.User
 	//rows, err := modules.MysqlDb.Raw("SELECT  *  from user where name=? and  source=?",[]string{"name","111"}...).Scan(&u)
-	modules.MysqlDb.Table("user").Select("*").Where(" name=? and  source=?", username, source).Find(&u)
+	modules.MysqlDb.Table("user").Select("*").Where(" name=? and  source=? and client=? ", username, source, client).Find(&u)
 
 	if u.Id == 0 {
 		u.Name = username
@@ -558,7 +417,10 @@ func Register(c *gin.Context) {
 			ResponseError(c, errors.New("user table insert Fail"))
 			return
 		}
-		g.GetLog().Printf("新建用户 %+v\n", u)
+		if g.GetConfig().IsDebug() {
+			g.GetLog().Debug("新建用户 %+v\n", u)
+		}
+
 	}
 
 	ResponseSuccess(c, &u)

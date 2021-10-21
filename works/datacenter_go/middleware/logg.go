@@ -36,7 +36,7 @@ func LogMiddleWare() gin.HandlerFunc {
 		//fmt.Println(end)
 		//log.Printf("Request :%+v\n", c.Request.Header["X-Forwarded-For"])
 		//path := c.Request.URL.Path
-		g.GetLog().Info("%15s | %12s | %15s | X-Forwarded-For: %s | %s | %d | %s\n",
+		g.GetLog().Info("%15s | %20s | %15s | X-Forwarded-For: %s | %s | %d | %s\n",
 			" RequestLog ",
 			c.Request.URL.Path,
 			c.ClientIP(),
@@ -57,7 +57,7 @@ func LogMiddleWare() gin.HandlerFunc {
 		//statusCode := c.Writer.Status()
 		var bodyMap map[string]interface{} = make(map[string]interface{}, 3)
 		_ = json.Unmarshal(blw.body.Bytes(), &bodyMap)
-		if code, ok := bodyMap["code"]; ok && code != 0 {
+		if code, ok := bodyMap["code"]; ok && code == "0" {
 			g.GetLog().Error("%15s | %12s | %15s | X-Forwarded-For: %s | %s | Req: %+v | Resp: %+v\n",
 				" ResponseLog ",
 				c.Request.URL.Path,

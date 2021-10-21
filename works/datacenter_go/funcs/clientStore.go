@@ -124,7 +124,7 @@ func (s *ClientStore) Create(info *modules.OauthClientDetails) error {
 
 func (s *ClientStore) GetDetailByID(id string) (clientDetail *modules.OauthClientDetails, db *gorm.DB) {
 	if id == "" {
-		return nil, nil
+		return
 	}
 
 	//var cd modules.OauthClientDetails

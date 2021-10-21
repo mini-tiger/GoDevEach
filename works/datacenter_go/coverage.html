@@ -1,0 +1,2178 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>controllers: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">datacenter/controllers/api.go (0.0%)</option>
+				
+				<option value="file1">datacenter/controllers/auth.go (0.0%)</option>
+				
+				<option value="file2">datacenter/controllers/base.go (0.0%)</option>
+				
+				<option value="file3">datacenter/controllers/demo.go (12.8%)</option>
+				
+				<option value="file4">datacenter/funcs/clientStore.go (26.3%)</option>
+				
+				<option value="file5">datacenter/funcs/clientStoreOptions.go (0.0%)</option>
+				
+				<option value="file6">datacenter/funcs/es.go (75.0%)</option>
+				
+				<option value="file7">datacenter/funcs/oAuthconfig.go (21.7%)</option>
+				
+				<option value="file8">datacenter/g/cfg.go (75.0%)</option>
+				
+				<option value="file9">datacenter/g/log.go (100.0%)</option>
+				
+				<option value="file10">datacenter/g/vars.go (100.0%)</option>
+				
+				<option value="file11">datacenter/main.go (72.7%)</option>
+				
+				<option value="file12">datacenter/middleware/cores.go (50.0%)</option>
+				
+				<option value="file13">datacenter/middleware/logg.go (91.7%)</option>
+				
+				<option value="file14">datacenter/modules/authModules.go (0.0%)</option>
+				
+				<option value="file15">datacenter/modules/mongodb.go (0.0%)</option>
+				
+				<option value="file16">datacenter/modules/mysql_gorm.go (20.5%)</option>
+				
+				<option value="file17">datacenter/routers/groups.go (100.0%)</option>
+				
+				<option value="file18">datacenter/utils/tools.go (0.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">no coverage</span>
+				<span class="cov1">low coverage</span>
+				<span class="cov2">*</span>
+				<span class="cov3">*</span>
+				<span class="cov4">*</span>
+				<span class="cov5">*</span>
+				<span class="cov6">*</span>
+				<span class="cov7">*</span>
+				<span class="cov8">*</span>
+				<span class="cov9">*</span>
+				<span class="cov10">high coverage</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package controllers
+
+import (
+        "context"
+        funcs "datacenter/funcs"
+        "datacenter/g"
+        "encoding/json"
+        "errors"
+        "fmt"
+        "github.com/gin-gonic/gin"
+        "github.com/gin-gonic/gin/binding"
+        "github.com/olivere/elastic/v7"
+        "net/url"
+        "strconv"
+        "strings"
+)
+
+/**
+ * @Author: Tao Jun
+ * @Description: controllers
+ * @File:  api
+ * @Version: 1.0.0
+ * @Date: 2021/9/13 下午5:24
+ */
+
+func QueryByEs(c *gin.Context) <span class="cov0" title="0">{
+        srv := funcs.OAuthSrv
+
+        _, err := srv.ValidationBearerToken(c.Request)
+        if err != nil </span><span class="cov0" title="0">{
+                ResponseError(c, err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">indexName := c.PostForm("indexName")
+
+        var pageIndex, pageSize int
+        _, ok := c.GetPostForm("pageIndex")
+        if !ok </span><span class="cov0" title="0">{
+                pageIndex = 1
+        }</span> else<span class="cov0" title="0"> {
+                pageIndex, _ = strconv.Atoi(c.PostForm("pageIndex"))
+        }</span>
+
+        //queryFields := c.PostForm("queryFields")
+
+        <span class="cov0" title="0">_, ok = c.GetPostForm("pageSize")
+        if !ok </span><span class="cov0" title="0">{
+                pageSize = 10
+        }</span> else<span class="cov0" title="0"> {
+                pageSize, _ = strconv.Atoi(c.PostForm("pageSize"))
+        }</span>
+
+        <span class="cov0" title="0">if pageIndex &lt;= 0 || pageSize &lt;= 0 </span><span class="cov0" title="0">{
+                ResponseError(c, errors.New("page params err"))
+                return
+        }</span>
+
+        // 构建查询语句
+        <span class="cov0" title="0">queryCondition, ok := c.GetPostForm("query")
+        queryMap := make(map[string]interface{})
+        if ok </span><span class="cov0" title="0">{
+
+                err = json.Unmarshal([]byte(queryCondition), &amp;queryMap)
+                if err != nil </span><span class="cov0" title="0">{
+                        ResponseError(c, err)
+                        return
+                }</span>
+        }
+
+        //fmt.Println(queryCondition)
+        //fmt.Println(queryMap)
+        //fmt.Printf(indexName)
+        <span class="cov0" title="0">var queryKeyLen int = len(queryMap)
+
+        //if len(queryMap) &gt; 1 {
+        //        fmt.Println(1111)
+        //}
+
+        //var queryCond *elastic.BoolQuery=elastic.NewBoolQuery()
+
+        searchFusion := funcs.EsClient.Search().Index(indexName)
+
+        searchSource := elastic.NewSearchSource()
+
+        // page
+        searchSource.From((pageIndex - 1) * pageSize).Size(pageSize)
+        searchFusion.SearchSource(searchSource)
+
+        // querycrond
+        switch true </span>{
+        case queryKeyLen == 1:<span class="cov0" title="0">
+                if _, or_ok := queryMap["or"]; or_ok </span><span class="cov0" title="0">{
+
+                        boolQuery := elastic.NewBoolQuery()
+                        for key, value := range queryMap["or"].(map[string]interface{}) </span><span class="cov0" title="0">{
+                                termQuery := elastic.NewMatchQuery(key, value)
+                                //fmt.Println(key, value)
+                                boolQuery.Should(termQuery)
+                        }</span>
+                        <span class="cov0" title="0">searchFusion.Query(boolQuery)
+                        searchSource.Query(boolQuery)</span>
+
+                } else<span class="cov0" title="0"> {
+                        for key, v := range queryMap </span><span class="cov0" title="0">{
+
+                                termQuery := elastic.NewMatchQuery(key, v)
+                                //fmt.Println(key, value)
+                                //queryCond.Should(termQuery)
+                                //searchFusion.Query(termQuery)
+                                searchSource.Query(termQuery)
+                        }</span>
+
+                }
+
+                <span class="cov0" title="0">break</span>
+        case queryKeyLen &gt; 1:<span class="cov0" title="0">
+                boolQuery := elastic.NewBoolQuery()
+                for key, value := range queryMap </span><span class="cov0" title="0">{
+                        termQuery := elastic.NewMatchQuery(key, value)
+                        //fmt.Println(key, value)
+                        boolQuery.Must(termQuery)
+                }</span>
+                //searchFusion.Query(boolQuery)
+                <span class="cov0" title="0">searchSource.Query(boolQuery)</span>
+
+        }
+
+        // sort
+        <span class="cov0" title="0">sortBy, sortbyok := c.GetPostForm("sortBy")
+
+        if sortbyok </span><span class="cov0" title="0">{
+                sortQuery := elastic.NewFieldSort(sortBy).Asc()
+                if c.PostForm("sortDirection") == "-1" </span><span class="cov0" title="0">{
+                        sortQuery = sortQuery.Desc()
+                }</span>
+                <span class="cov0" title="0">searchSource.SortBy(sortQuery)
+                searchFusion.SortBy(sortQuery)</span>
+        }
+
+        // show fields
+        <span class="cov0" title="0">fields, ok := c.GetPostForm("queryFields")
+        //fmt.Println(fields)
+        if ok </span><span class="cov0" title="0">{
+
+                fsc := elastic.NewFetchSourceContext(true).Include(strings.Split(fields, ",")...)
+                searchFusion.FetchSourceContext(fsc)
+                searchSource.FetchSourceContext(fsc)
+        }</span>
+
+        //termQuery := elastic.NewTermQuery("park_name", "实测交大停车场") // 不会对搜索词进行分词处理，而是作为一个整体与目标字段进行匹配
+
+        //d := elastic.NewMatchQuery("park_name", "交大科技大厦") // 会将搜索词分词
+
+        //andbool:=elastic.NewBoolQuery().Must(termQuery,d) // and
+
+        //orbool := elastic.NewBoolQuery().Should(termQuery, d) // or
+
+        //xxx andbool:=elastic.NewBoolQuery().Must(termQuery,d) // and
+
+        //xxx orbool := elastic.NewBoolQuery().Should(termQuery, d) // or
+
+        // xxx 多条件方法一
+        //timeQ := elastic.NewRangeQuery("@timestamp").From(from).To(End)
+        //componentQ := elastic.NewTermQuery("component", *component)
+        //deploymentQ := elastic.NewTermQuery("deploymentName", deploymentName)
+        //
+        //generalQ := elastic.NewBoolQuery()
+        //generalQ = generalQ.Must(timeQ).Must(componentQ).Must(deploymentQ)
+
+        //xxx 多条件方法二
+        // 创建bool查询
+        //boolQuery := elastic.NewBoolQuery().Must()
+        //
+        //// 创建term查询
+        //termQuery := elastic.NewTermQuery("Author", "tizi")
+        //matchQuery := elastic.NewMatchQuery("Title", "golang es教程")
+        //
+        //// 设置bool查询的should条件, 组合了两个子查询
+        //// 表示搜索Author=tizi或者Title匹配"golang es教程"的文档
+        //boolQuery.Should(termQuery, matchQuery)
+
+        // xxx https://www.coder.work/article/1023959
+        //
+
+        //searchResult, err := funcs.EsClient.Search().
+        //        Index(indexName).
+        //        //Type(typeName).
+        //        Query(termQuery).
+        //        Sort("update_date", true). // 按id升序排序
+        //        From(0).Size(10). // 拿前10个结果
+        //        Pretty(true).
+        //        FetchSourceContext(fsc).
+        //        Do(context.Background()) // 执行
+
+        //searchFusion := funcs.EsClient.Search().Index(indexName)
+        //searchFusion:=elastic.NewSearchService(funcs.EsClient)
+
+        //searchFusion.Index(indexName)
+        //searchFusion.Source(searchSource)
+
+        <span class="cov0" title="0">searchResult, err := searchFusion.Do(context.Background())
+
+        if err != nil </span><span class="cov0" title="0">{
+                panic(err)</span>
+        }
+        <span class="cov0" title="0">total := searchResult.TotalHits()
+        //fmt.Printf("Found %d subjects\n", total)
+
+        var result []map[string]interface{}
+        if total &gt; 0 </span><span class="cov0" title="0">{
+                for _, hit := range searchResult.Hits.Hits </span><span class="cov0" title="0">{
+                        item := make(map[string]interface{})
+
+                        err := json.Unmarshal(hit.Source, &amp;item)
+                        result = append(result, item)
+                        if err != nil </span><span class="cov0" title="0">{
+                                fmt.Printf("err:%v\n", err)
+                                continue</span>
+                        }
+                        //fmt.Printf("doc %+v\n", item)
+                }
+        } else<span class="cov0" title="0"> {
+                ResponseError(c, errors.New("Not Found Data!"))
+                return
+                //fmt.Println("Not found !")
+        }</span>
+
+        //pageinfo:=make(map[string]interface{})
+        //pageinfo["pageIndex"]=pageIndex
+        //pageinfo["pageSize"]=pageSize
+        //pageinfo["totalCount"]=total
+
+        <span class="cov0" title="0">body, _ := searchSource.Source()
+        mjson, _ := json.MarshalIndent(body, "", "\t")
+        //fmt.Println("return data:",len(result))
+        g.GetLog().Debug("IndexName:%s , QueryByEs query :%+v\n", indexName, string(mjson))
+
+        ResponseSuccess(c, &amp;ResultData{PageInfo: map[string]interface{}{
+                "pageIndex": pageIndex, "pageSize": pageSize, "totalCount": total},
+                List: result})</span>
+
+}
+
+//type EsUrlEntry struct {
+//        Data interface{} `json:"data"`
+//        Path string      `json:"path"`
+//}
+
+func QueryBySourceEs(c *gin.Context) <span class="cov0" title="0">{
+
+        //bytes, err := c.GetRawData() // 接收json数据
+        //if err != nil {
+        //        ResponseError(c, err) //统一返回
+        //        return
+        //}
+        //
+        //
+        //
+
+        srv := funcs.OAuthSrv
+
+        _, err := srv.ValidationBearerToken(c.Request)
+        if err != nil </span><span class="cov0" title="0">{
+                ResponseError(c, err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">var eue map[string]interface{}
+
+        if err := c.ShouldBindWith(&amp;eue, binding.JSON); err != nil </span><span class="cov0" title="0">{
+                ResponseError(c, errors.New("params err")) //统一返回
+                return
+        }</span>
+
+        //fmt.Printf("%+v\n", eue)
+        <span class="cov0" title="0">res, err := funcs.EsClient.PerformRequest(context.Background(), elastic.PerformRequestOptions{
+                Method:          "POST",
+                Path:            eue["path"].(string),
+                Params:          url.Values{},
+                Body:            eue["data"],
+                Headers:         nil,
+                MaxResponseSize: 0,
+        })
+        if err != nil </span><span class="cov0" title="0">{
+                ResponseError(c, err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">if g.GetConfig().Debug </span><span class="cov0" title="0">{
+                mjson, _ := json.MarshalIndent(eue["data"], "", "\t")
+
+                g.GetLog().Debug("IndexName:%s , QueryBySourceEs query :%+v\n", eue["path"], string(mjson))
+        }</span>
+
+        <span class="cov0" title="0">ResponseSuccess(c, res.Body)
+        return</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package controllers
+
+import (
+        "context"
+        funcs "datacenter/funcs"
+        "datacenter/g"
+        "datacenter/modules"
+        "datacenter/utils"
+        "errors"
+        "fmt"
+        "github.com/gin-gonic/gin"
+        "github.com/go-oauth2/oauth2/v4"
+        "gorm.io/gorm"
+        "net/http"
+        "strconv"
+        "strings"
+        "time"
+)
+
+/**
+ * @Author: Tao Jun
+ * @Description: controllers
+ * @File:  auth.go
+ * @Version: 1.0.0
+ * @Date: 2021/8/16 下午3:39
+ */
+
+type ResultData struct {
+        PageInfo map[string]interface{}   `json:"pageinfo"`
+        List     []map[string]interface{} `json:"list"`
+}
+
+func CheckToken(c *gin.Context) <span class="cov0" title="0">{
+
+        srv := funcs.OAuthSrv
+        err := c.Request.ParseForm()
+        if err != nil </span><span class="cov0" title="0">{
+                ResponseAuthError(c, err)
+        }</span>
+
+        // 请求参数 更改为 access_token
+        <span class="cov0" title="0">at := c.Request.Form["token"]
+        c.Request.Form["access_token"] = at
+
+        token, err := srv.ValidationBearerToken(c.Request)
+        if err != nil </span><span class="cov0" title="0">{
+                ResponseAuthError(c, err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">var u modules.User
+        modules.MysqlDb.Table("user").Select("*").Where(" id=? ", token.GetUserID()).First(&amp;u)
+
+        //fmt.Println(u)
+        //fmt.Println(id)
+        resp := map[string]interface{}{
+                "active":      true,
+                "scope":       []string{"all"},
+                "exp":         int64(token.GetAccessCreateAt().Add(token.GetAccessExpiresIn()).Sub(time.Now()).Seconds()),
+                "client_id":   token.GetClientID(),
+                "user_id":     token.GetUserID(),
+                "user_name":   u.Name,
+                "authorities": strings.Split(u.Roles, ","),
+        }
+
+        ResponseBasic(c, http.StatusOK, resp)</span>
+}
+
+func Token(c *gin.Context) <span class="cov0" title="0">{
+        //fmt.Println(c.Request.ParseForm())
+        //fmt.Println(c.Request.Form)
+        s := funcs.OAuthSrv
+
+        gt, tgr, err := s.ValidationTokenRequest(c.Request)
+        if err != nil </span><span class="cov0" title="0">{
+                ResponseError(c, err)
+                return
+        }</span>
+        //fmt.Printf("%+v\n",tgr)
+        //username, password := c.Request.FormValue("username"), c.Request.FormValue("password")
+        //fmt.Println(username,password)
+        //fmt.Println(strings.Split(tgr.UserID,"_")[1])
+        //fmt.Printf("%+v\n",tgr)
+
+        <span class="cov0" title="0">switch gt </span>{
+
+        case oauth2.PasswordCredentials:<span class="cov0" title="0">
+                var u modules.User
+                db := modules.MysqlDb.Table("user").Select("*").Where(" client=? and  name=?", tgr.ClientID, strings.Split(tgr.UserID, "_")[1]).First(&amp;u)
+                //fmt.Println(u)
+                if db.RowsAffected == 0 </span><span class="cov0" title="0">{
+                        ResponseError(c, errors.New(fmt.Sprintf("UserName: %s , ClientId:%s  DB Not Found", strings.Split(tgr.UserID, "_")[1], tgr.ClientID)))
+                        return
+                }</span>
+                //fmt.Println(c.Request.FormValue("password"))
+                //fmt.Println(utils.Md5V3(c.Request.FormValue("password")))
+                <span class="cov0" title="0">if u.Password != utils.Md5V3(c.Request.FormValue("password")) </span><span class="cov0" title="0">{
+                        ResponseError(c, errors.New(fmt.Sprintf("UserName: %s , ClientId:%s  password Not Match", strings.Split(tgr.UserID, "_")[1], tgr.ClientID)))
+                        return
+                }</span>
+
+        case oauth2.Refreshing:<span class="cov0" title="0"></span>
+
+        }
+
+        <span class="cov0" title="0">tgr.ClientSecret = utils.Md5V3(tgr.ClientSecret)
+        //fmt.Println(tgr)
+        ti, err := s.GetAccessToken(context.Background(), gt, tgr)
+
+        if err != nil </span><span class="cov0" title="0">{
+                ResponseError(c, err)
+                return
+        }</span>
+
+        //ResponseSuccess(c,        s.GetTokenData(ti))
+        <span class="cov0" title="0">c.JSON(http.StatusOK, s.GetTokenData(ti))</span>
+
+}
+
+func InitClient(c *gin.Context) <span class="cov0" title="0">{
+
+        secret := c.PostForm("secret")
+        resource_ids := c.PostForm("resource_ids")
+        scope := c.PostForm("scope")
+        authorized_grant_types := c.PostForm("authorized_grant_types")
+        web_server_redirect_uri := c.PostForm("web_server_redirect_uri")
+        authorities := c.PostForm("authorities")
+        access_token_validity := c.PostForm("access_token_validity")
+        refresh_token_validity := c.PostForm("refresh_token_validity")
+        additional_information := c.PostForm("additional_information")
+        autoapprove := c.PostForm("autoapprove")
+        client_id := c.PostForm("client_id")
+
+        var db *gorm.DB
+        // 查询存在
+        var clientDetail *modules.OauthClientDetails
+        //db = modules.MysqlDb.Table("oauth_client_details").Select("*").Where("client_id=?", client_id).First(&amp;clientDetail)
+
+        clientDetail, db = funcs.CStore.GetDetailByID(client_id)
+
+        //fmt.Println(clientDetail)
+        var u modules.User // 准备用户数据
+        u.Name = client_id
+        u.Password = utils.Md5V3(secret)
+        u.Source = "client_users"
+        u.Roles = "admin"
+        u.Status = "1"
+
+        // 1. 存在则创建 项目 默认用户
+        if db.RowsAffected &gt; 0 </span><span class="cov0" title="0">{
+                modules.MysqlDb.Table("user").Select("id").Where(" name=? and  source='client_users'", client_id).First(&amp;u)
+                if u.Id == 0 </span><span class="cov0" title="0">{
+
+                        db = modules.MysqlDb.Table("user").Create(&amp;u)
+                        //fmt.Printf("%+v\n", u)
+                        //fmt.Printf("%+v\n", db)
+                        if db.RowsAffected == 0 </span><span class="cov0" title="0">{
+                                ResponseError(c, errors.New("user table insert Fail"))
+                                return
+                        }</span>
+                }
+        } else<span class="cov0" title="0"> {
+                clientDetail.ClientSecret = utils.Md5V3(secret)
+                clientDetail.ClientId = client_id
+                clientDetail.WebServerRedirectUri = web_server_redirect_uri
+                atv, _ := strconv.Atoi(access_token_validity)
+
+                clientDetail.AccessTokenValidity = atv
+                clientDetail.AdditionalInformation = additional_information
+                clientDetail.Authorities = authorities
+                clientDetail.AuthorizedGrantTypes = authorized_grant_types
+                clientDetail.Autoapprove = autoapprove
+                rtv, _ := strconv.Atoi(refresh_token_validity)
+                clientDetail.RefreshTokenValidity = rtv
+                clientDetail.ResourceIds = resource_ids
+                clientDetail.Scope = scope
+
+                //db = modules.MysqlDb.Table("oauth_client_details").Create(&amp;clientDetail)
+                db = funcs.CStore.CreateDetail(clientDetail)
+                //fmt.Printf("%+v\n", u)
+                //fmt.Printf("%+v\n", db)
+                if db.RowsAffected == 0 </span><span class="cov0" title="0">{
+                        ResponseError(c, errors.New("oauth_client_details table insert Fail"))
+                        return
+                }</span> else<span class="cov0" title="0"> {
+                        db = modules.MysqlDb.Table("user").Create(&amp;u)
+                        //fmt.Printf("%+v\n", u)
+                        //fmt.Printf("%+v\n", db)
+                        if db.RowsAffected == 0 </span><span class="cov0" title="0">{
+                                ResponseError(c, errors.New("user table insert Fail"))
+                                return
+                        }</span>
+                }
+        }
+        <span class="cov0" title="0">ResponseSuccess(c, clientDetail)
+        return</span>
+
+}
+func DeleteClient(c *gin.Context) <span class="cov0" title="0">{
+        //fmt.Println(c.PostForm("client_secret"))
+        secret := utils.Md5V3(c.PostForm("client_secret"))
+        client_id := c.PostForm("client_id")
+        //fmt.Println(client_id)
+        //fmt.Println(secret)
+        var db *gorm.DB
+        //clientDetailDB := modules.MysqlDb.Table("oauth_client_details")
+        userDB := modules.MysqlDb.Table("user")
+        //fmt.Println(secret)
+
+        // 查询存在
+        var clientDetail *modules.OauthClientDetails
+        //db = modules.MysqlDb.Table("oauth_client_details").Select("*").Where("client_id=?", client_id).First(&amp;clientDetail)
+        clientDetail, db = funcs.CStore.GetDetailByWhere(fmt.Sprintf("client_id='%s' and client_secret='%s'", client_id, secret))
+
+        if db.RowsAffected &gt; 0 </span><span class="cov0" title="0">{
+                funcs.CStore.Delete(clientDetail)
+
+                userDB.Where("name=? and source='client_users'", client_id).Delete(&amp;modules.User{})
+                //modules.MysqlDb.Raw("DELETE from user  where name=? and source='client_users'", client_id).Rows()
+                ResponseSuccess(c, "success")
+                return
+        }</span>
+        <span class="cov0" title="0">ResponseError(c, errors.New("Client not Exist"))</span>
+
+}
+
+func UpdateClient(c *gin.Context) <span class="cov0" title="0">{
+
+        secret := utils.Md5V3(c.PostForm("secret"))
+        resource_ids := c.PostForm("resource_ids")
+        scope := c.PostForm("scope")
+        authorized_grant_types := c.PostForm("authorized_grant_types")
+        web_server_redirect_uri := c.PostForm("web_server_redirect_uri")
+        authorities := c.PostForm("authorities")
+        access_token_validity := c.PostForm("access_token_validity")
+        refresh_token_validity := c.PostForm("refresh_token_validity")
+        additional_information := c.PostForm("additional_information")
+        autoapprove := c.PostForm("autoapprove")
+        client_id := c.PostForm("client_id")
+
+        var db *gorm.DB
+        //clientDetailDB := modules.MysqlDb.Table("oauth_client_details")
+        userDB := modules.MysqlDb.Table("user")
+
+        // 查询存在
+        var clientDetail *modules.OauthClientDetails
+        //db = modules.MysqlDb.Table("oauth_client_details").Select("*").Where("client_id=?", client_id).First(&amp;clientDetail)
+
+        clientDetail, db = funcs.CStore.GetDetailByID(client_id)
+
+        var u modules.User // 准备用户数据
+
+        //fmt.Println(clientDetail)
+        // 1.
+        if db.RowsAffected &gt; 0 </span><span class="cov0" title="0">{
+                //fmt.Println(clientDetail)
+                clientDetail.ClientSecret = secret
+                clientDetail.ClientId = client_id
+                clientDetail.WebServerRedirectUri = web_server_redirect_uri
+                atv, _ := strconv.Atoi(access_token_validity)
+
+                clientDetail.AccessTokenValidity = atv
+                clientDetail.AdditionalInformation = additional_information
+                clientDetail.Authorities = authorities
+                clientDetail.AuthorizedGrantTypes = authorized_grant_types
+                clientDetail.Autoapprove = autoapprove
+                rtv, _ := strconv.Atoi(refresh_token_validity)
+                clientDetail.RefreshTokenValidity = rtv
+                clientDetail.ResourceIds = resource_ids
+                clientDetail.Scope = scope
+
+                //fmt.Println(clientDetail)
+                db = funcs.CStore.Save(clientDetail)
+
+                if db.RowsAffected &gt; 0 </span><span class="cov0" title="0">{ //没有改动 这里是0
+                        // 查找默认用户 没有则创建
+                        db = userDB.Select("id").Where(" name=? and  source='client_users'", client_id).First(&amp;u)
+
+                        if db.RowsAffected == 0 </span><span class="cov0" title="0">{
+                                u.Name = client_id
+                                u.Password = secret
+                                u.Source = "client_users"
+                                u.Roles = "admin"
+                                u.Status = "1"
+                                db = modules.MysqlDb.Table("user").Create(&amp;u)
+                                if db.RowsAffected == 0 </span><span class="cov0" title="0">{
+                                        ResponseError(c, errors.New("user table insert Fail"))
+                                        return
+                                }</span>
+                        } else<span class="cov0" title="0"> {
+                                fmt.Printf("%+v\n", u)
+                                db.Model(&amp;u).Select("name", "password").Updates(modules.User{Name: client_id, Password: secret})
+                                fmt.Printf("%+v\n", db)
+                        }</span>
+                }
+        } else<span class="cov0" title="0"> {
+                ResponseError(c, errors.New("clientDetail Not Found"))
+        }</span>
+        <span class="cov0" title="0">ResponseSuccess(c, clientDetail)
+        return</span>
+
+}
+
+func Register(c *gin.Context) <span class="cov0" title="0">{
+
+        username := c.PostForm("username")
+        //fmt.Println(username)
+
+        source := c.PostForm("source")
+        client := c.PostForm("client")
+        password := c.PostForm("password")
+        role := c.PostForm("role")
+        //fmt.Println(source)
+
+        var u modules.User
+        //rows, err := modules.MysqlDb.Raw("SELECT  *  from user where name=? and  source=?",[]string{"name","111"}...).Scan(&amp;u)
+        modules.MysqlDb.Table("user").Select("*").Where(" name=? and  source=?", username, source).Find(&amp;u)
+
+        if u.Id == 0 </span><span class="cov0" title="0">{
+                u.Name = username
+                u.Client = client
+                u.Password = utils.Md5V3(password)
+                u.Source = source
+                u.Roles = role
+                db := modules.MysqlDb.Table("user").Create(&amp;u)
+                //fmt.Printf("%+v\n", u)
+                //fmt.Printf("%+v\n", db)
+                if db.RowsAffected == 0 </span><span class="cov0" title="0">{
+                        ResponseError(c, errors.New("user table insert Fail"))
+                        return
+                }</span>
+                <span class="cov0" title="0">g.GetLog().Printf("新建用户 %+v\n", u)</span>
+        }
+
+        <span class="cov0" title="0">ResponseSuccess(c, &amp;u)
+        return</span>
+
+}
+
+//func InsertClientStoreUser(clientid, userid string) (err error) {
+//        var clientdetail modules.OauthClientDetails
+//        modules.MysqlDb.Table("oauth_client_details").Select("*").Where(" client_id=? ", clientid).Find(&amp;clientdetail)
+//        //fmt.Println(clientdetail)
+//        if clientdetail.ClientSecret == "" {
+//                err = errors.New("oauth_client_details table select Fail")
+//                return
+//        }
+//
+//        // clientStore insert
+//        err = funcs.ClientStore.Set(userid, &amp;models.Client{
+//                ID:     clientdetail.ClientId,
+//                Secret: clientdetail.ClientSecret,
+//                Domain: clientdetail.WebServerRedirectUri,
+//        })
+//        return err
+//}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package controllers
+
+import (
+        "github.com/gin-gonic/gin"
+        "net/http"
+)
+
+/**
+ * @Author: Tao Jun
+ * @Description: controllers
+ * @File:  base
+ * @Version: 1.0.0
+ * @Date: 2021/8/24 上午11:48
+ */
+
+func ResponseSuccess(c *gin.Context, msg interface{}) <span class="cov0" title="0">{
+        c.JSON(http.StatusOK, gin.H{
+                "code": "1",
+                "msg":  "成功",
+                "data": msg,
+        })
+}</span>
+
+func ResponseError(c *gin.Context, err error) <span class="cov0" title="0">{
+        c.JSON(http.StatusOK, gin.H{
+                "code": "0",
+                "msg":  "失败",
+                "data": err.Error(),
+        })
+}</span>
+
+func ResponseAuthError(c *gin.Context, err error) <span class="cov0" title="0">{
+        //c.JSON(code, gin.H{
+        //        "err": err.Error(),
+        //})
+        ResponseBasic(c, http.StatusUnauthorized, gin.H{"err": err.Error(), "status": http.StatusUnauthorized})
+}</span>
+
+func ResponseBasic(c *gin.Context, code int, msg interface{}) <span class="cov0" title="0">{
+        //c.JSON(http.StatusOK, msg)
+        //fmt.Println(msg)
+        c.JSON(code, msg)
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package controllers
+
+import (
+        "datacenter/modules"
+        "encoding/json"
+        "errors"
+        "fmt"
+        "github.com/gin-gonic/gin"
+        "github.com/gin-gonic/gin/binding"
+        "github.com/tidwall/gjson"
+        "go.mongodb.org/mongo-driver/bson"
+        "go.mongodb.org/mongo-driver/mongo/options"
+        "net/http"
+        "path"
+        "runtime"
+)
+
+func SingleUpLoad(c *gin.Context) <span class="cov0" title="0">{
+
+        _, filename, _, _ := runtime.Caller(0)
+        //fmt.Println(filename)
+        dir := path.Dir(path.Dir(filename))
+        file, _ := c.FormFile("file")
+        //log.Println(file.Filename)
+        //log.Println(path.Join(dir, file.Filename))
+        if err := c.SaveUploadedFile(file, path.Join(dir, file.Filename)); err != nil </span><span class="cov0" title="0">{
+                ResponseError(c, err)
+                return
+        }</span>
+
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{
+
+                "status":     http.StatusOK,
+                "statusText": "ok",
+
+                "data": fmt.Sprintf("upload file:%s success", file.Filename),
+        })</span>
+}
+
+func MysqlFind(c *gin.Context) <span class="cov0" title="0">{
+        bytes, err := c.GetRawData() // 接收json数据
+        if err != nil </span><span class="cov0" title="0">{
+                ResponseError(c, err) //统一返回
+                return
+        }</span>
+        <span class="cov0" title="0">data := string(bytes)
+        fmt.Println("request params:", data)
+
+        ResponseSuccess(c, nil)
+
+        rows, err := modules.MysqlDb.Raw("SELECT  *  from greed_track_chang_info_in_1 where ?", "1=1").Rows()
+        if err != nil </span><span class="cov0" title="0">{
+                ResponseError(c, err) //统一返回
+                return
+        }</span>
+        //a:=modules.DoQuerySort(rows)
+
+        <span class="cov0" title="0">b := modules.DoQuery(rows) //xxx  返回map[string]string,解析字段名
+        //if err != nil {
+        //        ResponseError(c, err) //统一返回
+        //        return
+        //}
+        fmt.Println(b)
+        c.JSON(http.StatusOK, gin.H{
+
+                "status":     http.StatusOK,
+                "statusText": "ok",
+
+                "data": b,
+        })</span>
+
+}
+
+func PostSpeed1(c *gin.Context) <span class="cov8" title="1">{
+        //fmt.Println(c.Request.Body)
+        //fmt.Println(c.Request.Header)
+        bytes, err := c.GetRawData() // 接收json数据
+        if err != nil </span><span class="cov0" title="0">{
+                ResponseError(c, err) //统一返回
+                return
+        }</span>
+        //data := string(bytes)
+        //fmt.Println(string(bytes))
+
+        <span class="cov8" title="1">if !gjson.GetBytes(bytes, "user").Exists() || !gjson.GetBytes(bytes, "password").Exists() </span><span class="cov0" title="0">{
+                ResponseError(c, errors.New("params err")) //统一返回
+                return
+        }</span>
+
+        <span class="cov8" title="1">var mapResult map[string]interface{} // json To map
+        err = json.Unmarshal(bytes, &amp;mapResult)
+        if err != nil </span><span class="cov0" title="0">{
+                fmt.Println("JsonToMapDemo err: ", err)
+        }</span>
+
+        <span class="cov8" title="1">u := gjson.GetBytes(bytes, "user")
+        if u.String() == "taojun" </span><span class="cov8" title="1">{
+                c.JSON(http.StatusOK, gin.H{
+                        "status":        http.StatusOK,
+                        "statusText":    "ok",
+                        "requestParams": mapResult, // response  reqParams
+                })
+                return
+        }</span>
+        <span class="cov0" title="0">ResponseError(c, errors.New("user not taojun"))</span> //统一返回
+}
+
+func PostSpeed2(c *gin.Context) <span class="cov0" title="0">{
+
+        var login modules.Login
+
+        if errA := c.ShouldBindWith(&amp;login, binding.JSON); errA != nil </span><span class="cov0" title="0">{
+                ResponseError(c, errors.New("params err")) //统一返回
+        }</span>
+        <span class="cov0" title="0">if login.User == "taojun" </span><span class="cov0" title="0">{
+                c.JSON(http.StatusOK, gin.H{
+                        "status":     http.StatusOK,
+                        "statusText": "ok",
+                })
+                return
+        }</span>
+        <span class="cov0" title="0">ResponseError(c, errors.New("user not taojun"))</span> //统一返回
+}
+
+func PostSpeed3(c *gin.Context) <span class="cov0" title="0">{
+
+        user := c.PostForm("user")
+
+        fmt.Println(111111,user)
+        if user == "taojun" </span><span class="cov0" title="0">{
+                c.JSON(http.StatusOK, gin.H{
+                        "statusText": "ok",
+                })
+                return
+        }</span>
+
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{
+                "statusText": "Fail",
+        })
+        return</span>
+}
+
+func GetHisMissionDetail(c *gin.Context) <span class="cov0" title="0">{
+        bytes, err := c.GetRawData() // 接收json数据
+        if err != nil </span><span class="cov0" title="0">{
+                ResponseError(c, err) //统一返回
+                return
+        }</span>
+        <span class="cov0" title="0">data := string(bytes)
+
+        //fmt.Println(data) //打印json 数据
+
+        if !gjson.Get(data, "demand").Exists() || !gjson.Get(data, "data.taskid").Exists() </span><span class="cov0" title="0">{
+                ResponseError(c, err) //统一返回
+                return
+        }</span>
+        // 指定获取要操作的数据集
+        <span class="cov0" title="0">mongoClient, err := modules.NewMongoConn()
+        if err != nil </span><span class="cov0" title="0">{
+                ResponseError(c, err) //统一返回
+                return
+        }</span>
+        //fmt.Println(mongoClient.CollectionCount("server_auto","dms-content"))
+
+        <span class="cov0" title="0">findOptions := options.Find()
+        //findOptions.SetLimit(2)
+
+        var TableName string
+        //let mongotasktablename = ""
+
+        switch gjson.Get(data, "demand").String() </span>{
+        case "ship":<span class="cov0" title="0">
+                // mongotasktablename = "schedulingtask_ship"
+                TableName = "chuanboshengchan" //船舶计划,  data 每条17列
+                // mongoOutTableName = mysqlOutTableName
+                break</span>
+        case "site":<span class="cov0" title="0">
+                // mongotasktablename = "schedulingtask_site"
+                TableName = "site_plan" //场地计划,  data 每条17列
+                // mongoOutTableName = mysqlOutTableName
+                break</span>
+        }
+        <span class="cov0" title="0">var filter = make(map[string]interface{})
+
+        filter = map[string]interface{}{"schemaName": TableName, "data.taskid.iv": gjson.Get(data, "data.taskid").Int()}
+
+        // xxx mongodb 的筛选 和 输出 都可以是 bson.M  bson.D 等
+
+        result, err := mongoClient.CollectionFilter("server_auto", "dms-content", bson.M(filter), findOptions)
+
+        //result, err := mongoClient.CollectionFilter("server_auto", "dms-content",bson.D{{
+        //        "data.taskid.iv",
+        //        bson.D{{
+        //                "$in",
+        //                bson.A{"Alice", "Bob"},
+        //        }},
+        //}}, findOptions)
+
+        if err != nil </span><span class="cov0" title="0">{
+                ResponseError(c, err) //统一返回
+                return
+        }</span>
+        //fmt.Println(result[0])
+        <span class="cov0" title="0">mongoClient.DisableConn()
+
+        c.JSON(http.StatusOK, gin.H{
+
+                "status":     http.StatusOK,
+                "statusText": "ok",
+
+                "data": result,
+        })</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package authfunc
+
+import (
+        "context"
+        "datacenter/modules"
+        "errors"
+
+        "github.com/go-oauth2/oauth2/v4"
+        "gorm.io/gorm"
+        "strings"
+)
+
+type ClientStore struct {
+        db                *gorm.DB
+        TableName         string
+        initTableDisabled bool
+}
+
+// ClientStoreItem data item
+//type ClientStoreItem struct {
+//        ID     string `db:"id"`
+//        Secret string `db:"secret"`
+//        Domain string `db:"domain"`
+//        Data   string `db:"data"`
+//}
+
+// NewClientStore creates PostgreSQL store instance
+func NewClientStore(db *gorm.DB, tablename string, options ...ClientStoreOption) (*ClientStore, error) <span class="cov8" title="1">{
+
+        store := &amp;ClientStore{
+                db:        db,
+                TableName: tablename,
+        }
+
+        for _, o := range options </span><span class="cov0" title="0">{
+                o(store)
+        }</span>
+
+        <span class="cov8" title="1">var err error
+        //fmt.Printf("%+v\n",store)
+        if !store.initTableDisabled </span><span class="cov8" title="1">{
+                err = store.initTable()
+                //fmt.Println(err.Error())
+                if err != nil </span><span class="cov0" title="0">{
+                        if !strings.Contains(err.Error(), "already exists") </span><span class="cov0" title="0">{
+                                return nil, err
+                        }</span>
+                }
+        }
+
+        <span class="cov8" title="1">return store, nil</span>
+}
+
+func (s *ClientStore) initTable() error <span class="cov8" title="1">{
+
+        //        query := fmt.Sprintf(`
+        //        CREATE TABLE IF NOT EXISTS %s (
+        //                id VARCHAR(255) NOT NULL PRIMARY KEY,
+        //                secret VARCHAR(255) NOT NULL,
+        //                domain VARCHAR(255) NOT NULL,
+        //                data TEXT NOT NULL
+        //          );
+        //`, s.tableName)
+        //
+        //        stmt, err := s.db.Prepare(query)
+        //        s.db.cr
+        //        if err != nil {
+        //                return err
+        //        }
+        //        _, err = stmt.Exec()
+        //        if err != nil {
+        //                return err
+        //        }
+
+        dm := s.db.Migrator()
+        //fmt.Println(s.db.AutoMigrate(&amp;modules.OauthClientDetails{}))
+        //fmt.Println(dm.HasTable(s.tableName))
+        //fmt.Printf(s.tableName)
+
+        if !dm.HasTable(s.TableName) </span><span class="cov0" title="0">{
+                db := s.db.Set("gorm:table_options", "ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;")
+                dm = db.Migrator()
+                return dm.CreateTable(&amp;modules.OauthClientDetails{})
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+//func (s *ClientStore) toClientInfo(data string) (oauth2.ClientInfo, error) {
+//        var cm modules.OauthClientDetails
+//        err := jsoniter.Unmarshal([]byte(data), &amp;cm)
+//        return &amp;cm, err
+//}
+
+// GetByID retrieves and returns client information by id
+func (s *ClientStore) GetByID(ctx context.Context, id string) (oauth2.ClientInfo, error) <span class="cov0" title="0">{
+        if id == "" </span><span class="cov0" title="0">{
+                return nil, nil
+        }</span>
+
+        <span class="cov0" title="0">var clientDetail modules.OauthClientDetails
+        db := modules.MysqlDb.Table(s.TableName).Select("*").Where("client_id=?", id).First(&amp;clientDetail)
+
+        if db.Error != nil </span><span class="cov0" title="0">{
+                return nil, db.Error
+        }</span>
+        <span class="cov0" title="0">if db.RowsAffected == 0 </span><span class="cov0" title="0">{
+                return &amp;clientDetail, errors.New("Not Found")
+        }</span>
+
+        <span class="cov0" title="0">return &amp;clientDetail, nil</span>
+}
+
+// Create creates and stores the new client information
+func (s *ClientStore) Create(info *modules.OauthClientDetails) error <span class="cov0" title="0">{
+        //data, err := jsoniter.Marshal(info)
+
+        db := s.db.Table(s.TableName).Create(info)
+        if db.Error != nil </span><span class="cov0" title="0">{
+                return db.Error
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (s *ClientStore) GetDetailByID(id string) (clientDetail *modules.OauthClientDetails, db *gorm.DB) <span class="cov0" title="0">{
+        if id == "" </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        //var cd modules.OauthClientDetails
+        <span class="cov0" title="0">db = modules.MysqlDb.Table(s.TableName).Select("*").Where("client_id=?", id).First(&amp;clientDetail)
+        return</span>
+}
+
+func (s *ClientStore) GetDetailByWhere(where string) (clientDetail *modules.OauthClientDetails, db *gorm.DB) <span class="cov0" title="0">{
+
+        //var cd modules.OauthClientDetails
+        db = modules.MysqlDb.Table(s.TableName).Select("*").Where(where).First(&amp;clientDetail)
+        return
+}</span>
+
+func (s *ClientStore) CreateDetail(info *modules.OauthClientDetails) *gorm.DB <span class="cov0" title="0">{
+        //data, err := jsoniter.Marshal(info)
+
+        return s.db.Table(s.TableName).Create(info)
+
+}</span>
+
+func (s *ClientStore) Save(info *modules.OauthClientDetails) *gorm.DB <span class="cov0" title="0">{
+        //data, err := jsoniter.Marshal(info)
+
+        return s.db.Table(s.TableName).Save(info)
+
+}</span>
+
+func (s *ClientStore) Delete(info *modules.OauthClientDetails) *gorm.DB <span class="cov0" title="0">{
+        //data, err := jsoniter.Marshal(info)
+
+        return s.db.Table(s.TableName).Delete(info)
+
+}</span>
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package authfunc
+
+// ClientStoreOption is the configuration options type for client store
+type ClientStoreOption func(s *ClientStore)
+
+// WithClientStoreTableName returns option that sets client store table name
+//func WithClientStoreTableName(tableName string) ClientStoreOption {
+//        return func(s *ClientStore) {
+//                s.tableName = tableName
+//        }
+//}
+
+// WithClientStoreInitTableDisabled returns option that disables table creation on client store instantiation
+func WithClientStoreInitTableDisabled() ClientStoreOption <span class="cov0" title="0">{
+        return func(s *ClientStore) </span><span class="cov0" title="0">{
+                s.initTableDisabled = true
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package authfunc
+
+import (
+        "datacenter/g"
+        "fmt"
+        "github.com/olivere/elastic/v7"
+)
+
+/**
+ * @Author: Tao Jun
+ * @Description: authfunc
+ * @File:  handler
+ * @Version: 1.0.0
+ * @Date: 2021/8/16 下午3:27
+ */
+
+var EsClient *elastic.Client
+
+func InitES() <span class="cov8" title="1">{
+        var err error
+        EsClient, err = elastic.NewClient(
+                elastic.SetURL(g.GetConfig().EsServer...),
+                elastic.SetSniff(false), //docker es
+        )
+        if err != nil </span><span class="cov0" title="0">{
+
+                g.GetLog().Error(fmt.Sprintf("Es %v Fail", g.GetConfig().EsServer))
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package authfunc
+
+import (
+        "datacenter/g"
+        "datacenter/modules"
+        "encoding/base64"
+        "errors"
+        "fmt"
+        "github.com/go-oauth2/mysql/v4"
+        "github.com/go-oauth2/oauth2/v4/manage"
+        "github.com/go-oauth2/oauth2/v4/server"
+        "time"
+
+        //"github.com/go-oauth2/oauth2/v4/store"
+        "github.com/go-session/session"
+        _ "github.com/go-sql-driver/mysql"
+        "net/http"
+        "strconv"
+        "strings"
+)
+
+/**
+ * @Author: Tao Jun
+ * @Description: authfunc
+ * @File:  config
+ * @Version: 1.0.0
+ * @Date: 2021/8/16 下午3:26
+ */
+var (
+        OAuthSrv *server.Server
+        Mstore   *mysql.Store
+        CStore   *ClientStore
+)
+
+func InitoAuth2() <span class="cov8" title="1">{
+        manager := manage.NewDefaultManager()
+        //manager.SetAuthorizeCodeTokenCfg(&amp;manage.Config{
+        //        AccessTokenExp: time.Hour * 10, RefreshTokenExp: time.Hour * 24 * 7, IsGenerateRefresh: true})
+
+        manager.SetPasswordTokenCfg(&amp;manage.Config{
+                AccessTokenExp: time.Hour * 24, RefreshTokenExp: time.Hour * 24 * 7, IsGenerateRefresh: true})
+        // token store
+
+        // use mysql token store
+        //fmt.Println(g.GetConfig().Mysqldsn)
+
+        // tokenStorage
+        Mstore = mysql.NewDefaultStore(
+                mysql.NewConfig(g.GetConfig().Mysqldsn),
+        )
+
+        manager.MapTokenStorage(Mstore)
+
+        //manager.MustTokenStorage(store.NewMemoryTokenStore())
+
+        // generate jwt access token
+        // manager.MapAccessGenerate(generates.NewJWTAccessGenerate("", []byte("00000000"), jwt.SigningMethodHS512))
+        //manager.MapAccessGenerate(generates.NewAccessGenerate())
+
+        //ClientStore = store.NewClientStore()
+
+        //ClientStore.Set("client", &amp;models.Client{
+        //        ID:     "client",
+        //        Secret: "123456",
+        //        //Domain: domainvar,
+        //})
+        var err error
+        CStore, err = NewClientStore(modules.MysqlDb, g.GetConfig().ClientTableName)
+
+        if err != nil </span><span class="cov0" title="0">{
+                g.GetLog().Panicf("ClientStore Fail %+v\n", err)
+        }</span>
+        // ClientStorage
+        <span class="cov8" title="1">manager.MapClientStorage(CStore)
+
+        OAuthSrv = server.NewServer(server.NewConfig(), manager)
+
+        //OAuthSrv.SetUserAuthorizationHandler(userAuthorizeHandler)
+        OAuthSrv.SetPasswordAuthorizationHandler(func(username, password string) (userID string, err error) </span><span class="cov0" title="0">{
+                // 1 通过 username 分解 name  client
+                sDec, err := base64.StdEncoding.DecodeString(username)
+                if err != nil </span><span class="cov0" title="0">{
+                        return "", err
+                }</span>
+                <span class="cov0" title="0">var client string
+                ucList := strings.Split(string(sDec), "|")
+                if strings.Contains(string(sDec), "|") &amp;&amp; len(ucList) == 2 </span><span class="cov0" title="0">{
+                        username = ucList[0]
+                        client = ucList[1]
+                }</span> else<span class="cov0" title="0"> {
+                        err = errors.New(fmt.Sprintf("username not Contains |"))
+                        return
+                }</span>
+                //fmt.Println(ucList)
+                <span class="cov0" title="0">g.GetLog().Debug("/auth/token username:%s clientId:%s\n", username, client)
+                // 2 用 username and client 查询userid,   es or  mysql
+                var u modules.User
+                modules.MysqlDb.Table("user").Select("*").Where(" name=? and  client=?", username, client).Find(&amp;u)
+                userID = fmt.Sprintf("%s_%s", strconv.FormatInt(u.Id, 10), username)
+                return</span>
+        })
+}
+
+//func DBLoadClient() {
+//        var clientdetailList []modules.OauthClientDetails
+//        modules.MysqlDb.Table("oauth_client_details").Select("*").Find(&amp;clientdetailList)
+//        for _, cd := range clientdetailList {
+//                InsertClientStoreUser(&amp;cd)
+//        }
+//}
+//
+//func InsertClientStoreUser(clientdetail *modules.OauthClientDetails) (err error) {
+//
+//        // clientStore insert
+//        err = CStore.Create(clientdetail)
+//        return err
+//}
+
+func userAuthorizeHandler(w http.ResponseWriter, r *http.Request) (userID string, err error) <span class="cov0" title="0">{
+        fmt.Println(r)
+        store, err := session.Start(r.Context(), w, r)
+        fmt.Println(store)
+        fmt.Println(err)
+        if err != nil </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        <span class="cov0" title="0">uid, ok := store.Get("LoggedInUserID")
+        fmt.Println(uid)
+        if !ok </span><span class="cov0" title="0">{
+                if r.Form == nil </span><span class="cov0" title="0">{
+                        r.ParseForm()
+                }</span>
+
+                <span class="cov0" title="0">store.Set("ReturnUri", r.Form)
+                store.Save()
+
+                w.Header().Set("Location", "/login")
+                w.WriteHeader(http.StatusFound)
+                return</span>
+        }
+
+        <span class="cov0" title="0">userID = uid.(string)
+        store.Delete("LoggedInUserID")
+        store.Save()
+        return</span>
+}
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package g
+
+import (
+        "encoding/json"
+        "errors"
+        "fmt"
+        "github.com/mini-tiger/tjtools/file"
+        "log"
+        "os"
+        "path"
+        "path/filepath"
+        "sync"
+)
+
+var cfg Config
+var configLock = new(sync.RWMutex)
+
+type Config struct {
+        Port            int      `json:"port"`
+        ClientTableName string   `json:"clientTableName"`
+        Mysqldsn        string   `json:"mysqldsn"`
+        Logfile         string   `json:"logfile"`
+        LogMaxDays      int      `json:"logMaxDays"`
+        Debug           bool     `json:"debug"`
+        Stdout          bool     `json:"stdout"`
+        EsServer        []string `json:"es_server"`
+}
+
+func ParseConfig(cfg string) string <span class="cov1" title="1">{
+        if cfg == "" </span><span class="cov0" title="0">{
+                log.Fatalln("use -c to specify configuration file")
+        }</span>
+
+        <span class="cov1" title="1">if !file.IsExist(cfg) </span><span class="cov0" title="0">{
+                log.Fatalln("config file:", cfg, "is not existent. maybe you need `mv cfg.example.json cfg.json`")
+        }</span>
+
+        <span class="cov1" title="1">configContent, err := file.ToTrimString(cfg)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalln("read config file:", cfg, "fail:", err)
+
+        }</span>
+
+        //var c GlobalConfig
+
+        <span class="cov1" title="1">lock.Lock()
+        defer lock.Unlock()
+
+        log.Println("read config file:", cfg, "successfully")
+        return configContent</span>
+        //WLog(fmt.Sprintf("read config file: %s successfully",cfg))
+}
+
+func CheckConfig(fp string) (e error, conf string) <span class="cov1" title="1">{
+        // 兼容开发与生产环境
+
+        if file.IsExist(fp) </span><span class="cov1" title="1">{
+                return nil, fp
+        }</span> else<span class="cov0" title="0"> {
+                dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
+                if file.IsExist(filepath.Join(dir, fp)) </span><span class="cov0" title="0">{
+                        return nil, filepath.Join(dir, fp)
+                }</span> else<span class="cov0" title="0"> {
+                        return errors.New(fmt.Sprintf("confile :%s Not Found", fp)), ""
+                }</span>
+        }
+
+}
+
+func readconfig(cfgfile string) <span class="cov1" title="1">{
+        cfgstr := ParseConfig(cfgfile)
+        err := json.Unmarshal([]byte(cfgstr), &amp;cfg)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalln("parse config file fail:", err)
+        }</span>
+}
+
+func LoadConfig(cfgPath string) <span class="cov1" title="1">{
+        var confile string
+        var e error
+        // 多级目录查找配置文件
+        for _, basedir := range Basedirs </span><span class="cov1" title="1">{
+                e, confile = CheckConfig(path.Join(basedir, cfgPath))
+                if e == nil </span><span class="cov1" title="1">{
+                        CurrentDir = basedir
+                        log.Printf("Work Dir:%s\n", basedir)
+                        break</span>
+                }
+        }
+
+        <span class="cov1" title="1">if e == nil </span><span class="cov1" title="1">{
+                readconfig(confile)
+                log.Printf("config file success:%+v\n", cfg)
+        }</span> else<span class="cov0" title="0"> {
+                log.Fatalln("config file fail:", e)
+        }</span>
+}
+
+func GetConfig() *Config <span class="cov10" title="4">{
+
+        configLock.RLock()
+        defer configLock.RUnlock()
+        return &amp;cfg
+}</span>
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package g
+
+import (
+        nxlog "github.com/ccpaging/nxlog4go"
+        logDiy "github.com/mini-tiger/tjtools/logDiyNew"
+        "path"
+        "sync"
+)
+
+var (
+        lock  = new(sync.RWMutex)
+        logge *nxlog.Logger
+)
+
+func InitLog() *nxlog.Logger <span class="cov1" title="1">{
+        // 初始化 日志
+
+        logge = logDiy.InitLog1(path.Join(CurrentDir, cfg.Logfile), cfg.LogMaxDays, true, "DEBUG", cfg.Stdout)
+        return logge
+
+}</span>
+
+func GetLog() *nxlog.Logger <span class="cov10" title="2">{
+        lock.RLock()
+        defer lock.RUnlock()
+        return logge
+}</span>
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package g
+
+import (
+        "os"
+        "path/filepath"
+        "runtime"
+)
+
+var (
+        Basedirs   []string
+        CurrentDir string
+)
+
+func init() <span class="cov8" title="1">{
+        _, file, _, _ := runtime.Caller(0)
+        Basedirs = append(Basedirs, filepath.Dir(filepath.Dir(file)))
+        dir, _ := os.Getwd()
+        Basedirs = append(Basedirs, dir)
+}</span>
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package main
+
+import (
+        funcs "datacenter/funcs"
+        "datacenter/g"
+        "os"
+        "strconv"
+
+        "datacenter/middleware"
+        "datacenter/modules"
+        "datacenter/routers"
+        "github.com/gin-gonic/gin"
+        "runtime"
+)
+
+// xxx gin doc https://www.kancloud.cn/shuangdeyu/gin_book/949420
+
+const ConfigJson = "config.json"
+
+func SetupCfg() <span class="cov8" title="1">{
+
+        g.LoadConfig(ConfigJson)
+
+        // CurrentDir 需要在 LoadConfig 设置
+        _ = os.Chdir(g.CurrentDir)
+
+        // 初始化 日志
+        g.InitLog()
+
+}</span>
+func SetupServer() (r *gin.Engine) <span class="cov8" title="1">{
+        // 默认已经连接了 Logger and Recovery 中间件
+        //r := gin.Default()
+        // xxx创建一个默认的没有任何中间件的路由
+        r = gin.New()
+
+        // windows 无法显示日志颜色
+        if runtime.GOOS == "windows" </span><span class="cov0" title="0">{
+                gin.DisableConsoleColor()
+        }</span> else<span class="cov8" title="1"> {
+                gin.ForceConsoleColor()
+        }</span>
+        <span class="cov8" title="1">gin.SetMode("debug")
+
+        // xxx 全局中间件
+        // Logger 中间件将写日志到 gin.DefaultWriter 即使你设置 GIN_MODE=release.
+        // 默认设置 gin.DefaultWriter = os.Stdout
+        // r.Use(gin.Logger())
+        // 自定义日志中间件,和django一样,中间件 往返都要执行
+        r.Use(middleware.LogMiddleWare())
+        // 需要将 r.Use(middlewares.Cors()) 在使用路由前进行设置，否则会导致不生效
+        r.Use(middleware.Cors())
+        // Recovery 中间件从任何 panic 恢复，如果出现 panic，它会写一个 500 错误。
+        r.Use(gin.Recovery())
+        // xxx 加载路由
+        routers.LoadRoute(r)
+        return</span>
+}
+
+func SetupPlugins() <span class="cov8" title="1">{
+        // xxx 初始化mysql conn
+        err := modules.MysqlInitConn()
+        if err != nil </span><span class="cov0" title="0">{
+                panic(err)</span>
+        }
+
+        // xxx 初始化oAuth2
+        <span class="cov8" title="1">funcs.InitoAuth2()
+
+        // xxx 初始化ES
+        funcs.InitES()</span>
+}
+
+func main() <span class="cov0" title="0">{
+
+        SetupCfg()
+        r := SetupServer()
+        SetupPlugins()
+
+        _ = r.Run(":" + strconv.Itoa(g.GetConfig().Port))
+}</span>
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package middleware
+
+import (
+        "github.com/gin-gonic/gin"
+        "log"
+        "net/http"
+)
+
+/**
+ * @Author: Tao Jun
+ * @Description: middleware
+ * @File:  cores
+ * @Version: 1.0.0
+ * @Date: 2021/8/18 上午9:23
+ */
+
+// xxx 需要将 r.Use(middlewares.Cors()) 在使用路由前进行设置，否则会导致不生效
+func Cors() gin.HandlerFunc <span class="cov1" title="1">{
+        return func(c *gin.Context) </span><span class="cov10" title="2">{
+                method := c.Request.Method
+                origin := c.Request.Header.Get("Origin") //请求头部
+                //fmt.Printf("%+v\n",c.Request)
+                //fmt.Println(origin)
+                if origin != "" </span><span class="cov0" title="0">{
+                        //接收客户端发送的origin （重要！）
+                        c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+                        //服务器支持的所有跨域请求的方法
+                        c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE,UPDATE")
+                        //允许跨域设置可以返回其他子段，可以自定义字段
+                        //c.Header("Access-Control-Allow-Headers", "Authorization, Content-Length, X-CSRF-Token, Token,session")
+                        c.Header("Access-Control-Allow-Headers", "*")
+                        // 允许浏览器（客户端）可以解析的头部 （重要）
+                        c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers")
+                        //设置缓存时间
+                        c.Header("Access-Control-Max-Age", "172800")
+                        //允许客户端传递校验信息比如 cookie (重要)
+                        c.Header("Access-Control-Allow-Credentials", "true")
+                }</span>
+
+                //允许类型校验
+                <span class="cov10" title="2">if method == "OPTIONS" </span><span class="cov0" title="0">{
+                        c.JSON(http.StatusOK, "ok!")
+                }</span>
+
+                <span class="cov10" title="2">defer func() </span><span class="cov10" title="2">{
+                        if err := recover(); err != nil </span><span class="cov0" title="0">{
+                                log.Printf("Panic info is: %v", err)
+                        }</span>
+                }()
+
+                <span class="cov10" title="2">c.Next()</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package middleware
+
+import (
+        "bytes"
+        "datacenter/g"
+        "encoding/json"
+        "github.com/gin-gonic/gin"
+        "time"
+)
+
+type bodyLogWriter struct {
+        gin.ResponseWriter
+        body *bytes.Buffer
+}
+
+func (w bodyLogWriter) Write(b []byte) (int, error) <span class="cov10" title="2">{
+        w.body.Write(b)
+        return w.ResponseWriter.Write(b)
+}</span>
+
+func LogMiddleWare() gin.HandlerFunc <span class="cov1" title="1">{
+
+        return func(c *gin.Context) </span><span class="cov10" title="2">{
+                //Start timer
+                start := time.Now()
+                //fmt.Println(start)
+                blw := &amp;bodyLogWriter{body: bytes.NewBufferString(""), ResponseWriter: c.Writer}
+                c.Writer = blw
+                //raw := c.Request.URL.RawQuery
+
+                // Process request
+                // xxx c.Next以上是请求时的运行
+                c.Next() // 注意 next()方法的作用是跳过该调用链去直接后面的中间件以及api路由
+                // xxx c.Next以下是返回时的运行
+                //end:=time.Now()
+                //fmt.Println(end)
+                //log.Printf("Request :%+v\n", c.Request.Header["X-Forwarded-For"])
+                //path := c.Request.URL.Path
+                g.GetLog().Info("%15s | %12s | %15s | X-Forwarded-For: %s | %s | %d | %s\n",
+                        " RequestLog ",
+                        c.Request.URL.Path,
+                        c.ClientIP(),
+                        c.Request.Header["X-Forwarded-For"],
+                        c.Request.Method,
+                        c.Writer.Status(),
+                        time.Now().Sub(start))
+
+                //fmt.Printf("%+v\n",c)
+                //log.Printf("%s | %s | %s | %s | %d | %s",
+                //        " RequestLog ",
+                //        path,
+                //        c.ClientIP(),
+                //        c.Request.Method,
+                //        c.Writer.Status(),
+                //        time.Now().Sub(start))
+
+                //statusCode := c.Writer.Status()
+                var bodyMap map[string]interface{} = make(map[string]interface{}, 3)
+                _ = json.Unmarshal(blw.body.Bytes(), &amp;bodyMap)
+                if code, ok := bodyMap["code"]; ok &amp;&amp; code == "0" </span><span class="cov0" title="0">{
+                        g.GetLog().Error("%15s | %12s | %15s | X-Forwarded-For: %s | %s | Req: %+v | Resp: %+v\n",
+                                " ResponseLog ",
+                                c.Request.URL.Path,
+                                c.ClientIP(),
+                                c.Request.Header["X-Forwarded-For"],
+                                c.Request.Method,
+                                c.Request.Form,
+                                bodyMap)
+                        //c.Writer.Status(),
+                }</span>
+                //if statusCode &gt;= 400 {
+                //        //ok this is an request with error, let's make a record for it
+                //        // now print body (or log in your preferred way)
+                //        fmt.Println("Response body: " + blw.body.String())
+                //}
+        }
+        // Log only when path is not being skipped
+        //
+        //        param := LogFormatterParams{
+        //                Request: c.Request,
+        //                isTerm:  isTerm,
+        //                Keys:    c.Keys,
+        //        }
+        //
+        //        // Stop timer
+        //        param.TimeStamp = time.Now()
+        //        param.Latency = param.TimeStamp.Sub(start)
+        //
+        //        param.ClientIP = c.ClientIP()
+        //        param.Method = c.Request.Method
+        //        param.StatusCode = c.Writer.Status()
+        //        param.ErrorMessage = c.Errors.ByType(ErrorTypePrivate).String()
+        //
+        //        param.BodySize = c.Writer.Size()
+        //
+        //        if raw != "" {
+        //                path = path + "?" + raw
+        //        }
+        //
+        //        param.Path = path
+        //
+        //        fmt.Fprint(out, formatter(param))
+
+}
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">package modules
+
+import "datacenter/g"
+
+/**
+ * @Author: Tao Jun
+ * @Description: modules
+ * @File:  authModules
+ * @Version: 1.0.0
+ * @Date: 2021/8/16 下午4:16
+ */
+
+type User struct {
+        Id         int64  `json:"id" gorm:"primary_key"`
+        Name       string `json:"username"`
+        Password   string `json:"password"`
+        Roles      string `json:"roles"`
+        Status     string `json:"status"`
+        Source     string `json:"source"`
+        UpdateTime string `json:"update_time" gorm:"-&gt;"` // 只读
+        Client     string `json:"client"`
+}
+
+func (User) TableName() string <span class="cov0" title="0">{
+        return "user"
+}</span>
+
+type OauthClientDetails struct {
+        AccessTokenValidity   int    `json:"access_token_validity" gorm:"type:int(11)" `
+        RefreshTokenValidity  int    `json:"refresh_token_validity" gorm:"type:int(11)"`
+        ClientId              string `json:"client_id" gorm:"primary_key;type:varchar(250)"`
+        ResourceIds           string `json:"resource_ids"`
+        ClientSecret          string `json:"client_secret"`
+        Scope                 string `json:"scope"`
+        AuthorizedGrantTypes  string `json:"authorized_grant_types"`
+        WebServerRedirectUri  string `json:"web_server_redirect_uri"`
+        Authorities           string `json:"authorities"`
+        AdditionalInformation string `json:"additional_information"`
+        Autoapprove           string `json:"autoapprove"`
+}
+
+func (OauthClientDetails) TableName() string <span class="cov0" title="0">{
+        //return "oauth_client_details"
+        return g.GetConfig().ClientTableName
+}</span>
+
+// GetID client id
+func (c *OauthClientDetails) GetID() string <span class="cov0" title="0">{
+        return c.ClientId
+}</span>
+
+// GetSecret client domain
+func (c *OauthClientDetails) GetSecret() string <span class="cov0" title="0">{
+        return c.ClientSecret
+}</span>
+
+// GetDomain client domain
+func (c *OauthClientDetails) GetDomain() string <span class="cov0" title="0">{
+        return c.WebServerRedirectUri
+}</span>
+
+// GetUserID user id  默认用户 与 clientid 一样
+func (c *OauthClientDetails) GetUserID() string <span class="cov0" title="0">{
+        return c.ClientId
+}</span>
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">package modules
+
+import (
+        "context"
+        "go.mongodb.org/mongo-driver/bson"
+        "go.mongodb.org/mongo-driver/mongo"
+        "go.mongodb.org/mongo-driver/mongo/options"
+        "time"
+)
+
+// 连接设置
+type MongoConn struct {
+        MongoClient *mongo.Client
+}
+
+// xxx 插入数据 https://blog.csdn.net/zhangyexinaisurui/article/details/87372728
+func NewMongoConn() (*MongoConn, error) <span class="cov0" title="0">{
+        //uri := "mongodb+srv://用户名:密码@官方给的.mongodb.net"
+        uri := "mongodb://auto:auto@192.168.40.124:27017/?serverSelectionTimeoutMS=5000&amp;connectTimeoutMS=10000&amp;authSource=server_auto"
+        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+        defer cancel()
+
+        MongoClient, err := mongo.Connect(ctx, options.Client().ApplyURI(uri)) // 连接池
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        // 检查连接
+        <span class="cov0" title="0">err = MongoClient.Ping(context.TODO(), nil)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return &amp;MongoConn{MongoClient: MongoClient}, err</span>
+        //log.Println("Connected to MongoDB!")
+}
+
+func (m *MongoConn) CollectionCount(db, coll string) (int64, error) <span class="cov0" title="0">{
+        collection := m.MongoClient.Database(db).Collection(coll)
+        //name := collection.Name()
+        return collection.EstimatedDocumentCount(context.TODO())
+        //return
+}</span>
+
+func (m *MongoConn) CollectionFilter(db, coll string,
+        Filter interface{}, findOptions *options.FindOptions) ([]bson.M, error) <span class="cov0" title="0">{
+
+        collection := m.MongoClient.Database(db).Collection(coll)
+        // 查询多个
+        // 将选项传递给Find()
+
+        // 定义一个切片用来存储查询结果
+        var results []bson.M
+
+        // 把bson.D{{}}作为一个filter来匹配所有文档
+        cur, err := collection.Find(context.TODO(), Filter, findOptions)
+        if err != nil </span><span class="cov0" title="0">{
+                return results, err
+        }</span>
+
+        // 查找多个文档返回一个光标
+        // 遍历游标允许我们一次解码一个文档
+        <span class="cov0" title="0">for cur.Next(context.TODO()) </span><span class="cov0" title="0">{
+                // 创建一个值，将单个文档解码为该值
+                var elem bson.M
+                err := cur.Decode(&amp;elem)
+                if err != nil </span><span class="cov0" title="0">{
+                        continue</span>
+                }
+                <span class="cov0" title="0">results = append(results, elem)</span>
+        }
+
+        <span class="cov0" title="0">if err := cur.Err(); err != nil </span><span class="cov0" title="0">{
+                return results, err
+        }</span>
+
+        // 完成后关闭游标
+        <span class="cov0" title="0">cur.Close(context.TODO())
+
+        return results, nil</span>
+}
+
+func (m *MongoConn) DisableConn() error <span class="cov0" title="0">{
+
+        //name := collection.Name()
+        return m.MongoClient.Disconnect(context.TODO())
+        //return
+}</span>
+</pre>
+		
+		<pre class="file" id="file16" style="display: none">package modules
+
+import (
+        "database/sql"
+        "datacenter/g"
+        "gorm.io/driver/mysql"
+        "gorm.io/gorm"
+        "time"
+        //"time"
+)
+
+/**
+ * @Author: Tao Jun
+ * @Description: modules
+ * @File:  mysql_gorm
+ * @Version: 1.0.0
+ * @Date: 2021/3/22 下午2:49
+ */
+// db连接
+//var db *gorm.DB
+//var DbPool *sql.DB
+var MysqlDb *gorm.DB
+
+func MysqlInitConn() (err error) <span class="cov8" title="1">{
+        MysqlDb, err = gorm.Open(mysql.New(mysql.Config{
+                DSN:                       g.GetConfig().Mysqldsn, // DSN data source name
+                DefaultStringSize:         256,                    // string 类型字段的默认长度
+                DisableDatetimePrecision:  true,                   // 禁用 datetime 精度，MySQL 5.6 之前的数据库不支持
+                DontSupportRenameIndex:    true,                   // 重命名索引时采用删除并新建的方式，MySQL 5.7 之前的数据库和 MariaDB 不支持重命名索引
+                DontSupportRenameColumn:   true,                   // 用 `change` 重命名列，MySQL 8 之前的数据库和 MariaDB 不支持重命名列
+                SkipInitializeWithVersion: false,                  // 根据当前 MySQL 版本自动配置
+        }), &amp;gorm.Config{
+                DisableForeignKeyConstraintWhenMigrating: true,
+        })
+
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">MysqlDb.DB()
+        //XXX 连接池由sql.db包提供
+        DbPool, err := MysqlDb.DB()
+
+        // SetMaxIdleConns 设置空闲连接池中连接的最大数量
+        DbPool.SetMaxIdleConns(10)
+
+        // SetMaxOpenConns 设置打开数据库连接的最大数量。
+        DbPool.SetMaxOpenConns(100)
+
+        // SetConnMaxLifetime 设置了连接可复用的最大时间。
+        DbPool.SetConnMaxLifetime(time.Hour)
+        return DbPool.Ping()</span>
+
+}
+
+func DoQuerySort(rows *sql.Rows) (result map[int]map[string]string) <span class="cov0" title="0">{
+        // 返回所有列
+        columns, _ := rows.Columns()
+        // 这里标识一行所有列的值，用 []byte 表示
+        vals := make([][]byte, len(columns))
+        // 这里标识一行填充数据
+        scans := make([]interface{}, len(columns))
+        // 这里scans 引用vals 把数据填充到 []byte 里
+        for k, _ := range vals </span><span class="cov0" title="0">{
+                scans[k] = &amp;vals[k]
+        }</span>
+        <span class="cov0" title="0">i := 0
+        result = make(map[int]map[string]string)
+        for rows.Next() </span><span class="cov0" title="0">{
+                // 填充数据
+                rows.Scan(scans...)
+                // 每行数据
+                row := make(map[string]string)
+                // 把vals中的数据赋值到row中
+                for k, v := range vals </span><span class="cov0" title="0">{
+                        key := columns[k]
+                        // 这里把[]byte数据转化成string
+                        row[key] = string(v)
+                }</span>
+                // 放入结果集
+                <span class="cov0" title="0">result[i] = row
+                i++</span>
+        }
+        <span class="cov0" title="0">return</span>
+
+}
+
+func DoQuery(rows *sql.Rows) (result []map[string]string) <span class="cov0" title="0">{
+        // 返回所有列
+        columns, _ := rows.Columns()
+        // 这里标识一行所有列的值，用 []byte 表示
+        vals := make([][]byte, len(columns))
+        // 这里标识一行填充数据
+        scans := make([]interface{}, len(columns))
+        // 这里scans 引用vals 把数据填充到 []byte 里
+        for k, _ := range vals </span><span class="cov0" title="0">{
+                scans[k] = &amp;vals[k]
+        }</span>
+
+        <span class="cov0" title="0">result = make([]map[string]string, 0)
+        for rows.Next() </span><span class="cov0" title="0">{
+                // 填充数据
+                rows.Scan(scans...)
+                // 每行数据
+                row := make(map[string]string)
+                // 把vals中的数据赋值到row中
+                for k, v := range vals </span><span class="cov0" title="0">{
+                        key := columns[k]
+                        // 这里把[]byte数据转化成string
+                        row[key] = string(v)
+                }</span>
+                // 放入结果集
+                <span class="cov0" title="0">result = append(result, row)</span>
+
+        }
+        <span class="cov0" title="0">return</span>
+
+}
+</pre>
+		
+		<pre class="file" id="file17" style="display: none">package routers
+
+import (
+        "datacenter/controllers"
+        "github.com/gin-gonic/gin"
+        "net/http"
+)
+
+func LoadRoute(router *gin.Engine) <span class="cov8" title="1">{
+
+        // Hello World
+        router.GET("/", func(c *gin.Context) </span><span class="cov8" title="1">{
+                //c.String(http.StatusOK, "Hello, World,TaoJun First Deploy for DataCenter")
+                c.JSON(http.StatusOK, gin.H{
+                        //"status":        http.StatusOK,
+                        "statusText":   "Hello, World,TaoJun First Deploy for DataCenter",
+                })
+        }</span>)
+
+        //xxx gin 自带 json parse方式 https://cloud.tencent.com/developer/article/1689928
+
+        // POST 测试JSON 速度
+        <span class="cov8" title="1">router.POST("/login1", controllers.PostSpeed1)
+        router.POST("/login2", controllers.PostSpeed2)
+        router.POST("/login3", controllers.PostSpeed3)
+
+        //v1组路由
+        hgApi := router.Group("/hg/api")
+
+        hgApi.POST("/mongoFind", controllers.GetHisMissionDetail) // mongo example
+        hgApi.POST("/mysqlFind", controllers.MysqlFind)           // mysql example  https://gorm.io/zh_CN/docs/sql_builder.html
+        hgApi.POST("/singleupload", controllers.SingleUpLoad)     //
+
+        // work auth
+        authApi := router.Group("/oauth")
+        authApi.POST("/token", controllers.Token)
+        authApi.POST("/check_token", controllers.CheckToken)
+
+        cfgApi := router.Group("/config")
+        cfgApi.POST("/register", controllers.Register)
+        cfgApi.POST("/initClient", controllers.InitClient)
+        cfgApi.POST("/updateClient", controllers.UpdateClient)
+        cfgApi.POST("/deleteClient", controllers.DeleteClient)
+
+        // work api
+        Api := router.Group("/api")
+        Api.POST("/queryByEs", controllers.QueryByEs)
+        Api.POST("/querySourceByEs", controllers.QueryBySourceEs)</span>
+}
+</pre>
+		
+		<pre class="file" id="file18" style="display: none">package utils
+
+import (
+        "crypto/md5"
+        "fmt"
+        "io"
+        "strings"
+)
+
+/**
+ * @Author: Tao Jun
+ * @Description: utils
+ * @File:  tools
+ * @Version: 1.0.0
+ * @Date: 2021/8/16 下午5:45
+ */
+
+func Md5V3(str string) string <span class="cov0" title="0">{
+        w := md5.New()
+        io.WriteString(w, str)
+
+        return strings.ToUpper(fmt.Sprintf("%x", w.Sum(nil)))
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

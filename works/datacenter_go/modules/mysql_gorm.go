@@ -23,7 +23,7 @@ var MysqlDb *gorm.DB
 
 func MysqlInitConn() (err error) {
 	MysqlDb, err = gorm.Open(mysql.New(mysql.Config{
-		DSN:                       g.GetConfig().Mysqldsn, // DSN data source name
+		DSN:                       g.GetConfig().MysqlDsn, // DSN data source name
 		DefaultStringSize:         256,                    // string 类型字段的默认长度
 		DisableDatetimePrecision:  true,                   // 禁用 datetime 精度，MySQL 5.6 之前的数据库不支持
 		DontSupportRenameIndex:    true,                   // 重命名索引时采用删除并新建的方式，MySQL 5.7 之前的数据库和 MariaDB 不支持重命名索引
@@ -31,13 +31,15 @@ func MysqlInitConn() (err error) {
 		SkipInitializeWithVersion: false,                  // 根据当前 MySQL 版本自动配置
 	}), &gorm.Config{
 		DisableForeignKeyConstraintWhenMigrating: true,
+		//Logger: logger.Default.LogMode(logger.Silent),
 	})
 
 	if err != nil {
 		return err
 	}
 
-	MysqlDb.DB()
+	//MysqlDb.DB()
+
 	//XXX 连接池由sql.db包提供
 	DbPool, err := MysqlDb.DB()
 
@@ -49,6 +51,7 @@ func MysqlInitConn() (err error) {
 
 	// SetConnMaxLifetime 设置了连接可复用的最大时间。
 	DbPool.SetConnMaxLifetime(time.Hour)
+
 	return DbPool.Ping()
 
 }

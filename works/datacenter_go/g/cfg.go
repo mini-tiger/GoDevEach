@@ -9,21 +9,29 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 	"sync"
 )
 
 var cfg Config
 var configLock = new(sync.RWMutex)
+var TokenTableName string
+var ClientTableName string
 
 type Config struct {
 	Port            int      `json:"port"`
 	ClientTableName string   `json:"clientTableName"`
-	Mysqldsn        string   `json:"mysqldsn"`
+	TokenTableName  string   `json:"tokenTableName"`
+	MysqlDsn        string   `json:"mysqlDsn"`
 	Logfile         string   `json:"logfile"`
 	LogMaxDays      int      `json:"logMaxDays"`
-	Debug           bool     `json:"debug"`
+	Level           string   `json:"level"`
 	Stdout          bool     `json:"stdout"`
 	EsServer        []string `json:"es_server"`
+}
+
+func (c *Config) IsDebug() bool {
+	return strings.ToLower(cfg.Level) == "debug"
 }
 
 func ParseConfig(cfg string) string {
@@ -73,11 +81,16 @@ func readconfig(cfgfile string) {
 	if err != nil {
 		log.Fatalln("parse config file fail:", err)
 	}
+
+	// var
+	TokenTableName = cfg.TokenTableName
+	ClientTableName = cfg.ClientTableName
+
 }
 
-func LoadConfig(cfgPath string) {
+func LoadConfig(cfgPath string) (e error) {
 	var confile string
-	var e error
+	//var e error
 	// 多级目录查找配置文件
 	for _, basedir := range Basedirs {
 		e, confile = CheckConfig(path.Join(basedir, cfgPath))
@@ -90,10 +103,12 @@ func LoadConfig(cfgPath string) {
 
 	if e == nil {
 		readconfig(confile)
-		log.Printf("config file success:%+v\n", cfg)
+		//cfgStr, _ := json.MarshalIndent(cfg, "", "\t")
+		//log.Printf("config file read success! data:%+v\n", string(cfgStr))
 	} else {
-		log.Fatalln("config file fail:", e)
+		log.Fatalln("config file fail :", e)
 	}
+	return
 }
 
 func GetConfig() *Config {

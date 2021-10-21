@@ -1,8 +1,8 @@
 package middleware
 
 import (
+	"datacenter/g"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 )
 
@@ -42,12 +42,26 @@ func Cors() gin.HandlerFunc {
 			c.JSON(http.StatusOK, "ok!")
 		}
 
+		c.Next()
+
+	}
+}
+
+func Recovery() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
 		defer func() {
 			if err := recover(); err != nil {
-				log.Printf("Panic info is: %v", err)
+				g.GetLog().Error(" [ %s ] 触发错误:%v\n", c.Request.URL.Path, err)
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"code": "0",
+					"msg":  "失败",
+					"data": err,
+				})
 			}
 		}()
 
 		c.Next()
+
 	}
 }

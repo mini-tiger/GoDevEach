@@ -1,6 +1,7 @@
 package g
 
 import (
+	"encoding/json"
 	nxlog "github.com/ccpaging/nxlog4go"
 	logDiy "github.com/mini-tiger/tjtools/logDiyNew"
 	"path"
@@ -15,7 +16,7 @@ var (
 func InitLog() *nxlog.Logger {
 	// 初始化 日志
 
-	logge = logDiy.InitLog1(path.Join(CurrentDir, cfg.Logfile), cfg.LogMaxDays, true, "DEBUG", cfg.Stdout)
+	logge = logDiy.InitLog1(path.Join(CurrentDir, cfg.Logfile), cfg.LogMaxDays, true, GetConfig().Level, cfg.Stdout)
 	return logge
 
 }
@@ -24,4 +25,12 @@ func GetLog() *nxlog.Logger {
 	lock.RLock()
 	defer lock.RUnlock()
 	return logge
+}
+
+func PrintConf() {
+	if cfg.IsDebug() {
+		cfgStr, _ := json.MarshalIndent(cfg, "", "\t")
+		logge.Debug("config file data:%+v\n", string(cfgStr))
+	}
+
 }

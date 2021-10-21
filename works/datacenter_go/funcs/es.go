@@ -2,7 +2,6 @@ package authfunc
 
 import (
 	"datacenter/g"
-	"fmt"
 	"github.com/olivere/elastic/v7"
 )
 
@@ -22,8 +21,8 @@ func InitES() {
 		elastic.SetURL(g.GetConfig().EsServer...),
 		elastic.SetSniff(false), //docker es
 	)
-	if err != nil {
 
-		g.GetLog().Error(fmt.Sprintf("Es %v Fail", g.GetConfig().EsServer))
+	if err != nil {
+		g.GetLog().Error("ElasticSearch%v Fail !!!!\n", g.GetConfig().EsServer)
 	}
 }

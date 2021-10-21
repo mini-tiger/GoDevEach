@@ -1,195 +1,528 @@
 package controllers
 
 import (
-	"datacenter/modules"
+	"context"
+	funcs "datacenter/funcs"
+	"datacenter/g"
+	"datacenter/utils"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/tidwall/gjson"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"net/http"
-	"path"
-	"runtime"
+	"github.com/olivere/elastic/v7"
+	"net/url"
+	"strconv"
+	"strings"
 )
 
-func SingleUpLoad(c *gin.Context) {
+/**
+ * @Author: Tao Jun
+ * @Description: controllers
+ * @File:  api
+ * @Version: 1.0.0
+ * @Date: 2021/9/13 下午5:24
+ */
 
-	_, filename, _, _ := runtime.Caller(0)
-	//fmt.Println(filename)
-	dir := path.Dir(path.Dir(filename))
-	file, _ := c.FormFile("file")
-	//log.Println(file.Filename)
-	//log.Println(path.Join(dir, file.Filename))
-	if err := c.SaveUploadedFile(file, path.Join(dir, file.Filename)); err != nil {
+func QueryByEs(c *gin.Context) {
+	srv := funcs.OAuthSrv
+
+	_, err := srv.ValidationBearerToken(c.Request)
+	if err != nil {
 		ResponseError(c, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
+	indexName := c.PostForm("indexName")
 
-		"status":     http.StatusOK,
-		"statusText": "ok",
+	var pageIndex, pageSize int
+	_, ok := c.GetPostForm("pageIndex")
+	if !ok {
+		pageIndex = 1
+	} else {
+		pageIndex, _ = strconv.Atoi(c.PostForm("pageIndex"))
+	}
 
-		"data": fmt.Sprintf("upload file:%s success", file.Filename),
-	})
+	//queryFields := c.PostForm("queryFields")
+
+	_, ok = c.GetPostForm("pageSize")
+	if !ok {
+		pageSize = 10
+	} else {
+		pageSize, _ = strconv.Atoi(c.PostForm("pageSize"))
+	}
+
+	if pageIndex <= 0 || pageSize <= 0 {
+		ResponseError(c, errors.New("page params err"))
+		return
+	}
+
+	// 构建查询语句
+	queryCondition, ok := c.GetPostForm("query")
+	queryMap := make(map[string]interface{})
+	if ok {
+
+		err = json.Unmarshal([]byte(queryCondition), &queryMap)
+		if err != nil {
+			ResponseError(c, err)
+			return
+		}
+	}
+
+	//fmt.Println(queryCondition)
+	//fmt.Println(queryMap)
+	//fmt.Printf(indexName)
+	var queryKeyLen int = len(queryMap)
+
+	//if len(queryMap) > 1 {
+	//	fmt.Println(1111)
+	//}
+
+	//var queryCond *elastic.BoolQuery=elastic.NewBoolQuery()
+
+	searchFusion := funcs.EsClient.Search().Index(indexName)
+
+	searchSource := elastic.NewSearchSource()
+
+	// page
+	searchSource.From((pageIndex - 1) * pageSize).Size(pageSize)
+	searchFusion.SearchSource(searchSource)
+
+	// xxx querycrond
+	//switch true {
+	//case queryKeyLen == 1:
+	//	if _, or_ok := queryMap["or"]; or_ok {
+	//
+	//		boolQuery := elastic.NewBoolQuery()
+	//		for key, value := range queryMap["or"].(map[string]interface{}) {
+	//			termQuery := elastic.NewMatchQuery(key, value)
+	//			//fmt.Println(key, value)
+	//			boolQuery.Should(termQuery)
+	//		}
+	//		//searchFusion.Query(boolQuery)
+	//		searchSource.Query(boolQuery)
+	//	} else {
+	//		boolQuery := elastic.NewBoolQuery()
+	//		for key, value := range queryMap {
+	//			termQuery := elastic.NewMatchQuery(key, value)
+	//			//fmt.Println(key, value)
+	//			boolQuery.Must(termQuery)
+	//		}
+	//		//searchFusion.Query(boolQuery)
+	//		searchSource.Query(boolQuery)
+	//	}
+	//
+	//	break
+	//case queryKeyLen > 1:
+	//	boolQuery := elastic.NewBoolQuery()
+	//	for key, value := range queryMap {
+	//		termQuery := elastic.NewMatchQuery(key, value)
+	//		//fmt.Println(key, value)
+	//		boolQuery.Must(termQuery)
+	//	}
+	//	//searchFusion.Query(boolQuery)
+	//	searchSource.Query(boolQuery)
+	//}
+
+	if _, or_ok := queryMap["or"]; or_ok && queryKeyLen == 1 {
+		boolQuery := elastic.NewBoolQuery()
+		for key, value := range queryMap["or"].(map[string]interface{}) {
+			termQuery := elastic.NewMatchQuery(key, value)
+			//fmt.Println(key, value)
+			boolQuery.Should(termQuery)
+		}
+		//searchFusion.Query(boolQuery)
+		searchSource.Query(boolQuery)
+	} else {
+		boolQuery := elastic.NewBoolQuery()
+		for key, value := range queryMap {
+			termQuery := elastic.NewMatchQuery(key, value)
+			//fmt.Println(key, value)
+			boolQuery.Must(termQuery)
+		}
+		//searchFusion.Query(boolQuery)
+		searchSource.Query(boolQuery)
+	}
+
+	// sort
+	sortBy, sortbyok := c.GetPostForm("sortBy")
+
+	if sortbyok {
+		sortQuery := elastic.NewFieldSort(sortBy).Asc()
+		if c.PostForm("sortDirection") == "-1" {
+			sortQuery = sortQuery.Desc()
+		}
+		searchSource.SortBy(sortQuery)
+		//searchFusion.SortBy(sortQuery)
+	}
+
+	// show fields
+	fields, ok := c.GetPostForm("queryFields")
+	//fmt.Println(fields)
+	if ok {
+
+		fsc := elastic.NewFetchSourceContext(true).Include(strings.Split(fields, ",")...)
+		//searchFusion.FetchSourceContext(fsc)
+		searchSource.FetchSourceContext(fsc)
+	}
+
+	//termQuery := elastic.NewTermQuery("park_name", "实测交大停车场") // 不会对搜索词进行分词处理，而是作为一个整体与目标字段进行匹配
+
+	//d := elastic.NewMatchQuery("park_name", "交大科技大厦") // 会将搜索词分词
+
+	//andbool:=elastic.NewBoolQuery().Must(termQuery,d) // and
+
+	//orbool := elastic.NewBoolQuery().Should(termQuery, d) // or
+
+	//xxx andbool:=elastic.NewBoolQuery().Must(termQuery,d) // and
+
+	//xxx orbool := elastic.NewBoolQuery().Should(termQuery, d) // or
+
+	// xxx 多条件方法一
+	//timeQ := elastic.NewRangeQuery("@timestamp").From(from).To(End)
+	//componentQ := elastic.NewTermQuery("component", *component)
+	//deploymentQ := elastic.NewTermQuery("deploymentName", deploymentName)
+	//
+	//generalQ := elastic.NewBoolQuery()
+	//generalQ = generalQ.Must(timeQ).Must(componentQ).Must(deploymentQ)
+
+	//xxx 多条件方法二
+	// 创建bool查询
+	//boolQuery := elastic.NewBoolQuery().Must()
+	//
+	//// 创建term查询
+	//termQuery := elastic.NewTermQuery("Author", "tizi")
+	//matchQuery := elastic.NewMatchQuery("Title", "golang es教程")
+	//
+	//// 设置bool查询的should条件, 组合了两个子查询
+	//// 表示搜索Author=tizi或者Title匹配"golang es教程"的文档
+	//boolQuery.Should(termQuery, matchQuery)
+
+	// xxx https://www.coder.work/article/1023959
+	//
+
+	//searchResult, err := funcs.EsClient.Search().
+	//	Index(indexName).
+	//	//Type(typeName).
+	//	Query(termQuery).
+	//	Sort("update_date", true). // 按id升序排序
+	//	From(0).Size(10). // 拿前10个结果
+	//	Pretty(true).
+	//	FetchSourceContext(fsc).
+	//	Do(context.Background()) // 执行
+
+	//searchFusion := funcs.EsClient.Search().Index(indexName)
+	//searchFusion:=elastic.NewSearchService(funcs.EsClient)
+
+	//searchFusion.Index(indexName)
+	//searchFusion.Source(searchSource)
+
+	searchResult, err := searchFusion.Do(context.Background())
+
+	if err != nil {
+		ResponseError(c, err)
+		return
+	}
+	total := searchResult.TotalHits()
+	//fmt.Printf("Found %d subjects\n", total)
+
+	var result []map[string]interface{}
+	if total > 0 {
+		for _, hit := range searchResult.Hits.Hits {
+			item := make(map[string]interface{})
+
+			err := json.Unmarshal(hit.Source, &item)
+			result = append(result, item)
+			if err != nil {
+				fmt.Printf("err:%v\n", err)
+				continue
+			}
+			//fmt.Printf("doc %+v\n", item)
+		}
+	} else {
+		ResponseError(c, errors.New("Not Found Data!"))
+		return
+		//fmt.Println("Not found !")
+	}
+
+	//pageinfo:=make(map[string]interface{})
+	//pageinfo["pageIndex"]=pageIndex
+	//pageinfo["pageSize"]=pageSize
+	//pageinfo["totalCount"]=total
+
+	body, _ := searchSource.Source()
+	mjson, _ := json.MarshalIndent(body, "", "\t")
+	//fmt.Println("return data:",len(result))
+	g.GetLog().Debug("IndexName:%s , QueryByEs query :%+v\n", indexName, string(mjson))
+
+	ResponseSuccess(c, &ResultData{PageInfo: map[string]interface{}{
+		"pageIndex": pageIndex, "pageSize": pageSize, "totalCount": total},
+		List: result})
+
 }
 
-func MysqlFind(c *gin.Context) {
-	bytes, err := c.GetRawData() // 接收json数据
+func QueryByEsPlus(c *gin.Context) {
+	srv := funcs.OAuthSrv
+
+	_, err := srv.ValidationBearerToken(c.Request)
 	if err != nil {
-		ResponseError(c, err) //统一返回
+		ResponseError(c, err)
 		return
 	}
-	data := string(bytes)
-	fmt.Println("request params:", data)
 
-	ResponseSuccess(c, nil)
+	indexName := c.PostForm("indexName")
 
-	rows, err := modules.MysqlDb.Raw("SELECT  *  from greed_track_chang_info_in_1 where ?", "1=1").Rows()
-	if err != nil {
-		ResponseError(c, err) //统一返回
+	var pageIndex, pageSize int
+	_, ok := c.GetPostForm("pageIndex")
+	if !ok {
+		pageIndex = 1
+	} else {
+		pageIndex, _ = strconv.Atoi(c.PostForm("pageIndex"))
+	}
+
+	_, ok = c.GetPostForm("pageSize")
+	if !ok {
+		pageSize = 10
+	} else {
+		pageSize, _ = strconv.Atoi(c.PostForm("pageSize"))
+	}
+
+	if pageIndex <= 0 || pageSize <= 0 {
+		ResponseError(c, errors.New("page params err"))
 		return
 	}
-	//a:=modules.DoQuerySort(rows)
+	// 构建查询语句
+	queryCondition, ok := c.GetPostForm("query")
+	queryMap := make(map[string]string)
+	if ok {
 
-	b := modules.DoQuery(rows) //xxx  返回map[string]string,解析字段名
+		err = json.Unmarshal([]byte(queryCondition), &queryMap)
+		if err != nil {
+			ResponseError(c, err)
+			return
+		}
+	}
+
+	searchFusion := funcs.EsClient.Search().Index(indexName)
+
+	searchSource := elastic.NewSearchSource()
+
+	// page
+	searchSource.From((pageIndex - 1) * pageSize).Size(pageSize)
+	searchFusion.SearchSource(searchSource)
+
+	//
+	//var queryKeyLen int = len(queryMap)
+	//
+	//switch true {
+	//case queryKeyLen == 1:
+	//		for key, v := range queryMap {
+	//			termQuery := elastic.NewWildcardQuery(key, v)
+	//			searchSource.Query(termQuery)
+	//		}
+	//	break
+	//case queryKeyLen > 1:
+	//	boolQuery := elastic.NewBoolQuery()
+	//	for key, value := range queryMap {
+	//		termQuery := elastic.NewWildcardQuery(key, value)
+	//		//fmt.Println(key, value)
+	//		boolQuery.Must(termQuery)
+	//	}
+	//	searchSource.Query(boolQuery)
+	//
+	//}
+	//
+
+	//fmt.Println(regexTpl)
+
+	queryType := c.DefaultPostForm("querytype", "term")
+
+	boolQuery := elastic.NewBoolQuery()
+	for key, value := range queryMap {
+		var termQuery elastic.Query
+		switch true {
+		case queryType == "term":
+			termQuery = elastic.NewTermQuery(key, value)
+		case queryType == "regex":
+			termQuery = elastic.NewWildcardQuery(key, fmt.Sprintf(utils.FixReg(c), value))
+		default:
+			termQuery = elastic.NewTermQuery(key, value)
+		}
+
+		//fmt.Println(key, value)
+		boolQuery.Must(termQuery)
+	}
+	searchSource.Query(boolQuery)
+
+	//searchFusion.Query(boolQuery)
+
+	// sort
+	sortBy, sortByOk := c.GetPostForm("sortBy")
+
+	if sortByOk {
+		sortQuery := elastic.NewFieldSort(sortBy).Asc()
+		if c.PostForm("sortDirection") == "-1" {
+			sortQuery = sortQuery.Desc()
+		}
+		searchSource.SortBy(sortQuery)
+		//searchFusion.SortBy(sortQuery)
+	}
+
+	// show fields
+	fields, ok := c.GetPostForm("queryFields")
+	//fmt.Println(fields)
+	if ok {
+
+		fsc := elastic.NewFetchSourceContext(true).Include(strings.Split(fields, ",")...)
+		//searchFusion.FetchSourceContext(fsc)
+		searchSource.FetchSourceContext(fsc)
+	}
+
+	//termQuery := elastic.NewTermQuery("park_name", "实测交大停车场") // 不会对搜索词进行分词处理，而是作为一个整体与目标字段进行匹配
+
+	//d := elastic.NewMatchQuery("park_name", "交大科技大厦") // 会将搜索词分词
+
+	//andbool:=elastic.NewBoolQuery().Must(termQuery,d) // and
+
+	//orbool := elastic.NewBoolQuery().Should(termQuery, d) // or
+
+	//xxx andbool:=elastic.NewBoolQuery().Must(termQuery,d) // and
+
+	//xxx orbool := elastic.NewBoolQuery().Should(termQuery, d) // or
+
+	// xxx 多条件方法一
+	//timeQ := elastic.NewRangeQuery("@timestamp").From(from).To(End)
+	//componentQ := elastic.NewTermQuery("component", *component)
+	//deploymentQ := elastic.NewTermQuery("deploymentName", deploymentName)
+
+	//generalQ := elastic.NewBoolQuery()
+	//generalQ = generalQ.Must(timeQ).Must(componentQ).Must(deploymentQ)
+
+	//xxx 多条件方法二
+	// 创建bool查询
+	//boolQuery := elastic.NewBoolQuery().Must()
+	//
+	//// 创建term查询
+	//termQuery := elastic.NewTermQuery("Author", "tizi")
+	//matchQuery := elastic.NewMatchQuery("Title", "golang es教程")
+	//
+	//// 设置bool查询的should条件, 组合了两个子查询
+	//// 表示搜索Author=tizi或者Title匹配"golang es教程"的文档
+	//boolQuery.Should(termQuery, matchQuery)
+
+	// xxx https://www.coder.work/article/1023959
+	//
+
+	//searchResult, err := funcs.EsClient.Search().
+	//	Index(indexName).
+	//	//Type(typeName).
+	//	Query(termQuery).
+	//	Sort("update_date", true). // 按id升序排序
+	//	From(0).Size(10). // 拿前10个结果
+	//	Pretty(true).
+	//	FetchSourceContext(fsc).
+	//	Do(context.Background()) // 执行
+
+	//searchFusion := funcs.EsClient.Search().Index(indexName)
+	//searchFusion:=elastic.NewSearchService(funcs.EsClient)
+
+	//searchFusion.Index(indexName)
+	//searchFusion.Source(searchSource)
+
+	searchResult, err := searchFusion.Do(context.Background())
+
+	if err != nil {
+		ResponseError(c, err)
+		return
+	}
+	total := searchResult.TotalHits()
+	//fmt.Printf("Found %d subjects\n", total)
+
+	var result []map[string]interface{}
+	if total > 0 {
+		for _, hit := range searchResult.Hits.Hits {
+			item := make(map[string]interface{})
+
+			err := json.Unmarshal(hit.Source, &item)
+			result = append(result, item)
+			if err != nil {
+				fmt.Printf("err:%v\n", err)
+				continue
+			}
+			//fmt.Printf("doc %+v\n", item)
+		}
+	} else {
+		ResponseError(c, errors.New("Not Found Data!"))
+		return
+		//fmt.Println("Not found !")
+	}
+
+	//pageinfo:=make(map[string]interface{})
+	//pageinfo["pageIndex"]=pageIndex
+	//pageinfo["pageSize"]=pageSize
+	//pageinfo["totalCount"]=total
+
+	body, _ := searchSource.Source()
+	mjson, _ := json.MarshalIndent(body, "", "\t")
+	//fmt.Println("return data:",len(result))
+	g.GetLog().Debug("IndexName:%s , QueryByEs query :%+v\n", indexName, string(mjson))
+
+	ResponseSuccess(c, &ResultData{PageInfo: map[string]interface{}{
+		"pageIndex": pageIndex, "pageSize": pageSize, "totalCount": total},
+		List: result})
+
+}
+
+//type EsUrlEntry struct {
+//	Data interface{} `json:"data"`
+//	Path string      `json:"path"`
+//}
+
+func QueryBySourceEs(c *gin.Context) {
+
+	//bytes, err := c.GetRawData() // 接收json数据
 	//if err != nil {
 	//	ResponseError(c, err) //统一返回
 	//	return
 	//}
-	fmt.Println(b)
-	c.JSON(http.StatusOK, gin.H{
+	//
+	//
+	//
 
-		"status":     http.StatusOK,
-		"statusText": "ok",
+	srv := funcs.OAuthSrv
 
-		"data": b,
+	_, err := srv.ValidationBearerToken(c.Request)
+	if err != nil {
+		ResponseError(c, err)
+		return
+	}
+
+	var eue map[string]interface{}
+
+	if err := c.ShouldBindWith(&eue, binding.JSON); err != nil {
+		ResponseError(c, err) //统一返回
+		return
+	}
+
+	//fmt.Printf("%+v\n", eue)
+	res, err := funcs.EsClient.PerformRequest(context.Background(), elastic.PerformRequestOptions{
+		Method:          "POST",
+		Path:            eue["path"].(string),
+		Params:          url.Values{},
+		Body:            eue["data"],
+		Headers:         nil,
+		MaxResponseSize: 0,
 	})
-
-}
-
-func PostSpeed1(c *gin.Context) {
-	fmt.Println(c.Request.Body)
-	fmt.Println(c.Request.Header)
-	bytes, err := c.GetRawData() // 接收json数据
 	if err != nil {
-		ResponseError(c, err) //统一返回
-		return
-	}
-	//data := string(bytes)
-	fmt.Println(string(bytes))
-
-	if !gjson.GetBytes(bytes, "user").Exists() || !gjson.GetBytes(bytes, "password").Exists() {
-		ResponseError(c, errors.New("params err")) //统一返回
+		ResponseError(c, err)
 		return
 	}
 
-	var mapResult map[string]interface{} // json To map
-	err = json.Unmarshal(bytes, &mapResult)
-	if err != nil {
-		fmt.Println("JsonToMapDemo err: ", err)
+	if g.GetConfig().IsDebug() {
+		mjson, _ := json.MarshalIndent(eue["data"], "", "\t")
+		g.GetLog().Debug("IndexName:%s , QueryBySourceEs query :%+v\n", eue["path"], string(mjson))
 	}
 
-	u := gjson.GetBytes(bytes, "user")
-	if u.String() == "taojun" {
-		c.JSON(http.StatusOK, gin.H{
-			"status":        http.StatusOK,
-			"statusText":    "ok",
-			"requestParams": mapResult, // response  reqParams
-		})
-		return
-	}
-	ResponseError(c, errors.New("user not taojun")) //统一返回
-}
-
-func PostSpeed2(c *gin.Context) {
-
-	var login modules.Login
-
-	if errA := c.ShouldBindWith(&login, binding.JSON); errA != nil {
-		ResponseError(c, errors.New("params err")) //统一返回
-	}
-	if login.User == "taojun" {
-		c.JSON(http.StatusOK, gin.H{
-			"status":     http.StatusOK,
-			"statusText": "ok",
-		})
-		return
-	}
-	ResponseError(c, errors.New("user not taojun")) //统一返回
-}
-
-func GetHisMissionDetail(c *gin.Context) {
-	bytes, err := c.GetRawData() // 接收json数据
-	if err != nil {
-		ResponseError(c, err) //统一返回
-		return
-	}
-	data := string(bytes)
-
-	//fmt.Println(data) //打印json 数据
-
-	if !gjson.Get(data, "demand").Exists() || !gjson.Get(data, "data.taskid").Exists() {
-		ResponseError(c, err) //统一返回
-		return
-	}
-	// 指定获取要操作的数据集
-	mongoClient, err := modules.NewMongoConn()
-	if err != nil {
-		ResponseError(c, err) //统一返回
-		return
-	}
-	//fmt.Println(mongoClient.CollectionCount("server_auto","dms-content"))
-
-	findOptions := options.Find()
-	//findOptions.SetLimit(2)
-
-	var TableName string
-	//let mongotasktablename = ""
-
-	switch gjson.Get(data, "demand").String() {
-	case "ship":
-		// mongotasktablename = "schedulingtask_ship"
-		TableName = "chuanboshengchan" //船舶计划,  data 每条17列
-		// mongoOutTableName = mysqlOutTableName
-		break
-	case "site":
-		// mongotasktablename = "schedulingtask_site"
-		TableName = "site_plan" //场地计划,  data 每条17列
-		// mongoOutTableName = mysqlOutTableName
-		break
-	}
-	var filter = make(map[string]interface{})
-
-	filter = map[string]interface{}{"schemaName": TableName, "data.taskid.iv": gjson.Get(data, "data.taskid").Int()}
-
-	// xxx mongodb 的筛选 和 输出 都可以是 bson.M  bson.D 等
-
-	result, err := mongoClient.CollectionFilter("server_auto", "dms-content", bson.M(filter), findOptions)
-
-	//result, err := mongoClient.CollectionFilter("server_auto", "dms-content",bson.D{{
-	//	"data.taskid.iv",
-	//	bson.D{{
-	//		"$in",
-	//		bson.A{"Alice", "Bob"},
-	//	}},
-	//}}, findOptions)
-
-	if err != nil {
-		ResponseError(c, err) //统一返回
-		return
-	}
-	//fmt.Println(result[0])
-	mongoClient.DisableConn()
-
-	c.JSON(http.StatusOK, gin.H{
-
-		"status":     http.StatusOK,
-		"statusText": "ok",
-
-		"data": result,
-	})
+	ResponseSuccess(c, res.Body)
+	return
 }

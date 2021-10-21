@@ -3,19 +3,19 @@ package authfunc
 import (
 	"datacenter/g"
 	"datacenter/modules"
+	"datacenter/utils"
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"github.com/go-oauth2/mysql/v4"
 	"github.com/go-oauth2/oauth2/v4/manage"
 	"github.com/go-oauth2/oauth2/v4/server"
+	"strconv"
 	"time"
 
 	//"github.com/go-oauth2/oauth2/v4/store"
 	"github.com/go-session/session"
 	_ "github.com/go-sql-driver/mysql"
 	"net/http"
-	"strconv"
 	"strings"
 )
 
@@ -28,11 +28,11 @@ import (
  */
 var (
 	OAuthSrv *server.Server
-	Mstore   *mysql.Store
+	MStore   *modules.StoreEntry
 	CStore   *ClientStore
 )
 
-func InitoAuth2() {
+func InitOAuth2() {
 	manager := manage.NewDefaultManager()
 	//manager.SetAuthorizeCodeTokenCfg(&manage.Config{
 	//	AccessTokenExp: time.Hour * 10, RefreshTokenExp: time.Hour * 24 * 7, IsGenerateRefresh: true})
@@ -44,26 +44,15 @@ func InitoAuth2() {
 	// use mysql token store
 	//fmt.Println(g.GetConfig().Mysqldsn)
 
-	// tokenStorage
-	Mstore = mysql.NewDefaultStore(
-		mysql.NewConfig(g.GetConfig().Mysqldsn),
+	// xxx NewStoreWithDB 中 包含 清理过期 数据库记录
+	Store := modules.NewStore(
+		modules.NewConfig(g.GetConfig().MysqlDsn), g.GetConfig().TokenTableName, 300,
 	)
 
-	manager.MapTokenStorage(Mstore)
+	MStore = modules.NewStoreEntry(Store)
+	manager.MapTokenStorage(MStore)
 
-	//manager.MustTokenStorage(store.NewMemoryTokenStore())
-
-	// generate jwt access token
-	// manager.MapAccessGenerate(generates.NewJWTAccessGenerate("", []byte("00000000"), jwt.SigningMethodHS512))
-	//manager.MapAccessGenerate(generates.NewAccessGenerate())
-
-	//ClientStore = store.NewClientStore()
-
-	//ClientStore.Set("client", &models.Client{
-	//	ID:     "client",
-	//	Secret: "123456",
-	//	//Domain: domainvar,
-	//})
+	// client 数据库
 	var err error
 	CStore, err = NewClientStore(modules.MysqlDb, g.GetConfig().ClientTableName)
 
@@ -74,13 +63,12 @@ func InitoAuth2() {
 	manager.MapClientStorage(CStore)
 
 	OAuthSrv = server.NewServer(server.NewConfig(), manager)
-
 	//OAuthSrv.SetUserAuthorizationHandler(userAuthorizeHandler)
 	OAuthSrv.SetPasswordAuthorizationHandler(func(username, password string) (userID string, err error) {
 		// 1 通过 username 分解 name  client
 		sDec, err := base64.StdEncoding.DecodeString(username)
 		if err != nil {
-			return "", err
+			return "", errors.New(fmt.Sprintf("base64 decode err : %s", err))
 		}
 		var client string
 		ucList := strings.Split(string(sDec), "|")
@@ -91,12 +79,28 @@ func InitoAuth2() {
 			err = errors.New(fmt.Sprintf("username not Contains |"))
 			return
 		}
-		//fmt.Println(ucList)
-		g.GetLog().Debug("/auth/token username:%s clientId:%s\n", username, client)
+		if g.GetConfig().IsDebug() {
+			g.GetLog().Debug("/auth/token username:%s clientId:%s\n", username, client)
+		}
+
 		// 2 用 username and client 查询userid,   es or  mysql
 		var u modules.User
-		modules.MysqlDb.Table("user").Select("*").Where(" name=? and  client=?", username, client).Find(&u)
-		userID = fmt.Sprintf("%s_%s", strconv.FormatInt(u.Id, 10), username)
+		//modules.MysqlDb.Table("user").Select("*").Where(" name=? and  client=?", username, client).Find(&u)
+
+		udb := modules.MysqlDb.Where(" name=? and  client=?", username, client).Find(&u)
+		if udb.RowsAffected == 0 {
+			err = errors.New(fmt.Sprintf("UserName: %s , ClientId:%s  DB Not Found", username, client))
+			return
+		}
+
+		//确认密码eq
+		if u.Password != utils.Md5V3(password) {
+			err = errors.New(fmt.Sprintf("UserName: %s , ClientId:%s  password Not Match", username, client))
+			return
+		}
+
+		userID = fmt.Sprintf("%s%s%s", strconv.FormatInt(u.Id, 10), g.SepStr, username)
+
 		return
 	})
 }

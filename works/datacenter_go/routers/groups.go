@@ -10,7 +10,11 @@ func LoadRoute(router *gin.Engine) {
 
 	// Hello World
 	router.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "Hello, World,Taojun First Deploy for DataCenter")
+		//c.String(http.StatusOK, "Hello, World,TaoJun First Deploy for DataCenter")
+		c.JSON(http.StatusOK, gin.H{
+			//"status":        http.StatusOK,
+			"statusText": "Hello, World,TaoJun First Deploy for DataCenter",
+		})
 	})
 
 	//xxx gin 自带 json parse方式 https://cloud.tencent.com/developer/article/1689928
@@ -18,6 +22,7 @@ func LoadRoute(router *gin.Engine) {
 	// POST 测试JSON 速度
 	router.POST("/login1", controllers.PostSpeed1)
 	router.POST("/login2", controllers.PostSpeed2)
+	router.POST("/login3", controllers.PostSpeed3)
 
 	//v1组路由
 	hgApi := router.Group("/hg/api")
@@ -40,4 +45,6 @@ func LoadRoute(router *gin.Engine) {
 	// work api
 	Api := router.Group("/api")
 	Api.POST("/queryByEs", controllers.QueryByEs)
+	Api.POST("/queryByEsPlus", controllers.QueryByEsPlus)
+	Api.POST("/querySourceByEs", controllers.QueryBySourceEs)
 }

@@ -9,6 +9,7 @@ import (
 var (
 	Basedirs   []string
 	CurrentDir string
+	SepStr     string = "_||_"
 )
 
 func init() {
