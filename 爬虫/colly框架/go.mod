@@ -1,4 +1,4 @@
-module colly框架
+module collydemo
 
 go 1.14
 

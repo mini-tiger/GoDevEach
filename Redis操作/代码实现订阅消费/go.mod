@@ -1,3 +1,3 @@
-module 代码实现订阅消费
+module redis_pubsub_demo
 
 go 1.14

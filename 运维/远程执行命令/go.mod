@@ -1,4 +1,4 @@
-module 远程执行命令
+module remoteCmd
 
 go 1.14
 

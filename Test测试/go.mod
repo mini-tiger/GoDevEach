@@ -1,3 +1,3 @@
-module Test测试
+module Testdemo
 
 go 1.14

@@ -1,4 +1,4 @@
-module redis任务生产消费
+module redisWorkPush
 
 go 1.13
 

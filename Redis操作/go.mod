@@ -1,4 +1,4 @@
-module Redis操作
+module Redisdemo
 
 go 1.13
 

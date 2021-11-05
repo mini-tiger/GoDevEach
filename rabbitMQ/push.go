@@ -6,6 +6,7 @@ import (
 	"github.com/streadway/amqp"
 	"log"
 	"rabbitMQ/service"
+	"time"
 )
 
 //Rabbitmq 初始化rabbitmq连接
@@ -31,10 +32,14 @@ func main() {
 	//xxx exchage
 	// todo topic 支持通配符
 	// https://www.guaosi.com/2020/01/28/detailed-introduction-to-the-rabbitmq-switch-with-golang/
-	r, _ := New()
-	r.DeleteQueue("tao")
 
-	service.PublishExchageQueue(r.conn, "test_topic_exchange", []string{"user.save", "user.update", "user.delete.abc"}, "test_topic_queue")
+	//r.DeleteQueue("tao")
+	for {
+		r, _ := New()
+		service.PublishExchageQueue(r.conn, "test_topic_exchange", []string{"user.save", "user.update", "user.delete.abc"}, "test_topic_queue")
+
+		time.Sleep(time.Second * 60)
+	}
 
 	r1, _ := New()
 	service.ConsumeExchageQueue(r1.conn, "test_topic_exchange", "user.#", "test_topic_queue")

@@ -1,4 +1,4 @@
-module 限流器
+module xianliudemo
 
 go 1.14
 

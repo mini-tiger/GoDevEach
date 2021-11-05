@@ -1,4 +1,4 @@
-module ssh并发脚本
+module sshdemo
 
 go 1.14
 
