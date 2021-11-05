@@ -1,4 +1,4 @@
-module ttest
+module vaildatordemo
 
 go 1.17
 

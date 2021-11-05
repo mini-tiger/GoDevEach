@@ -1,4 +1,4 @@
-module GBK字符集转换
+module GBKConverDemo
 //module GBK
 
 go 1.16

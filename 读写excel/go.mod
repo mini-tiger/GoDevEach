@@ -1,4 +1,4 @@
-module 读写excel
+module exceldemo
 
 go 1.13
 
