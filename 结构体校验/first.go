@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/go-playground/validator/v10"
+	"strings"
 )
 
 // User contains user information
@@ -13,6 +14,7 @@ type User struct {
 	Email          string     `validate:"required,email"`
 	FavouriteColor string     `validate:"iscolor"`                // alias for 'hexcolor|rgb|rgba|hsl|hsla'
 	Addresses      []*Address `validate:"required,dive,required"` // a person can have a home and cottage...
+	String         string     `validate:"is-awesome"`             // 自定义
 }
 
 // Address houses a users address information
@@ -26,10 +28,15 @@ type Address struct {
 // use a single instance of Validate, it caches struct info
 var validate *validator.Validate
 
+func ValidateMyVal(fl validator.FieldLevel) bool {
+
+	return strings.Contains(fl.Field().String(), "zidingyi")
+}
+
 func main() {
 
 	validate = validator.New()
-
+	validate.RegisterValidation("is-awesome", ValidateMyVal)
 	validateStruct()
 	validateVariable()
 }
@@ -45,10 +52,11 @@ func validateStruct() {
 	user := &User{
 		FirstName:      "Badger",
 		LastName:       "Smith",
-		Age:            135,
+		Age:            135, // 不在  0 - 130
 		Email:          "Badger.Smith@gmail.com",
-		FavouriteColor: "#000-",
+		FavouriteColor: "#d3dbdc", // 正确 hexcolor|rgb|rgba|hsl|hsla
 		Addresses:      []*Address{address},
+		String:         "zidingyi",
 	}
 
 	// returns nil or ValidationErrors ( []FieldError )
