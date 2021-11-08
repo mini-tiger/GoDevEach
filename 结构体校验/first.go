@@ -72,17 +72,17 @@ func validateStruct() {
 		}
 
 		for _, err := range err.(validator.ValidationErrors) {
-
-			fmt.Println(err.Namespace())
-			fmt.Println(err.Field())
-			fmt.Println(err.StructNamespace())
-			fmt.Println(err.StructField())
-			fmt.Println(err.Tag())
-			fmt.Println(err.ActualTag())
-			fmt.Println(err.Kind())
-			fmt.Println(err.Type())
-			fmt.Println(err.Value())
-			fmt.Println(err.Param())
+			fmt.Printf("%#v\n", err)
+			fmt.Println("Namespace:", err.Namespace())
+			fmt.Println("Field:", err.Field())
+			fmt.Println("StructNamespace:", err.StructNamespace())
+			fmt.Println("StructField:", err.StructField())
+			fmt.Println("Tag:", err.Tag(), err)
+			fmt.Println("ActualTag:", err.ActualTag())
+			fmt.Println("Kind:", err.Kind())
+			fmt.Println("Type:", err.Type())
+			fmt.Println("Value:", err.Value())
+			fmt.Println("Param:", err.Param())
 			fmt.Println()
 		}
 
