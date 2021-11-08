@@ -50,7 +50,7 @@ func ConsumeExchageQueue(conn *amqp.Connection, exchange, routingKey, queueName 
 	//args：直接写nil，没研究过，不解释。
 	q, err := ch.QueueDeclare(
 		queueName, // name
-		false,     // durable
+		true,      // durable
 		false,     // delete when usused
 		false,     // exclusive
 		false,     // no-wait

@@ -21,6 +21,8 @@ func failOnError(err error, msg string) {
 	}
 }
 
+// xxx https://learnku.com/docs/go-szgbf/1.0/topic-mode-of-rabbitmq-working-mode/8748
+
 func main() {
 	//xxx no exchage
 	// https://www.jianshu.com/p/ae01daa8b1b3
@@ -38,7 +40,7 @@ func main() {
 		r, _ := New()
 		service.PublishExchageQueue(r.conn, "test_topic_exchange", []string{"user.save", "user.update", "user.delete.abc"}, "test_topic_queue")
 
-		time.Sleep(time.Second * 60)
+		time.Sleep(time.Second * 2)
 	}
 
 	r1, _ := New()
