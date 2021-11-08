@@ -16,7 +16,7 @@ func init() {
 func main() {
 	http.Handle("/metrics", promhttp.Handler())
 	if err := http.ListenAndServe(":8080", nil); err != nil {
-		fmt.Printf("Error occur when start server %v ", err)
+		fmt.Printf("Error occur when start server %v", err)
 	}
 
 }
