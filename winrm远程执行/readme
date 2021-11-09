@@ -1,0 +1,23 @@
+安装
+管理员cmd
+winrm invoke Restore winrm/Config
+winrm quickconfig
+winrm e winrm/config/listener
+
+winrm set winrm/config/client/auth @{Basic="true"}
+winrm set winrm/config/service/auth @{Basic="true"}
+winrm set winrm/config/service @{AllowUnencrypted="true"}   # 如果报错，执行下面powershell 方面
+
+powershell
+主机信任
+ Set-Item wsman:\localhost\Client\TrustedHosts -value 172.*
+或
+Set-Item WSMan:\localhost\Client\TrustedHosts *
+
+网络改为私有
+Set-NetConnectionProfile -NetworkCategory Private
+跳过网络检查
+Enable-PSRemoting -SkipNetworkProfileCheck -Force
+
+查看网络
+ Get-NetConnectionProfile
