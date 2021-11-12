@@ -2,60 +2,52 @@ package main
 
 import (
 	"fmt"
-	ants "github.com/panjf2000/ants/v2"
+	"github.com/panjf2000/ants/v2"
+	"log"
 	"sync"
-	"sync/atomic"
 	"time"
 )
 
-var sum int32
+//xxx https://gitee.com/mirrors/ants
 
 func myFunc(i interface{}) {
-	n := i.(int32)
-	atomic.AddInt32(&sum, n)
-	fmt.Printf("run with %d\n", n)
+	n := i.(*Entry)
+	//atomic.AddInt32(&sum, n)
+	time.Sleep(200 * time.Millisecond)
+	fmt.Printf("run with %+v\n", *n)
 }
 
-func demoFunc() {
-	time.Sleep(10 * time.Millisecond)
-	fmt.Println("Hello World!")
+type Entry struct {
+	int
+	Massage string
 }
-
-// xxx https://segmentfault.com/a/1190000040117561
-// https://github.com/panjf2000/ants/
 
 func main() {
-	defer ants.Release()
-
 	runTimes := 1000
-
-	// Use the common pool.
 	var wg sync.WaitGroup
-	syncCalculateSum := func() {
-		demoFunc()
-		wg.Done()
-	}
-	for i := 0; i < runTimes; i++ {
-		wg.Add(1)
-		_ = ants.Submit(syncCalculateSum)
-	}
-	wg.Wait()
-	fmt.Printf("running goroutines: %d\n", ants.Running())
-	fmt.Printf("finish all tasks.\n")
+	// 创建一个容量为10的goroutine池
+	//p,_:=ants.NewPool(10)
 
-	// Use the pool with a function,
-	// set 10 to the capacity of goroutine pool and 1 second for expired duration.
 	p, _ := ants.NewPoolWithFunc(10, func(i interface{}) {
 		myFunc(i)
 		wg.Done()
-	})
-	defer p.Release()
-	// Submit tasks one by one.
+	},
+		ants.WithMaxBlockingTasks(2), // 设置等待队列的最大长度。超过这个长度，提交任务直接返回错误
+		ants.WithNonblocking(false),  // 设置其为非阻塞。非阻塞的ants池中，在所有 goroutine 都在处理任务时，提交新任务会直接返回错误
+	)
+
+	defer p.Release() // xxx 使用完必须释放
+
 	for i := 0; i < runTimes; i++ {
 		wg.Add(1)
-		_ = p.Invoke(int32(i))
+		err := p.Invoke(&Entry{i, "Hello"}) //xxx 提交任务  不是执行
+		if err != nil {
+			log.Fatalln(err)
+		}
 	}
 	wg.Wait()
-	fmt.Printf("running goroutines: %d\n", p.Running())
-	fmt.Printf("finish all tasks, result is %d\n", sum)
+
+	//p.Reboot()
+	fmt.Printf("running goroutines: %d\n", p.Running()) //执行
+	//fmt.Printf("finish all tasks, result is %d\n", sum)
 }

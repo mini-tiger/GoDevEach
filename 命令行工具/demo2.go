@@ -24,6 +24,7 @@ func main() {
 //--flag=x
 
 //xxx  ./demo2 -f 1
+// xxx ./demo2 --flagname 22
 func init() {
 	var ip = flag.IntP("flagname", "f", 1234, "help message")
 
