@@ -11,12 +11,11 @@ import (
 // https://learnku.com/docs/go-szgbf/1.0/topic-mode-of-rabbitmq-working-mode/8748
 
 func main() {
-	rabbitmqOne := rbtmqcs.NewRabbitMQTopic("hxbExc", "huxiaobai.one")
-	rabbitmqTwo := rbtmqcs.NewRabbitMQTopic("hxbExc", "huxiaobai.two.cs")
+	rabbitmqOne := rbtmqcs.NewRabbitMQTopic("hxbExc12", "huxiaobai.one", "abc1")
+	//rabbitmqTwo := rbtmqcs.NewRabbitMQTopic("hxbExc", "huxiaobai.two.cs","abc123")
 	for i := 0; ; i++ {
-		rabbitmqOne.PublishTopic("hello huxiaobai one" + strconv.Itoa(i))
-		rabbitmqTwo.PublishTopic("hello huxiaobai two" + strconv.Itoa(i))
-		time.Sleep(1 * time.Second)
+		rabbitmqOne.PublishTopic("hello huxiaobai one"+strconv.Itoa(i), false) //xxx dc  true,消费者 重启 也能 连接上 断开之前的数据， false  如果发送端 不持久化队列，消费端重启，则接收更新的数据
+		time.Sleep(200 * time.Millisecond)
 		fmt.Println(i)
 	}
 }
