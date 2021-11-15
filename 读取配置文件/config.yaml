@@ -1,0 +1,31 @@
+# mysql configuration
+mysql:
+  username: root
+  password: 'hello'
+  path: '172.16.71.17:3306'
+  db-name: 'itgo_monitor'
+  config: 'charset=utf8&parseTime=True&loc=Local'
+  max-idle-conns: 5
+  max-open-conns: 100
+  log-mode: false
+
+# system configuration
+system:
+  use-multipoint: false
+  env: 'public'  # Change to "develop" to skip authentication for development mode
+  addr: ''
+  port: 13008
+  db-type: "mysql"  # support mysql/sqlite/maridb
+
+# elasticsearch configuration
+es:
+  host: 'http://192.168.25.239:9200'
+
+prometheus:
+  host: 'http://172.16.62.239:9090'
+
+consul:
+  addr: "http://172.16.71.20:8500"
+
+public:
+  publicSendEmailAddress: "http://futong-public-mq:6010/sendEmailMethod"
