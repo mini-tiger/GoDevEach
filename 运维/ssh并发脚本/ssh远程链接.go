@@ -7,8 +7,8 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
-	"ssh并发脚本/funcs"
-	"ssh并发脚本/g"
+	"sshdemo/funcs"
+	"sshdemo/g"
 )
 
 func main() {

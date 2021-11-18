@@ -5,7 +5,7 @@ import (
 	"gitee.com/taojun319/tjtools/sshtools"
 	mapset "github.com/deckarep/golang-set"
 	"log"
-	"ssh并发脚本/g"
+	"sshdemo/g"
 )
 
 var hostSet mapset.Set

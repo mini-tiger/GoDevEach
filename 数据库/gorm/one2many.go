@@ -32,7 +32,7 @@ func (KpiInfo) TableName() string {
 
 type KpiSet struct {
 	ID             uint64 `gorm:"primaryKey" json:"id"`
-	KpiInfoID      uint64 `gorm:"column:kpi_info_id;not null" json:"kpi_info_id"`
+	KpiInfoID      uint64 `gorm:"column:kpi_info_id;not null" json:"kpi_info_id"` // 与 kpiset 关联字段
 	MonitorTypeId  int    `gorm:"column:monitor_type_id" json:"monitor_type_id"`
 	KpiSetName     string `gorm:"column:kpi_set_name; size:128" json:"kpi_set_name"`
 	KpiSetStatus   int    `gorm:"column:kpi_set_status" json:"kpi_set_status"`
@@ -255,7 +255,7 @@ func main() {
 
 	fmt.Printf("%+v,%d\n", kpiInfo116.ID, len(kpiInfo116.KpiSetId))
 
-	// 清除关联后  使用Related 还是可以查到
+	// 清除关联后
 	db.Model(&kpiInfo116).Related(&kpiInfo116.KpiSetId).Find(&kpiInfo116.KpiSetId)
 	fmt.Printf("%+v,%d\n", kpiInfo116.ID, len(kpiInfo116.KpiSetId))
 
