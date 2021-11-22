@@ -60,6 +60,7 @@ func ttttt2() {
 	c := cron.New()
 	_ = c.Schedule(defaultSecond, Test2Job{})
 	c.Start()
+	c.
 }
 
 func ttttt1() {
