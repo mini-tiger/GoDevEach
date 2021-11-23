@@ -11,6 +11,7 @@ import (
 //https://godoc.org/github.com/robfig/cron
 
 type TestJob struct {
+
 }
 
 func (this TestJob) Run() {
