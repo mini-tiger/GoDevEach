@@ -11,7 +11,6 @@ import (
 //https://godoc.org/github.com/robfig/cron
 
 type TestJob struct {
-
 }
 
 func (this TestJob) Run() {
@@ -61,7 +60,6 @@ func ttttt2() {
 	c := cron.New()
 	_ = c.Schedule(defaultSecond, Test2Job{})
 	c.Start()
-	c.
 }
 
 func ttttt1() {
