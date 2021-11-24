@@ -2,23 +2,22 @@ package main
 
 import (
 	"fmt"
+	"github.com/Shopify/sarama"
 	"log"
 	"os"
 	"sync"
 	"time"
-
-	"github.com/Shopify/sarama"
 )
 
 var wg sync.WaitGroup
-var topic = "test-topic"
+var topic = "kafkaMsgTypeOs"
 
 // xxx 不能 从上次偏移量 继续
 func main() {
 	sarama.Logger = log.New(os.Stdout, "sarama: ", log.LstdFlags)
 
 	cfg := sarama.NewConfig()
-	cfg.Version = sarama.V2_7_1_0
+	cfg.Version = sarama.V2_6_0_0
 	cfg.Producer.Return.Errors = true
 	cfg.Net.SASL.Enable = false
 	cfg.Producer.Return.Successes = true //这个是关键，否则读取不到消息
@@ -34,12 +33,12 @@ func main() {
 	//创建新的消费者
 	//consumer, err := sarama.NewConsumer([]string{"192.168.43.111:9092"}, config)
 
-	client, err := sarama.NewClient([]string{"192.168.43.111:9092"}, cfg)
+	client, err := sarama.NewClient([]string{"172.16.71.17:9092"}, cfg)
 	if err != nil {
 		fmt.Println("fail to start consumer", err)
 	}
 
-	offsetid, _ := client.GetOffset("test-topic", 0, sarama.OffsetNewest)
+	offsetid, _ := client.GetOffset("kafkaMsgTypeOs", 0, sarama.OffsetNewest)
 	//
 	fmt.Printf("最新 offset:%v\n", offsetid)
 	consumer, err := sarama.NewConsumerFromClient(client)

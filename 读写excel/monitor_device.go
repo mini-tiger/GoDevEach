@@ -7,22 +7,22 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
+	"strings"
 )
 
 // defined a struct
-type Standard1 struct {
+type Row struct {
 	// xxx column 要与title 名字一样
 	// use field name as default column name
-	Phone int `xlsx:"column(phone)"`
+	//Phone int `xlsx:"column(phone)"`
 	// column means to map the column name
-	Name string `xlsx:"column(name)"`
+	Name string `xlsx:"column(Name)"`
 	// you can map a column into more than one field
-	NamePtr *string `xlsx:"column(name)"` // xxx 重复读name列
+	Os string `xlsx:"column(OS)" validate:"required,OsValidation"` // xxx 重复读name列
 	// omit `column` if only want to map to column name, it's equal to `column(AgeOf)`
-	Age  int    `xlsx:"age" validate:"gte=0,lte=130"` // xxx 与xlsx:"column(age)"效果一样
-	Addr string `xlsx:"column(addr)"`
-	Mail string `xlsx:"column(mail);default(abc@mail.com)" validate:"required,email"`
-	IP   string `xlsx:"column(IP)" validate:"required,ipv4"`
+
+	//Mail string `xlsx:"column(mail);default(abc@mail.com)" validate:"required,email"`
+	IP string `xlsx:"column(IP)" validate:"required,ipv4"`
 
 	// split means to split the string into slice by the `|`
 
@@ -42,7 +42,7 @@ func main() {
 	CurrDir := filepath.Dir(file)
 
 	conn := excel.NewConnecter()
-	err := conn.Open(path.Join(CurrDir, "stuTojson2.xlsx"))
+	err := conn.Open(path.Join(CurrDir, "monitor_device.xlsx"))
 	if err != nil {
 		panic(err)
 	}
@@ -54,6 +54,7 @@ func main() {
 	//             if sheetNamer is a object implements `GetXLSXSheetName()string`, the return value will be used.
 	//             otherwise, will use sheetNamer as struct and reflect for it's name.
 	// 			   if sheetNamer is a slice, the type of element will be used to infer like before.
+
 	cfg := &excel.Config{
 		Sheet:         "student_list",
 		TitleRowIndex: 1, // xxx title 行的位置
@@ -63,18 +64,26 @@ func main() {
 	}
 	rd, err := conn.NewReaderByConfig(cfg)
 	validate := validator.New()
+	err = validate.RegisterValidation("OsValidation", OsValidationFunc)
+	if err != nil {
+		panic(err)
+	}
+	var index = 3
 	for rd.Next() {
 		//fmt.Printf("rd:%v\n",rd.GetTitles())
-		var s Standard1
+		var r Row
 		// Read a row into a struct.
-		err := rd.Read(&s)
+		err := rd.Read(&r)
 		if err != nil {
 			panic(err)
 		}
+		fmt.Println("============", index)
+
 		//xxx 检验数据
-		err = validate.Struct(&s)
+		err = validate.Struct(&r)
 		if err != nil {
 			for _, err := range err.(validator.ValidationErrors) {
+
 				fmt.Printf("%#v\n", err)
 				fmt.Println("Namespace:", err.Namespace())
 				fmt.Println("Field:", err.Field())
@@ -89,7 +98,17 @@ func main() {
 				fmt.Println()
 			}
 		}
-		fmt.Printf("%+v\n", s)
-
+		fmt.Printf("%+v\n", r)
+		index++
 	}
+}
+
+func OsValidationFunc(f1 validator.FieldLevel) bool {
+	// f1 包含了字段相关信息
+	// f1.Field() 获取当前字段信息
+	// f1.Param() 获取tag对应的参数
+	// f1.FieldName() 获取字段名称
+	//fmt.Printf("%+v\n",f1)
+	value := strings.ToLower(f1.Field().String())
+	return value == "linux" || value == "windows"
 }
