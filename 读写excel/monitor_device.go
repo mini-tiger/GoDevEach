@@ -57,7 +57,7 @@ func main() {
 	// 			   if sheetNamer is a slice, the type of element will be used to infer like before.
 
 	cfg := &excel.Config{
-		Sheet:         "student_list",
+		Sheet:         "monitor_devices",
 		TitleRowIndex: 1, // xxx title 行的位置
 		Skip:          0,
 		Prefix:        "",
