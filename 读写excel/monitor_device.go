@@ -7,6 +7,7 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 )
 
@@ -18,9 +19,9 @@ type Row struct {
 	// column means to map the column name
 	Name string `xlsx:"column(Name)"`
 	// you can map a column into more than one field
-	Os string `xlsx:"column(OS)" validate:"required,OsValidation"` // xxx 重复读name列
+	Os string `xlsx:"column(OS)" validate:"required,OsValidation"`
 	// omit `column` if only want to map to column name, it's equal to `column(AgeOf)`
-
+	Port string `xlsx:"column(port)" validate:"required,PortValidation"`
 	//Mail string `xlsx:"column(mail);default(abc@mail.com)" validate:"required,email"`
 	IP string `xlsx:"column(IP)" validate:"required,ipv4"`
 
@@ -64,10 +65,9 @@ func main() {
 	}
 	rd, err := conn.NewReaderByConfig(cfg)
 	validate := validator.New()
-	err = validate.RegisterValidation("OsValidation", OsValidationFunc)
-	if err != nil {
-		panic(err)
-	}
+	validate.RegisterValidation("OsValidation", OsValidationFunc)
+	validate.RegisterValidation("PortValidation", PortValidationFunc)
+
 	var index = 3
 	for rd.Next() {
 		//fmt.Printf("rd:%v\n",rd.GetTitles())
@@ -75,28 +75,33 @@ func main() {
 		// Read a row into a struct.
 		err := rd.Read(&r)
 		if err != nil {
-			panic(err)
+			continue
 		}
 		fmt.Println("============", index)
 
 		//xxx 检验数据
 		err = validate.Struct(&r)
 		if err != nil {
-			for _, err := range err.(validator.ValidationErrors) {
-
-				fmt.Printf("%#v\n", err)
-				fmt.Println("Namespace:", err.Namespace())
-				fmt.Println("Field:", err.Field())
-				fmt.Println("StructNamespace:", err.StructNamespace())
-				fmt.Println("StructField:", err.StructField())
-				fmt.Println("Tag:", err.Tag(), err)
-				fmt.Println("ActualTag:", err.ActualTag())
-				fmt.Println("Kind:", err.Kind())
-				fmt.Println("Type:", err.Type())
-				fmt.Println("Value:", err.Value())
-				fmt.Println("Param:", err.Param())
-				fmt.Println()
+			errslice := err.(validator.ValidationErrors)
+			if len(errslice) > 0 {
+				fmt.Printf("行: %d 列: %s 值: %s 不符合:%s 规范\n", index, (errslice[0]).Field(), errslice[0].Value(), errslice[0].Field())
 			}
+
+			//for _, err := range err.(validator.ValidationErrors) {
+			//
+			//	fmt.Printf("%#v\n", err)
+			//	fmt.Println("Namespace:", err.Namespace())
+			//	fmt.Println("Field:", err.Field())
+			//	fmt.Println("StructNamespace:", err.StructNamespace())
+			//	fmt.Println("StructField:", err.StructField())
+			//	fmt.Println("Tag:", err.Tag(), err)
+			//	fmt.Println("ActualTag:", err.ActualTag())
+			//	fmt.Println("Kind:", err.Kind())
+			//	fmt.Println("Type:", err.Type())
+			//	fmt.Println("Value:", err.Value())
+			//	fmt.Println("Param:", err.Param())
+			//	fmt.Println()
+			//}
 		}
 		fmt.Printf("%+v\n", r)
 		index++
@@ -111,4 +116,17 @@ func OsValidationFunc(f1 validator.FieldLevel) bool {
 	//fmt.Printf("%+v\n",f1)
 	value := strings.ToLower(f1.Field().String())
 	return value == "linux" || value == "windows"
+}
+
+func PortValidationFunc(f1 validator.FieldLevel) bool {
+	// f1 包含了字段相关信息
+	// f1.Field() 获取当前字段信息
+	// f1.Param() 获取tag对应的参数
+	// f1.FieldName() 获取字段名称
+	//fmt.Printf("%+v\n",f1)
+	value, err := strconv.Atoi(f1.Field().String())
+	if err != nil {
+		return false
+	}
+	return value > 1 && value < 65535
 }
