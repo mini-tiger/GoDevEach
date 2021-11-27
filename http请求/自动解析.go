@@ -34,4 +34,5 @@ func main() {
 		fmt.Printf("name:%s latest:%s\n", lib.Name, lib.Latest)
 		break
 	}
+
 }
