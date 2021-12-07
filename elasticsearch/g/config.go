@@ -11,7 +11,7 @@ package g
 var (
 	IndexName = "subject"
 	TypeName  = "online"
-	Servers   = []string{"http://192.168.43.47:9200"}
+	Servers   = []string{"http://172.16.71.31:9200"}
 )
 
 type Subject struct {

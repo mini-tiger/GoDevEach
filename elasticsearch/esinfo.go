@@ -8,7 +8,7 @@ import (
 
 func main() {
 	es, err := elasticsearch.NewClient(
-		elasticsearch.Config{Addresses: []string{"http://192.168.43.47:9200"}},
+		elasticsearch.Config{Addresses: []string{"http://172.16.71.31:9200"}},
 	)
 	if err != nil {
 		panic(err)
