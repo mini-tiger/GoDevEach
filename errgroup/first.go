@@ -26,8 +26,8 @@ func main() {
 			return nil
 		})
 	}
-	if err := group.Wait(); err != nil {
-		fmt.Println(err)
-	}
 
+	if err := group.Wait(); err != nil {
+		fmt.Println(err) //只返回 第一个错误
+	}
 }
