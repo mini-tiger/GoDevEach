@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/fatih/structs"
 	"github.com/goinggo/mapstructure"
+	"math"
 	"reflect"
 )
 
@@ -67,14 +68,16 @@ func MapToJsonDemo2() {
 }
 
 type People struct {
-	Name string `json:"name_title"`
-	Age  int    `json:"age_size"`
+	Name    string  `json:"name_title"`
+	Age     int     `json:"age_size"`
+	Float64 float64 `json:"float64"`
 }
 
 func MapToStructDemo() {
 	mapInstance := make(map[string]interface{})
 	mapInstance["Name"] = "jqw"
 	mapInstance["Age"] = 18
+	mapInstance["Float64"] = math.MaxFloat64
 
 	var people People
 	err := mapstructure.Decode(mapInstance, &people)
@@ -117,6 +120,6 @@ func main() {
 
 	// xxx struct to map
 
-	data := StructToMapDemo(People{"aa", 123})
+	data := StructToMapDemo(People{"aa", 123, math.MaxFloat64 - 1})
 	fmt.Println(data)
 }
