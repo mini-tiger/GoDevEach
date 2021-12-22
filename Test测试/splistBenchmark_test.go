@@ -1,7 +1,7 @@
 package main
 
 import (
-	"Test测试/tools"
+	"Testdemo/tools"
 	"testing"
 )
 
