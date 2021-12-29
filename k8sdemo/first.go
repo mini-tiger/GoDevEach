@@ -27,7 +27,7 @@ import (
 func main() {
 	var kubeconfig *string
 	if home := homedir.HomeDir(); home != "" {
-		kubeconfig = flag.String("kubeconfig", filepath.Join("config"), "(optional) absolute path to the kubeconfig file")
+		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
 	} else {
 		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
 	}
@@ -65,7 +65,7 @@ func main() {
 					Containers: []apiv1.Container{
 						{
 							Name:  "web",
-							Image: "nginx:1.12",
+							Image: "nginx:1.19.7",
 							Ports: []apiv1.ContainerPort{
 								{
 									Name:          "http",

@@ -13,6 +13,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
+// https://blog.csdn.net/huwh_/article/details/78821805
 var ctx context.Context = context.Background()
 
 func main() {
