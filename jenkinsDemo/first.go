@@ -50,8 +50,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	for index, j := range jobs {
-		fmt.Println(index, j.GetName())
+	for _, j := range jobs {
+		//get xml
+		fmt.Println(j.GetConfig(ctx))
+		//fmt.Println(index, j.GetName())
 	}
 
 }
