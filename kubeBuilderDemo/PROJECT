@@ -1,0 +1,16 @@
+domain: tj.github.com
+layout:
+- go.kubebuilder.io/v3
+projectName: kubebuilderdemo
+repo: kubeBuilderDemo
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: tj.github.com
+  group: batch
+  kind: ImoocPod
+  path: kubeBuilderDemo/api/v1alpha1
+  version: v1alpha1
+version: "3"
