@@ -1,1 +1,6 @@
 go.sum
+.idea
+*.a
+*.exe
+*.log
+*.sum
