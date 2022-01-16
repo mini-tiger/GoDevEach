@@ -54,7 +54,8 @@ func main() {
 
 	//respbody:=make(map[string]interface{},0)
 	respbody := &respStruct{}
-	resp, err := client.R().SetBody(map[string]interface{}{"username": "testuser", "password": "testpass"}).
+	resp, err := client.R().
+		SetBody(map[string]interface{}{"username": "testuser", "password": "testpass"}).
 		SetHeader("Content-Type", "application/json"). // request header
 		ForceContentType("application/json").          // 强制返回格式
 		SetResult(respbody).                           // or SetResult(AuthSuccess{}).
