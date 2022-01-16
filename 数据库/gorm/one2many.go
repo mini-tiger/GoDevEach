@@ -18,12 +18,12 @@ import (
 // xxx one(KpiInfo) many(kpiset)
 // xxx https://gobea.cn/blog/detail/260JLw5Z.html
 type KpiInfo struct {
-	ID            uint64   `gorm:"primaryKey" json:"id"`
-	MonitorTypeId int      `gorm:"column:monitor_type_id" json:"monitor_type_id"`
-	KpiSetId      []KpiSet `json:"kpi_set_id"` //数据库不会 有这个字段
-	KpiKey        string   `gorm:"column:kpi_key; size:128" json:"kpi_key"`
-	KpiName       string   `gorm:"column:kpi_name; size:128" json:"kpi_name"`
-	KpiUint       string   `gorm:"column:kpi_uint; size:32" json:"kpi_uint"`
+	ID            uint64    `gorm:"primaryKey" json:"id"`
+	MonitorTypeId int       `gorm:"column:monitor_type_id" json:"monitor_type_id"`
+	KpiSetId      []*KpiSet `json:"kpi_set_id"` //数据库不会 有这个字段
+	KpiKey        string    `gorm:"column:kpi_key; size:128" json:"kpi_key"`
+	KpiName       string    `gorm:"column:kpi_name; size:128" json:"kpi_name"`
+	KpiUint       string    `gorm:"column:kpi_uint; size:32" json:"kpi_uint"`
 }
 
 func (KpiInfo) TableName() string {
@@ -59,7 +59,7 @@ func init() {
 	//if MysqlClient, err = gorm.Open(mysql.Open(dsn), &gorm.Config{}); err != nil {
 	//	log.Fatal("mysql init err:", err)
 	//}
-	Db, err = gorm.Open("mysql", "root:hello@tcp(172.16.71.17:3306)/itgo_monitor?charset=utf8&parseTime=True&loc=Local")
+	Db, err = gorm.Open("mysql", "root:FuTongde1gesjk@tcp(172.16.71.31:3306)/itgo_monitor?charset=utf8&parseTime=True&loc=Local")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -110,7 +110,7 @@ func main() {
 	// 一起创建
 	kpiinfo = KpiInfo{
 		KpiKey: "Abc",
-		KpiSetId: []KpiSet{
+		KpiSetId: []*KpiSet{
 			{
 				KpiSetType: "123",
 			},
@@ -123,11 +123,11 @@ func main() {
 	//db.Save(&kpiinfo)
 	//xxx 先 多  在  一
 
-	KpiSets := []KpiSet{
-		KpiSet{
+	KpiSets := []*KpiSet{
+		&KpiSet{
 			KpiSetType: "123",
 		},
-		KpiSet{
+		&KpiSet{
 			KpiSetType: "456",
 		},
 	}
@@ -201,7 +201,7 @@ func main() {
 	kpiset44 := KpiSet{}
 	db.First(&kpiset44, "id = 1005") // 从数据库找一条数据
 
-	db.Model(&kpiset44).Related(&kpiset44, "kpi_info_id") // Related 返回 一条数据
+	db.Model(&kpiset44).Related(&kpiset44, "kpi_info_id") // Related 返回 一 那边的数据
 
 	fmt.Printf("关联 一那边 的id:%d \n", kpiset44.KpiInfoID)
 	fmt.Printf("%+v\n", kpiset44)
