@@ -1,5 +1,5 @@
 #xxxx 设置基础镜像,Harbor服务器pull镜像
-FROM alpine:3.13.6
+FROM gongt/glibc:bash
 #创建app目录,保存我们的代码
 RUN mkdir -p /usr/src/go
 #设置工作目录
@@ -17,4 +17,4 @@ EXPOSE 8080
 #运行命令
 #CMD ["sh","-c","./main >server.log 2>&1"]
 # 日志打印在 标准输出
-CMD ["sh","-c","./main"]
+CMD ["bash","-c","./main"]

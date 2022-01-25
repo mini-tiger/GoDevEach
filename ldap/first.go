@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-ldap/ldap"
 	"log"
+	"strings"
 )
 
 func main() {
@@ -34,7 +35,7 @@ func abc() {
 func Example_userAuthentication() {
 	// The username and password we want to check
 	// 用来认证的用户名和密码
-	username := "sAMAccountName"
+	//username := "sAMAccountName"
 	password := "Taojun207"
 
 	// 用来获取查询权限的 bind 用户.如果 ldap 禁止了匿名查询,那我们就需要先用这个帐户 bind 以下才能开始查询
@@ -68,16 +69,16 @@ func Example_userAuthentication() {
 	// 这样我们就有查询权限了,可以构造查询请求了
 	searchRequest := ldap.NewSearchRequest(
 		// 这里是 basedn,我们将从这个节点开始搜索
-		"dc=21vianet,dc=com",
+		"DC=21vianet,DC=com",
 		// 这里几个参数分别是 scope, derefAliases, sizeLimit, timeLimit,  typesOnly
 		// 详情可以参考 RFC4511 中的定义,文末有链接
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
 		// 这里是 LDAP 查询的 Filter.这个例子例子,我们通过查询 uid=username 且 objectClass=organizationalPerson.
 		// username 即我们需要认证的用户名
-		//fmt.Sprintf("(&(objectClass=organizationalPerson))"),
-		fmt.Sprintf("(&(objectClass=organizationalPerson)(uid=%s))", ldap.EscapeFilter(username)),
+		"(objectClass=group)",
+		//fmt.Sprintf("(&(objectClass=organizationalPerson)(uid=%s))", ldap.EscapeFilter(username)),
 		// 这里是查询返回的属性,以数组形式提供.如果为空则会返回所有的属性
-		[]string{"dn"},
+		[]string{"dn", "cn", "uid"},
 		nil,
 	)
 	// 好了现在可以搜索了,返回的是一个数组
@@ -85,9 +86,15 @@ func Example_userAuthentication() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	for _, group := range sr.Entries {
+		if strings.Contains(group.DN, "member") {
+			fmt.Println(group)
+		}
+	}
 
 	// 如果没有数据返回或者超过1条数据返回,这对于用户认证而言都是不允许的.
 	// 前这意味着没有查到用户,后者意味着存在重复数据
+	fmt.Println(len(sr.Entries))
 	if len(sr.Entries) != 1 {
 		log.Fatal("User does not exist or too many entries returned")
 	}
