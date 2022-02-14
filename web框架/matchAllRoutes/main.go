@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -21,8 +20,13 @@ func doLogin(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": gin.H{
-			"code":     http.StatusOK,
-			"message":  fmt.Sprintf("method:%s,host:%v,path:%s", c.Request.Method, c.Request.Host, path),
+			"code": http.StatusOK,
+			"message": gin.H{
+				"Method":     c.Request.Method,
+				"Host":       c.Request.Host,
+				"RemoteAddr": c.Request.RemoteAddr,
+				"Path":       path,
+			},
 			"clientIP": c.ClientIP(),
 			"header":   c.Request.Header,
 		},
