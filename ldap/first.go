@@ -78,8 +78,8 @@ func Example_userAuthentication() {
 		//fmt.Sprintf("(&(objectClass=organizationalPerson))"),
 		fmt.Sprintf("(&(objectClass=organizationalPerson)(sAMAccountName=%s))", ldap.EscapeFilter(username)), // xxx 根据属性筛选
 		// xxx 这里是查询返回的属性,以数组形式提供.如果为空则会返回所有的属性
-		//nil,
-		[]string{"cn", "description", "sAMAccountName"},
+		nil,
+		//[]string{"cn", "description", "sAMAccountName"},
 		nil,
 	)
 	// 好了现在可以搜索了,返回的是一个数组
