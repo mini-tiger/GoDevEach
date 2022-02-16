@@ -2,10 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/yl2chen/cidranger"
 	"net"
 	"os"
-
-	"github.com/yl2chen/cidranger"
 )
 
 // custom structure that conforms to RangerEntry interface
