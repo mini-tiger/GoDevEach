@@ -16,7 +16,7 @@ import (
  * @Date: 2021/11/15 下午6:30
  */
 
-const defaultConfigFile = "E:\\work\\erp-helm\\values.yaml"
+const defaultConfigFile = "values.yaml"
 const harbor = "misharbor.dyxnet.com/erp-lastest/"
 const harbor21 = "harbor.dev.21vianet.com/dyxnet-erp/"
 
