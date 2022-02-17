@@ -17,7 +17,7 @@ func main() {
 // 控制器函数
 func doLogin(c *gin.Context) {
 	path := c.Param("path")
-
+	//fmt.Printf("%+v\n",c.Request.Header)
 	c.JSON(http.StatusOK, gin.H{
 		"status": gin.H{
 			"code": http.StatusOK,
