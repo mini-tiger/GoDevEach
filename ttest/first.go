@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	flag "github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"log"
+	"os/exec"
 	"time"
 )
 
@@ -53,11 +55,45 @@ func main() {
 		pullCmd = fmt.Sprintf("docker pull %s", sourceImage)
 		retag = fmt.Sprintf("docker tag %s %s", sourceImage, destImage)
 		pushCmd = fmt.Sprintf("docker push %s", destImage)
-		fmt.Println(pullCmd)
-		fmt.Println(retag)
-		fmt.Println(pushCmd)
-		fmt.Printf("%v is done\n", image)
+		//fmt.Println(pullCmd)
+		log.Printf("begin image:%v\n", image)
+		err, _ := RunCommand(pullCmd)
+		if err != "" {
+			log.Printf("pull error :%s\n", image)
+			time.Sleep(10 * time.Second)
+		}
+
+		//fmt.Println(retag)
+		err, _ = RunCommand(retag)
+		if err != "" {
+			log.Printf("retag error :%s\n", image)
+			time.Sleep(10 * time.Second)
+		}
+
+		//fmt.Println(pushCmd)
+		err, _ = RunCommand(pushCmd)
+		if err != "" {
+			log.Printf("push error :%s\n", image)
+			time.Sleep(10 * time.Second)
+		}
+		log.Printf("done image:%v\n", image)
 	}
+}
+func RunCommand(command string) (string, string) {
+	cmd := exec.Command("/bin/bash", "-c", command)
+
+	var out bytes.Buffer
+	cmd.Stdout = &out
+
+	var e bytes.Buffer
+	cmd.Stderr = &e
+	//cmd.Start()
+	//buf, _ := cmd.CombinedOutput()
+	cmd.Run()
+	if e.Len() != 0 && out.Len() == 0 {
+		return e.String(), out.String()
+	}
+	return "", out.String()
 }
 
 type Config struct {
