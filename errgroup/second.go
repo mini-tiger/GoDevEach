@@ -19,6 +19,7 @@ type Search func(ctx context.Context, query string) (Result, error)
 
 func fakeSearch(kind string) Search {
 	return func(_ context.Context, query string) (Result, error) {
+		// something
 		return Result(fmt.Sprintf("%s result for %q", kind, query)), nil
 	}
 }
