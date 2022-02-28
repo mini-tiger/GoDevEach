@@ -46,6 +46,7 @@ func main() {
 
 	if len(Conf.FnArgs) < 0 {
 		log.Fatalln("len is 0")
+
 	}
 	var pullCmd, retag, sourceImage, destImage, pushCmd string
 	for _, image := range Conf.FnArgs {
