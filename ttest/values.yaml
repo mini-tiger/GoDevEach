@@ -1,0 +1,137 @@
+fnArgs:
+  - name: erp-eureka
+    tag: 4.00.00c
+  - name: erp-cas
+    tag: 4.00.19
+    port: 8006
+  - name: erp-cis
+    tag: 4.00.18
+    port: 8005
+  - name: erp-ccis
+    tag: 4.00.14
+    port: 8003
+  - name: erp-common
+    tag: 4.00.12
+    port: 8001
+  - name: erp-crm
+    tag: 4.00.06
+    port: 8002
+  - name: erp-mysql
+    tag: 4.00.02
+    port: 8008
+  - name: erp-sbs
+    tag: 4.00.19
+    port: 8007
+  - name: erp-sis
+    tag: 4.00.16
+    port: 8004
+  - name: erp-workflow
+    tag: 4.00.05
+    port: 8014
+  - name: erp-wf-edge
+    tag: 4.00.07
+    port: 8102
+  - name: erp-sys-edge
+    tag: 4.00.12
+    port: 8101
+  - name: erp-sis-edge
+    tag: 4.00.16
+    port: 8108
+  - name: erp-sbs-edge
+    tag: 4.00.15
+    port: 8107
+  - name: erp-report
+    tag: 4.00.26
+    port: 8109
+  - name: erp-public-edge
+    tag: 4.00.25
+    port: 8100
+  - name: erp-crm-edge
+    tag: 4.00.10
+    port: 8106
+  - name: erp-cis-edge
+    tag: 4.00.17
+    port: 8105
+  - name: erp-ccis-edge
+    tag: 4.00.16
+    port: 8104
+  - name: erp-cas-edge
+    tag: 4.00.21
+    port: 8103
+    replicaCount: 2
+  - name: erp
+    tag: 4.00.02c
+    port: 8090
+  - name: erp-egress
+    tag: 4.00.09
+    port: 8016
+  - name: erp-openapi
+    tag: 4.00.03
+    port: 8013
+  - name: erp-task
+    tag: 4.00.06
+    port: 8009
+  - name: api-service
+    tag: 4.00.00
+    port: 8014
+  - name: api-manager
+    tag: 4.00.01
+    port: 8015
+  - name: erp-po
+    tag: 4.00.02
+    port: 8017
+  - name: erp-po-edge
+    tag: 4.00.02
+    port: 8117
+image:
+  repository: misharbor.dyxnet.com/erp-lastest/
+erp:
+  service:
+    port: 30002
+  eureka:
+    port: 30001
+    ipAddr: 10.96.0.2
+  config:
+    port: 30005
+    ipAddr: 10.205.170.181
+  openapi:
+    port: 30006
+  apiManager:
+    port: 30003
+  apiService:
+    port:  30004
+env:
+  suffix: prod
+  cloudProfile: prod
+  localProfile: prod
+  edgeProfile: prod
+  #pullPolicy: Always
+  java_opt: -Xmx1024m -Xms1024m
+  java_opt_lev_2: -Xmx2048m -Xms2048m
+  java_opt_lev_3: -Xmx3072m -Xms3072m
+  #openFileBeat: on
+  #filebeatHost: 10.205.153.38:5044
+  #filebeatImage: 10.205.153.39:8900/library/filebeat:7.2.0
+  initContainer: on
+  initImage: misharbor.dyxnet.com/library/busybox-curl:latest
+  cm:
+    cmName: common-config
+  pvc:
+    pvcName: erp-log-pvc
+  pv:
+    storage: 10Gi
+    pvName: erp-log-pv
+    pvPath: /nfs/logs
+    nfsServer: 10.205.170.181
+    pvClassName: erp-log
+res:
+  req:
+    mem: 1024Mi
+    cpu: 600m
+  req2:
+    mem: 2048Mi
+  req3:
+    mem: 3072Mi
+  ave:
+    mem: 1024Mi
+    cpu: 1000m

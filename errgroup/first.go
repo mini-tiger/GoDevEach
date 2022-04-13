@@ -12,6 +12,7 @@ import (
 //errgroup 可以控制协程并发顺序。确保子协程执行完成后再执行主协程
 //errgroup 可以使用 context 实现协程撤销。或者超时撤销。子协程中使用 ctx.Done()来获取撤销信号
 
+//todo 只返回 第一个结果(错误)
 func main() {
 	group, _ := errgroup.WithContext(context.Background())
 	for i := 0; i < 5; i++ {
@@ -28,6 +29,6 @@ func main() {
 	}
 
 	if err := group.Wait(); err != nil {
-		fmt.Println(err) //只返回 第一个错误
+		fmt.Println(err)
 	}
 }
