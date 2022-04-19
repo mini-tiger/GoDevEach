@@ -16,7 +16,7 @@ type EtcdClient struct {
 	Client *clientv3.Client
 	Config clientv3.Config
 	//Kv     clientv3.KV
-	Lease  clientv3.Lease
+	Lease         clientv3.Lease
 	keepAliveChan <-chan *clientv3.LeaseKeepAliveResponse
 }
 
@@ -69,7 +69,7 @@ func (this *EtcdClient) DelKey(key string, ops ...clientv3.OpOption) error {
 	return nil
 }
 
-func (this *EtcdClient) GetLease(t int64) (err error,leaseGrantResp *clientv3.LeaseGrantResponse) {
+func (this *EtcdClient) GetLease(t int64) (err error, leaseGrantResp *clientv3.LeaseGrantResponse) {
 	// 申请一个租约
 	this.Lease = clientv3.NewLease(this.Client)
 
@@ -93,11 +93,11 @@ func (this *EtcdClient) AssignLease(leaseId clientv3.LeaseID, keydatas map[strin
 	}
 }
 
-func (this *EtcdClient)KeepAlive(leaseId clientv3.LeaseID)  {
+func (this *EtcdClient) KeepAlive(leaseId clientv3.LeaseID) {
 	//var keepRespChan <-chan *clientv3.LeaseKeepAliveResponse
 
 	if keepRespChan, err := this.Client.KeepAlive(context.Background(), leaseId); err != nil {
-		this.keepAliveChan=keepRespChan
+		this.keepAliveChan = keepRespChan
 		return
 	}
 
@@ -115,8 +115,10 @@ func main() {
 	EtcCli := &EtcdClient{}
 	// 客户端配置
 	EtcCli.Config = clientv3.Config{
-		Endpoints:   []string{"192.168.43.26:2379"},
+		Endpoints:   []string{"172.22.50.25:31015"},
 		DialTimeout: 5 * time.Second,
+		Username:    "root",
+		Password:    "123456",
 	}
 	// 建立连接
 	if EtcCli.Client, err = clientv3.New(EtcCli.Config); err != nil {
@@ -138,12 +140,12 @@ func main() {
 	//put
 	_ = EtcCli.PutKV("/test1/key3", "value3", clientv3.WithPrevKV())
 	_ = EtcCli.PutKV("/test1/key4", "value4")
-
+	_ = EtcCli.PutKV("/test1/key5", "value5")
 	//get
 	_, _ = EtcCli.GetKey("/test1/", clientv3.WithPrefix())
 
 	//del 删除key前缀
-	_ = EtcCli.DelKey("/test1/", clientv3.WithPrefix(), clientv3.WithPrevKV())
+	//_ = EtcCli.DelKey("/test1/", clientv3.WithPrefix(), clientv3.WithPrevKV())
 
 	println("-----------------------------------------------------------------------")
 
@@ -170,7 +172,5 @@ func main() {
 	}
 
 	println("-----------------------------------------------------------------------")
-
-
 
 }
