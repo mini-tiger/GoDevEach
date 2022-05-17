@@ -1,3 +1,0 @@
- go build main.go
-
- docker build -t harbor.dev.21vianet.com/taojun/matchrouter .
