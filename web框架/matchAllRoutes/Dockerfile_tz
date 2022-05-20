@@ -1,0 +1,18 @@
+FROM golang:1.17.10-alpine3.15 as build
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN apk add -U tzdata
+COPY . /go/src/matchAllRoutes
+WORKDIR /go/src/matchAllRoutes
+ENV GOPROXY https://goproxy.cn,direct
+# make 命令不能用在apline
+RUN CGO_ENABLED=0 GOOS=linux go build -o matchAllRoutes.docker
+
+FROM scratch as final
+
+COPY --from=build /go/src/matchAllRoutes/matchAllRoutes.docker /usr/src/
+### 下面这行是新加的
+COPY --from=build /usr/share/zoneinfo /usr/share/zoneinfo
+ENV TZ=Asia/Shanghai
+WORKDIR /usr/src/
+EXPOSE 8081
+ENTRYPOINT ["./matchAllRoutes.docker"]

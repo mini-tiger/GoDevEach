@@ -19,8 +19,12 @@ COPY --from=build /go/src/matchAllRoutes/matchAllRoutes.docker /usr/src/
 #设置工作目录
 WORKDIR /usr/src/
 #COPY ./config.json /usr/src/datacenter_go/
-# 时区 已经打包 到基础镜像
+# xxx alpine 时区
 #RUN apk add -U tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && apk del tzdata
+
+# xxx scratch 时区
+# ./Dockerfile_tz
+
 #暴露container的端口
 EXPOSE 8081
 #ENV mysqluser root
