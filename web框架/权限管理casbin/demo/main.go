@@ -31,5 +31,8 @@ func main() {
 	check(e, "dajun", "data", "write")
 	check(e, "lizi", "data", "read")
 	check(e, "lizi", "data", "write") // lizi所属角色没有write权限
-	check(e, "root", "data", "write") // root 在policy.csv中有 r.sub == "root"
+	//check(e, "root", "data", "write") // root 在policy.csv中有 r.sub == "root"
+	fmt.Println(e.HasNamedPolicy("p2", "root", "write"))
+	fmt.Println(e.HasNamedGroupingPolicy("g2", "aa", "root"))
+
 }

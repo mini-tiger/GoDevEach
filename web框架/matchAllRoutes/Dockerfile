@@ -37,3 +37,4 @@ EXPOSE 8081
 # xxx if from scratch
 ENTRYPOINT ["./matchAllRoutes.docker"]
 
+
