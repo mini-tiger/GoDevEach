@@ -1,8 +1,6 @@
-package test
+package business
 
-import (
-	"sync"
-)
+import "sync"
 
 func Sum(numbers []int) int {
 	sum := 0
@@ -31,7 +29,3 @@ func Sum1(numbers []int) int {
 	s.Wait()
 	return sum
 }
-
-//func main()  {
-//	fmt.Println(Sum1([]int{1,2,3,4,5}))
-//}

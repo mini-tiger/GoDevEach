@@ -1,8 +1,7 @@
 package test
 
 import (
-	"fmt"
-	lm "gitee.com/taojun319/tjtools/LinkedMap"
+	lm "github.com/mini-tiger/tjtools/LinkedMap"
 	"strconv"
 	"testing"
 )
@@ -21,9 +20,9 @@ func Benchmark_Linkmap(b *testing.B) {
 	//fmt.Printf("%+v\n", a.MLink)
 	for _, key := range a.SortLinkMap() {
 		//fmt.Println(key)
-		if v, e := a.Get(key); e {
-			fmt.Printf("key:%s,value:%v\n", key, v)
-		}
+		a.Get(key)
+		//fmt.Printf("key:%s,value:%v\n", key, v)
+
 	}
 
 }
