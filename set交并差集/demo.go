@@ -12,7 +12,7 @@ type A struct {
 
 func main() {
 	var a1 A = A{"1"}
-	var a2 A = A{"1"}   // 值一样就去重
+	var a2 A = A{"1"}   // todo 值一样就去重
 	var a3 *A = &A{"1"} // todo 指针不能去重
 	kide1 := mapset.NewSet()
 	kide1.Add(a1)
@@ -50,13 +50,13 @@ func main() {
 	fmt.Printf("Difference:%v\n", allClasses.Difference(scienceClasses)) //Set{Music, Automotive, Go Programming, Python Programming, Cooking, English, Math, Welding}
 
 	//两个集合的交集
-	fmt.Printf("Insersect:%v\n",scienceClasses.Intersect(kide)) //Set{Biology}
+	fmt.Printf("Insersect:%v\n", scienceClasses.Intersect(kide)) //Set{Biology}
 
 	//有多少基数
-	fmt.Printf("cardinality:%d\n",bonusClasses.Cardinality()) //2
+	fmt.Printf("cardinality:%d\n", bonusClasses.Cardinality()) //2
 
-	log.Printf("scienceClasses 是否是allColassese 子集:%v\n",scienceClasses.IsSubset(allClasses))
-	log.Printf("scienceClasses 是否是allColassese 超集:%v\n",allClasses.IsSuperset(scienceClasses))
+	log.Printf("scienceClasses 是否是allColassese 子集:%v\n", scienceClasses.IsSubset(allClasses))
+	log.Printf("scienceClasses 是否是allColassese 超集:%v\n", allClasses.IsSuperset(scienceClasses))
 
 	num1 := mapset.NewSet()
 	num1.Add(2)
