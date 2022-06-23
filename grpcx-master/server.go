@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	port = ":50051"
+	Port = ":50051"
 )
 
 type UserService struct {
@@ -62,7 +62,7 @@ func (userService *UserService) UserDelete(ctx context.Context, in *user.UserDel
 }
 
 func main() {
-	lis, err := net.Listen("tcp", port)
+	lis, err := net.Listen("tcp", Port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
