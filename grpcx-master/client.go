@@ -14,6 +14,9 @@ const (
 	address = "localhost:50051"
 )
 
+var userClient user.UserClient
+var ctx context.Context
+
 func main() {
 	//建立链接
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
@@ -24,12 +27,19 @@ func main() {
 
 	defer conn.Close()
 
-	userClient := user.NewUserClient(conn)
+	userClient = user.NewUserClient(conn)
 
 	// 设定请求超时时间 3s
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
-	defer cancel()
+	//ctx, _ = context.WithTimeout(context.Background(), time.Second*3)
+	ctx = context.Background()
+	//defer cancel()
+	for i := 0; ; i++ {
+		send()
+		time.Sleep(5 * time.Second)
+	}
+}
 
+func send() {
 	// UserIndex 请求
 	userIndexReponse, err := userClient.UserIndex(ctx, &user.UserIndexRequest{Page: 1, PageSize: 12})
 	if err != nil {
