@@ -3,7 +3,7 @@ package main
 import (
 	_ "github.com/go-sql-driver/mysql"
 	"goweb/controllers"
-	"goweb/middleware"
+	"goweb/middlewares"
 	_ "goweb/models"
 	"log"
 	"net/http"
@@ -26,9 +26,9 @@ func main() {
 	controllers.RegisterControllers()
 
 	//注册middleware
-	middlewareHandle := &middleware.TimeoutMiddleware{ // 2s timeout
-		Next: &middleware.BasicAuthMiddleware{
-			Next: &middleware.LogMiddleware{}, // 顺序 Timeout -> Auth -> log
+	middlewareHandle := &middlewares.TimeoutMiddleware{ // 2s timeout
+		Next: &middlewares.BasicAuthMiddleware{
+			Next: &middlewares.LogMiddleware{}, // 顺序 Timeout -> Auth -> log
 		},
 	}
 
