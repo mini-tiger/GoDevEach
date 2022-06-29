@@ -19,10 +19,9 @@ func main() {
 				}
 				fmt.Println(i, ok)
 			}
-
 		}
-
 	}()
+
 	go func() {
 		for i := 0; i < 1000; i++ {
 			//sync1.Add(1)
