@@ -1,4 +1,4 @@
-package cover覆盖
+package cover
 
 import "testing"
 

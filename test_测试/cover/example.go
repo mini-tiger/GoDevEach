@@ -1,4 +1,4 @@
-package cover覆盖
+package cover
 
 func Add(x int, y int) int {
 	return x + y
