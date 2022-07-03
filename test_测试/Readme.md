@@ -4,7 +4,8 @@
 -cover 开启测试覆盖率；
 -run regexp 只运行 regexp 匹配的函数，例如 -run=Array 那么就执行包含有 Array 开头的函数；
 -v 显示测试的详细命令。
-
+-benchtime 的值除了是时间外，还可以是具体的次数。例如，执行 30 次可以用 -benchtime=30x
+-count 参数可以用来设置 benchmark 的轮数
 
 测试文件 以  _test.go 结尾 
 
@@ -36,7 +37,7 @@ time
 go test -v -bench=. -benchtime=5s first_Benchmark_test.go
 
 count 运行次数 
-go test -v -bench=. -benchtime=50x first_Benchmark_test.go
+go test -v -bench=. -benchtime=5s -count=3  first_Benchmark_test.go
 
 压力函数名  Benchmark_
     func Benchmark_ByteString(b *testing.B) {
