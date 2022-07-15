@@ -8,7 +8,8 @@ import (
 	"time"
 )
 
-var Address = []string{"192.168.43.111:9092"}
+var Address = []string{"172.22.159.22:31082", "172.22.159.22:31083", "172.22.159.22:31084", "172.22.159.22:31085",
+	"172.22.159.22:31086", "172.22.159.22:31087", "172.22.159.22:31088", "172.22.159.22:31089", "172.22.159.22:31090"}
 
 func main() {
 	syncProducer(Address)
@@ -28,7 +29,7 @@ func syncProducer(address []string) {
 	defer p.Close()
 	topic := "test-topic"
 	srcValue := "sync: this is a message. index=%d"
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 100000; i++ {
 		value := fmt.Sprintf(srcValue, i)
 		msg := &sarama.ProducerMessage{
 			Topic: topic,
