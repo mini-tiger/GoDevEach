@@ -14,8 +14,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// xxx directConnection=true 性能 下降 但可以 nodeport 端口转发
 //var uri = "mongodb://cc:cc@172.22.50.25:27021,172.22.50.25:27022,172.22.50.25:27023/?connectTimeoutMS=300000&authSource=cmdb"
-var uri = "mongodb://root:abc123@172.22.50.25:32087/?connectTimeoutMS=300000&authSource=admin"
+var uri = "mongodb://root:abc123@172.22.50.25:28015/?connectTimeoutMS=300000&authSource=admin&directConnection=true"
 
 //var uri = "mongodb://cc:cc@172.22.50.25:40017/?connectTimeoutMS=300000&authSource=cmdb"
 
