@@ -3,14 +3,18 @@ package main
 import "fmt"
 
 func GenSliceAppend() []int {
-	s := make([]int, 0)
-	for i := 0; i < 1023; i++ {
-		s = append(s, i)
+	s := make([]int, 0, 100)
+	var ss []int
+	for i := 0; i < 100; i++ {
+		ss = append(ss, i)
 	}
-
+	s = append(s, ss...)
 	return s
 }
+
 func main() {
+	s := GenSliceAppend()
+	fmt.Println(len(s), s[99])
 	append1()
 	copy1()
 }
