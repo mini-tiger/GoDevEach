@@ -1,0 +1,4 @@
+- name: copy  files
+  copy: src={{role_path}}/templates/tt.sh dest=/tmp/ mode=755
+- name: run shell scripts
+  shell: bash -c /tmp/tt.sh {{abc}}

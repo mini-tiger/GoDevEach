@@ -40,6 +40,7 @@ func doLogin(c *gin.Context) {
 		if err != nil {
 			jsonData = []byte(fmt.Sprintf("err post data : %s", err.Error()))
 		}
+		fmt.Println(string(jsonData))
 		mapbody = make(map[string]interface{})
 
 		json.Unmarshal(jsonData, &mapbody)

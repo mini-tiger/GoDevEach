@@ -21,7 +21,7 @@ func abc() {
 
 	sr, err := l.SimpleBind(&ldap.SimpleBindRequest{
 		Username: "uid=tao.jun,dc=21vianet,dc=com",
-		Password: "Taojun207",
+		Password: "Taojun207!#",
 	})
 	if err != nil {
 		fmt.Println(err)
@@ -35,7 +35,7 @@ func Example_userAuthentication() {
 	// The username and password we want to check
 	// 用来认证的用户名和密码
 	username := "tao.jun"
-	password := "Taojun207"
+	password := "Taojun207!@#"
 
 	// 用来获取查询权限的 bind 用户.如果 ldap 禁止了匿名查询,那我们就需要先用这个帐户 bind 以下才能开始查询
 	// bind 的账号通常要使用完整的 DN 信息.例如 cn=manager,dc=example,dc=org

@@ -1,0 +1,25 @@
+---
+
+- hosts: localhost
+  connection: local # 只针对本机链接模式
+  vars:
+    f1_var1: na
+    f1_var2: na
+    f2_var1: na
+    f2_var2: na
+
+  tasks:
+    - name: show values
+      debug:
+        msg: |
+          {{ f1_var1 }}
+          {{ f1_var2 }}
+          {{ f2_var1 }}
+          {{ f2_var2 }}
+
+- hosts: remote
+  connection: local # 只针对本机链接模式
+  roles:
+    #  - {role: optimization_linux}
+    - { role: echo }
+  #  - {role: cpu_set}
