@@ -28,7 +28,7 @@ func main() {
 	ansiblePlaybookOptions := &playbook.AnsiblePlaybookOptions{
 		Inventory: "127.0.0.1,",
 	}
-
+	execute.NewDefaultExecute()
 	playbooksList := []string{"site1.yml"}
 	playbook := &playbook.AnsiblePlaybookCmd{
 		Playbooks: playbooksList,
@@ -52,9 +52,12 @@ func main() {
 
 	for _, play := range res.Plays {
 		for _, task := range play.Tasks {
-			for _, content := range task.Hosts {
+			for host, content := range task.Hosts {
+				fmt.Println(host)
+
 				if task.Task.Name == "skipping-task" {
-					fmt.Printf("Task [%s] skipped [%t] with skip reason [%s]\n", task.Task.Name, content.Skipped, content.SkipReason)
+					fmt.Printf("Task [%s] skipped [%t] with skip reason [%s]\n",
+						task.Task.Name, content.Skipped, content.SkipReason)
 				} else {
 					fmt.Printf("Task [%s] failed [%t] with condition [%t]. Executed cmd: %v\n",
 						task.Task.Name, content.Failed, content.FailedWhenResult, content.Cmd)
