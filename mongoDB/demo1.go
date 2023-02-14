@@ -31,7 +31,7 @@ xxx 分片 连接方法
 //var uri = "mongodb://root:pass2022@172.22.50.25:32092,172.22.50.25:32093,172.22.50.25:32094/?connectTimeoutMS=300000&authSource=admin"
 */
 
-var uri = "mongodb://root:pass2022@172.22.50.25:32092,172.22.50.25:32093,172.22.50.25:32094/?connectTimeoutMS=300000&authSource=admin"
+var uri = "mongodb://root:abc123@172.22.50.25:32082,172.22.50.25:32083,172.22.50.25:32084/?connectTimeoutMS=300000&authSource=admin"
 
 func main() {
 	// 设置客户端连接配置
@@ -58,4 +58,22 @@ func main() {
 		return
 	}
 	log.Println("Database version:", buildInfoDoc["version"])
+	insertDemo(client)
+}
+func insertDemo(client *mongo.Client) {
+	//不用提前创建db: cmdb
+	collection := client.Database("cmdb").Collection("tt")
+	result, err := collection.InsertOne(
+		context.Background(), // 上下文参数
+		bson.D{ // 使用bson.D定义一个JSON文档
+			{"item", "canvas"},
+			{"qty", 100},
+			{"tags", bson.A{"cotton"}},
+			{"size", bson.D{
+				{"h", 28},
+				{"w", 35.5},
+				{"uom", "cm"},
+			}},
+		})
+	fmt.Println(result, err)
 }
