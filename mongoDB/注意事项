@@ -1,0 +1,5 @@
+1.分片事务，
+    不能在代码中写多个mongos地址，可能会sessionid会找不到
+2.分片链接uri 要加 directConnection=true
+
+3.watch stream 可以 多个mongos

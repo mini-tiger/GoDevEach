@@ -52,17 +52,21 @@ func (t *TxnManager) Release(sessionid string) {
 }
 func (t *TxnManager) GenSess() mongo.SessionContext {
 	// session 读取策略
+	options.Session().se
 	sessOpts := options.Session().SetDefaultReadConcern(readconcern.Majority())
 	session, err := Client.StartSession(sessOpts)
 	if err != nil {
 		log.Fatal(err)
 	}
-	//sessCtx := mongo.NewSessionContext(context.TODO(), session)
+	id := session.ID()
+	sessCtx := mongo.NewSessionContext(context.TODO(), session)
+
+	session.(*mongo.sessionImpl).SessionID
 	//sess
 	if err = session.StartTransaction(); err != nil {
 		panic(err)
 	}
-	return sessCtx
+	return
 }
 func (t *TxnManager) reloadSession(sessionid string) mongo.SessionContext {
 	var sess mongo.SessionContext

@@ -59,7 +59,7 @@ type changeEvent struct {
 }
 
 //var uri string = "mongodb://cc:cc@172.22.50.25:27021/?connectTimeoutMS=300000&authSource=cmdb"
-var uri string = "mongodb://cc:cc@172.22.50.25:32047/?connectTimeoutMS=300000&authSource=cmdb"
+var uri string = "mongodb://root:abc123@172.22.50.25:32082/?connectTimeoutMS=300000&authSource=admin"
 
 func main() {
 	// Set client options
@@ -80,7 +80,7 @@ func main() {
 	fmt.Println("Connected to MongoDB!")
 
 	// Get a handle for your collection
-	collection := client.Database("cmdb").Collection("cc_InstAsst")
+	collection := client.Database("cmdb").Collection("cc_ObjectBase")
 
 	// Watches the todo collection and prints out any changed documents
 	go watch(collection)
@@ -93,7 +93,7 @@ func main() {
 func watch(collection *mongo.Collection) {
 
 	// xxx FullDocument 返回由更新操作修改的那些字段的增量，而不是整个更新的文档。 https://www.mongodb.com/docs/manual/reference/method/db.collection.watch/
-	streamOptions := options.ChangeStream().SetFullDocument(options.WhenAvailable)
+	streamOptions := options.ChangeStream().SetFullDocument(options.UpdateLookup)
 	//streamOptions := options.ChangeStream().SetFullDocumentBeforeChange(options.WhenAvailable) //mongodb 6.x
 
 	/* xxx fullDocument删除文档时不返回源文档

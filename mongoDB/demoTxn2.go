@@ -28,7 +28,7 @@ xxx 尽管在事务中先插入了一条name相同的记录，但事务是一个
 */
 func main() {
 	//设置连接参数
-	uri := fmt.Sprintf("mongodb://%s:%s@%s/?connectTimeoutMS=300000&authSource=%s", user, password, hosts, auth)
+	uri := fmt.Sprintf("mongodb://root:abc123@172.22.50.25:32082,172.22.50.25:32083,172.22.50.25:32084/?connectTimeoutMS=300000&authSource=admin")
 	opt := options.Client().ApplyURI(uri).SetSocketTimeout(timeout)
 
 	//创建一个context上下文

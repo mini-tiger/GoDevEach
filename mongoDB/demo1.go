@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"log"
+	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -36,9 +37,23 @@ var uri = "mongodb://root:abc123@172.22.50.25:32082,172.22.50.25:32083,172.22.50
 func main() {
 	// 设置客户端连接配置
 	clientOptions := options.Client().ApplyURI(uri)
+	var mp uint64 = 3000
+	var app = "migrate"
+	//var rs = "rs0"
+	conOpt := options.ClientOptions{
+		MaxPoolSize: &mp,
+		//MaxPoolSize:     3000,
+		//MinPoolSize:     100,
+		//ConnectTimeout:  &timeout,
+		//SocketTimeout:   &socketTimeout,
+		//ReplicaSet: &rs,
+		//RetryWrites:     false,
+		//MaxConnIdleTime: "1500000000000"
+		AppName: &app,
+	}
 
 	// 连接到MongoDB
-	client, err := mongo.Connect(context.TODO(), clientOptions)
+	client, err := mongo.Connect(context.TODO(), clientOptions, &conOpt)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -62,18 +77,17 @@ func main() {
 }
 func insertDemo(client *mongo.Client) {
 	//不用提前创建db: cmdb
-	collection := client.Database("cmdb").Collection("tt")
-	result, err := collection.InsertOne(
-		context.Background(), // 上下文参数
-		bson.D{ // 使用bson.D定义一个JSON文档
-			{"item", "canvas"},
-			{"qty", 100},
-			{"tags", bson.A{"cotton"}},
-			{"size", bson.D{
-				{"h", 28},
-				{"w", 35.5},
-				{"uom", "cm"},
-			}},
-		})
-	fmt.Println(result, err)
+	collection := client.Database("cmdb").Collection("cc_ObjectBase")
+	for i := 10; i < 9999900; i++ {
+		_, err := collection.InsertOne(
+			context.Background(), // 上下文参数
+			bson.M{ // 使用bson.D定义一个JSON文档
+				"bk_inst_id":   fmt.Sprintf("cmdb111__%d", i),
+				"bk_inst_name": "aaa",
+				"bk_obj_id":    "a",
+			})
+		fmt.Println(i, err)
+		time.Sleep(500 * time.Millisecond)
+	}
+
 }
