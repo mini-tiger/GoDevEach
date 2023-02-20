@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -59,7 +60,7 @@ type changeEvent struct {
 }
 
 //var uri string = "mongodb://cc:cc@172.22.50.25:27021/?connectTimeoutMS=300000&authSource=cmdb"
-var uri string = "mongodb://root:abc123@172.22.50.25:32082/?connectTimeoutMS=300000&authSource=admin"
+var uri string = "mongodb://cc:cc@172.22.50.25:27117,172.22.50.25:27118/?authMechanism=SCRAM-SHA-256&authSource=cmdb&directConnection=true"
 
 func main() {
 	// Set client options
@@ -108,11 +109,21 @@ func watch(collection *mongo.Collection) {
 
 	// Whenever there is a new change event, decode the change event and print some information about it
 	for cs.Next(context.TODO()) {
-		var changeEvent interface{}
-
+		var changeEvent bson.M
 		err := cs.Decode(&changeEvent)
 		if err != nil {
 			log.Fatal(err)
+		}
+		// 检查事件类型是否为删除事件
+		if changeEvent["operationType"] == "delete" {
+			// 获取被删除的文档
+			deletedDoc := bson.M{}
+			if err := cs.Decode(&deletedDoc); err != nil {
+				panic(err)
+			}
+
+			// 输出删除事件的详细信息
+			fmt.Printf("Received delete event: %v\n", deletedDoc)
 		}
 
 		fmt.Printf("Change Event: %+v\n", changeEvent)
