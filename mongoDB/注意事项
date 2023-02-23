@@ -3,3 +3,6 @@
 2.分片链接uri 要加 directConnection=true
 
 3.watch stream 可以 多个mongos
+
+
+分片集群 ./mongodb_deploy.md
