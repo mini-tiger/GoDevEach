@@ -3,10 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"matchAllRoutes/middleware"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
