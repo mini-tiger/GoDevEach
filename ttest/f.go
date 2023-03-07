@@ -8,6 +8,7 @@ func GenSliceAppend() []int {
 	for i := 0; i < 100; i++ {
 		ss = append(ss, i)
 	}
+	// testpush
 	s = append(s, ss...)
 	return s
 }
