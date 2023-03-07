@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"github.com/apenella/go-ansible/pkg/execute"
 	"github.com/apenella/go-ansible/pkg/options"
-	"github.com/apenella/go-ansible/pkg/playbook"
 	"github.com/apenella/go-ansible/pkg/stdoutcallback/results"
 	"io"
+	"os"
+
+	"github.com/apenella/go-ansible/pkg/playbook"
 )
 
 func main() {
@@ -17,7 +19,7 @@ func main() {
 	//	Connection: "local",
 	//	User:       "aleix",
 	//}
-	//os.Chdir("/data/work/go/GoDevEach/ansible/ansibleplaybook-extravars-file")
+	os.Chdir("/data/work/go/GoDevEach/ansible/ansibleplaybook-extravars-file")
 
 	var res *results.AnsiblePlaybookJSONResults
 
@@ -30,7 +32,7 @@ func main() {
 			"@vars-file1.yml",
 			"@vars-file2.yml",
 		},
-		//ExtraVars: map[string]interface{}{options.AnsibleHostKeyCheckingEnv: false},
+		ExtraVars: map[string]interface{}{options.AnsibleHostKeyCheckingEnv: false},
 	}
 
 	ansiblePlaybookConnectionOptions := &options.AnsibleConnectionOptions{

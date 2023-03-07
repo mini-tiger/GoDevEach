@@ -1,5 +1,5 @@
 ---
-- hosts: remote
+- hosts: all
 #  connection: local
   vars:
     f1_var1: na
@@ -16,7 +16,7 @@
           {{ f2_var1 }}
           {{ f2_var2 }}
 
-- hosts: remote
+- hosts: all
 #  connection: local
   roles:
     #  - {role: optimization_linux}

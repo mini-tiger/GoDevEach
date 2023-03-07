@@ -1,0 +1,13 @@
+---
+- name: Example playbook
+  hosts: all
+  gather_facts: yes
+  become: true
+  vars:
+    f1_var1: na11111111
+    f1_var2: na
+    f2_var1: na
+    f2_var2: na
+  roles:
+    - example
+

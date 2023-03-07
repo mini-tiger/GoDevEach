@@ -32,8 +32,9 @@ xxx 分片 连接方法
 //var uri = "mongodb://root:pass2022@172.22.50.25:32092,172.22.50.25:32093,172.22.50.25:32094/?connectTimeoutMS=300000&authSource=admin"
 */
 
-//var uri = "mongodb://root:abc123@172.22.50.25:32082,172.22.50.25:32083,172.22.50.25:32084/?connectTimeoutMS=300000&authSource=admin"
-var uri string = "mongodb://cc:cc@172.22.50.25:27117,172.22.50.25:27118/?authMechanism=SCRAM-SHA-256&authSource=cmdb&directConnection=true"
+var uri = "mongodb://root:cc@172.22.50.25:32082,172.22.50.25:32083,172.22.50.25:32084/?connectTimeoutMS=300000&authSource=admin"
+
+//var uri string = "mongodb://cc:cc@172.22.50.25:27117,172.22.50.25:27118/?authMechanism=SCRAM-SHA-256&authSource=cmdb&directConnection=true"
 
 func main() {
 	// 设置客户端连接配置
