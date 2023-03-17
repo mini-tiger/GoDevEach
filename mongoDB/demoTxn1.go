@@ -12,12 +12,12 @@ import (
 
 //mongo连接参数
 const (
-	user     = "cc"
-	password = "cc"
-	hosts    = "172.22.50.25:27021"
-	mongoOpt = "replicaSet=rs0"
-	auth     = "cmdb"
-	timeout  = time.Duration(3000) * time.Millisecond
+	//user     = "cc"
+	//password = "cc"
+	//hosts    = "172.22.50.25:27021"
+	//mongoOpt = "replicaSet=rs0"
+	auth    = "cmdb"
+	timeout = time.Duration(3000) * time.Millisecond
 )
 
 //mongo文档结构体
@@ -32,7 +32,7 @@ type student struct {
  */
 func main() {
 	//设置连接参数
-	uri := fmt.Sprintf("mongodb://root:abc123@172.22.50.25:32082,172.22.50.25:32083,172.22.50.25:32084/?connectTimeoutMS=300000&authSource=admin")
+	uri := fmt.Sprintf("mongodb://root:cc@172.22.50.25:32082,172.22.50.25:32083,172.22.50.25:32084/?connectTimeoutMS=300000&authSource=admin")
 	opt := options.Client().ApplyURI(uri).SetSocketTimeout(timeout)
 
 	//创建一个context上下文

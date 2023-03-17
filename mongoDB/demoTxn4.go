@@ -16,12 +16,12 @@ import (
 )
 
 const (
-	user     = "cc"
-	password = "cc"
-	hosts    = "172.22.50.25:27021"
-	mongoOpt = "replicaSet=rs0"
-	auth     = "cmdb"
-	timeout  = time.Duration(3000) * time.Millisecond
+	//user     = "cc"
+	//password = "cc"
+	//hosts    = "172.22.50.25:27021"
+	//mongoOpt = "replicaSet=rs0"
+	auth    = "cmdb"
+	timeout = time.Duration(3000) * time.Millisecond
 )
 
 /*
@@ -52,7 +52,7 @@ func (t *TxnManager) Release(sessionid string) {
 }
 func (t *TxnManager) GenSess() mongo.SessionContext {
 	// session 读取策略
-	options.Session().se
+	//options.Session().se
 	sessOpts := options.Session().SetDefaultReadConcern(readconcern.Majority())
 	session, err := Client.StartSession(sessOpts)
 	if err != nil {

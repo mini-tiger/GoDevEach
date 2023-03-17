@@ -1,7 +1,7 @@
 ---
 
 - hosts: all
-  connection: local # 只针对本机链接模式
+#  connection: local # 只针对本机链接模式
 
   tasks:
     - name: ok-task

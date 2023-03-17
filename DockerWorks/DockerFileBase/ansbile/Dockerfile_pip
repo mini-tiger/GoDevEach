@@ -1,0 +1,37 @@
+FROM harbor.dev.21vianet.com/taojun/centos:7.4.1708-debug
+RUN sed -e 's|^mirrorlist=|#mirrorlist=|g' \
+             -e 's|^#baseurl=http://mirror.centos.org|baseurl=https://mirrors.tuna.tsinghua.edu.cn|g' \
+             -i.bak \
+             /etc/yum.repos.d/CentOS-*.repo
+
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+ENV ANSIBLE_HOST_KEY_CHECKING False
+
+RUN yum makecache && \
+    yum install -y gcc libffi-devel python3 epel-release && \
+    yum install -y python3-pip && \
+    yum install -y wget && \
+    yum install -y krb5-devel python3-devel python-devel && \
+    yum install -y net-tools  openssl openssh-server ftp  openssh-clients sshpass && \
+    yum clean all
+
+COPY ansibleplaybook-extravars-file /data/ansbile/
+
+RUN pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple pip -U && \
+    pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple &&  \
+    pip3 install --upgrade pip && \
+    pip3 install --upgrade virtualenv && \
+    pip3 install pywinrm[kerberos] && \
+    pip3 install pywinrm && \
+    python3 -m pip install jmespath && \
+    pip3 install requests && \
+    python3 -m pip install --user ansible-core==2.11.12 && \
+    rm -rf /root/.cache/pip && \
+    echo "export PATH=$PATH:/root/.local/bin" >> /root/.bashrc && \
+    echo "export PATH=$PATH:/root/.local/bin" >> /etc/profile
+
+#    ansible-galaxy collection install azure.azcollection; \
+#    pip3 install -r ~/.ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt
+
+CMD ["tail -f ", "/dev/null"]

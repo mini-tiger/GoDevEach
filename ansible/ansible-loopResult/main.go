@@ -62,6 +62,7 @@ func main() {
 					fmt.Printf("Task [%s] failed [%t] with condition [%t]. Executed cmd: %v\n",
 						task.Task.Name, content.Failed, content.FailedWhenResult, content.Cmd)
 				}
+				fmt.Println(content.Stdout, content.Stderr)
 
 			}
 		}

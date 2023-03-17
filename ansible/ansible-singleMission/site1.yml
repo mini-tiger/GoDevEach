@@ -1,0 +1,35 @@
+---
+- name: Example playbook
+  hosts: all
+  become: true
+  vars:
+    f1_var1: na11111111
+    f1_var2: na
+    f2_var1: na
+    f2_var2: na
+  tasks:
+    - name: Run task 1
+      command: echo "Task 1"
+      register: result
+    - name: Run task 2
+      when: result.stdout.find('Task 1') != -1
+      debug:
+        msg: 'I fusion normally {{ result.stdout }}'
+    - name: Handle the error
+      block:
+        - debug:
+            msg: 'I execute normally {{ result.stdout }}'
+        - name: i force a failure
+          command: /bin/false
+
+        - debug:
+            msg: 'I never execute, due to the above task failing, :-('
+
+      rescue:
+        - name: "rescue1"
+          debug:
+            msg: 'I caught an error, can do stuff here to fix it, :-)'
+      always:
+        - debug:
+            msg: "This always executes {{ f1_var1 }}"
+

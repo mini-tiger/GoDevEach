@@ -1,0 +1,44 @@
+---
+#- name: Show gathered facts
+#  debug:
+#    var: ansible_facts
+- name: Save gathered facts to file
+  copy:
+    content: "{{ ansible_facts }}"
+    dest: /tmp/gather_facts.json
+
+#- name: Use gathered facts
+#  set_fact:
+#    my_var: "{{ lookup('file', '/path/to/gather_facts.json') | from_json }}"
+
+
+- name: Run task 1
+  command: echo "Task 1"
+  register: result
+- name: Run task 2
+#  when: result.stdout.find('Task 1') != -1
+  failed_when: result.stdout.find('Task 1') == -1 # 条件成立则失败
+  debug:
+    msg: 'I fusion normally {{ result.stdout }}'
+- name: Handle the error
+  block:
+    - name: try when
+      command: echo "try when"
+      register: package_result
+      failed_when: package_result.rc != 0 or "No such" in result.stdout # rc返回码
+
+    - debug:
+        msg: 'I execute normally {{ result.stdout }}'
+    - name: i force a failure
+      command: /bin/false
+
+    - debug:
+        msg: '这里永远执行不了, :-('
+
+  rescue:
+    - name: "rescue1"
+      debug:
+        msg: 'I caught an error, can do stuff here to fix it, :-)'
+  always:
+    - debug:
+        msg: "This always executes {{ f1_var1 }}"

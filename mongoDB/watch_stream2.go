@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -11,7 +12,7 @@ import (
 	"time"
 )
 
-var uri string = "mongodb://cc:cc@172.22.50.25:27117,172.22.50.25:27118/?authMechanism=SCRAM-SHA-256&authSource=cmdb&directConnection=true"
+var uri string = "mongodb://cc:cc@172.22.50.25:32082,172.22.50.25:32083,172.22.50.25:32084/?authMechanism=SCRAM-SHA-256&authSource=cmdb"
 
 func main() {
 	// Set up client options
@@ -32,7 +33,7 @@ func main() {
 
 	// Set up the database and collection names
 	dbName := "cmdb"
-	collName := "cc_ObjectBase"
+	collName := "cc_InstAsst"
 
 	// Set up the pipeline for the Change Stream
 	pipeline := mongo.Pipeline{}
@@ -40,9 +41,15 @@ func main() {
 	// Set up the options for the Change Stream
 	options := options.ChangeStream().SetFullDocument(options.UpdateLookup)
 	options.SetMaxAwaitTime(time.Second * 5) // xxx 指定新文档游标上一个的的最长等待时间，防止 重复watch到数据
+
+	options.SetStartAtOperationTime(&primitive.Timestamp{
+		T: 0,
+		I: 0,
+	})
+	options.SetBatchSize(2000)
 	// Set up the resume token to start monitoring from the current time
 	//resumeToken := &bson.Raw{bson.M{"_id": "resume_token_id"}}
-	fmt.Println(options)
+	//fmt.Println(options)
 	// Start the Change Stream
 	changeStream, err := client.Database(dbName).Collection(collName).Watch(
 		context.Background(), pipeline, options)
