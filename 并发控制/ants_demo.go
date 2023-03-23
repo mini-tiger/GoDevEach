@@ -28,6 +28,7 @@ func main() {
 	// 创建一个容量为10的goroutine池
 	//p,_:=ants.NewPool(10)
 
+	// xxx 性能更好
 	p, _ := ants.NewPoolWithFunc(10, func(i interface{}) {
 		myFunc(i)
 		wg.Done()

@@ -2,11 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/sevlyar/go-daemon"
 	"html"
 	"log"
 	"net/http"
-
-	"github.com/sevlyar/go-daemon"
 )
 
 // To terminate the daemon use:

@@ -75,8 +75,35 @@ func main() {
 	}
 	log.Println("Database version:", buildInfoDoc["version"])
 
+	// xxx indexes
+	coll := client.Database("cmdb").Collection("cc_TopoGraphics")
+
+	//common.BKTableNameTopoGraphics: {
+	//	types.Index{Name: "", Keys: map[string]int32{"scope_type": 1, "scope_id": 1, "node_type": 1, common.BKObjIDField: 1, common.BKInstIDField: 1}, Background: true, Unique: true},
+	//},
+	//
+	var b bool = true
+	opt := &options.IndexOptions{}
+	opt.Unique = &b
+	opt.Background = &b
+	//var be1 bson.E = bson.E{Key: "scope_type", Value: 1}
+	var De []bson.E = bson.D{
+		bson.E{Key: "scope_type", Value: 1},
+		bson.E{Key: "scope_id", Value: 1},
+		bson.E{Key: "node_type", Value: 1},
+		bson.E{Key: "bk_obj_id", Value: 1},
+		bson.E{Key: "bk_inst_id", Value: 1},
+	}
+	//{
+	//	"scope_type", "scope_id", "node_type", "bk_obj_id", "bk_inst_id":1
+	//},
+	bb, err := coll.Indexes().CreateOne(context.Background(), mongo.IndexModel{
+		Keys:    De,
+		Options: opt,
+	})
+	fmt.Println(bb, err)
 	// xxx insert
-	insertDemo(client)
+	//insertDemo(client)
 }
 
 func insertDemo(client *mongo.Client) {

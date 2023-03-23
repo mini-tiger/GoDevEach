@@ -19,6 +19,7 @@ func InitPanicFile() error {
 		println(err)
 		return err
 	}
+	fmt.Println(int(file.Fd()), int(os.Stdout.Fd()))
 	if err = syscall.Dup2(int(file.Fd()), int(os.Stderr.Fd())); err != nil {
 		return err
 	}
