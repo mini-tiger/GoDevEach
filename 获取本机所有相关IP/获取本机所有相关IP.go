@@ -91,7 +91,7 @@ func GetOutboundIP() {
 	//	L.Done()
 	//}()
 	//conn, err := net.Dial("udp", "8.8.8.8:80")
-	conn, err := net.DialTimeout("tcp", "172.16.71.17:22", time.Duration(15)*time.Second)
+	conn, err := net.DialTimeout("tcp", "www.baidu.com:80", time.Duration(15)*time.Second)
 	if err != nil {
 		ip3 <- ""
 
@@ -126,6 +126,7 @@ func main() {
 
 	fmt.Printf("%-16s%v\n", "除回环以外所有IP    :", <-ip1)
 	fmt.Printf("%-16s%s\n", "公网出网IP          :", <-ip2) // ip2 会带有换行字符
-	fmt.Printf("%-16s%s\n", "首选的出站内网IP地址:", <-ip3)
+	ip33 := <-ip3
+	fmt.Printf("%-16s%s\n", "首选的出站内网IP地址:", ip33)
 
 }

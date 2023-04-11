@@ -14,17 +14,6 @@ func main() {
 	// xxx 默认已经连接了 Logger and Recovery 中间件
 	//r := gin.Default()
 
-	// windows 无法显示日志颜色
-	if runtime.GOOS == "windows" {
-		gin.DisableConsoleColor()
-	} else {
-		gin.ForceConsoleColor()
-	}
-
-	gin.SetMode("debug")
-	// 创建一个默认的没有任何中间件的路由
-	r := gin.New()
-
 	// 全局中间件
 	// Logger 中间件将写日志到 gin.DefaultWriter 即使你设置 GIN_MODE=release.
 	// 默认设置 gin.DefaultWriter = os.Stdout

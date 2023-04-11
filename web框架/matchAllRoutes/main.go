@@ -32,6 +32,9 @@ func main() {
 
 // 控制器函数
 func doLogin(c *gin.Context) {
+	data, err := c.GetRawData()
+	fmt.Println(err)
+	fmt.Println(string(data))
 	path := c.Param("path")
 	//fmt.Printf("%+v\n",c.Request.Header)
 	var mapbody map[string]interface{}
