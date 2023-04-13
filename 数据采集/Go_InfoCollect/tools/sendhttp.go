@@ -12,4 +12,17 @@ import (
  * @Desc: sendhttp.go
 **/
 
-var HttpSendCleint = resty.New().SetTimeout(conf.DefaultTimeOut * time.Second)
+var HttpSendClient = resty.New().SetTimeout(conf.DefaultTimeOut * time.Second)
+
+func HttpGetRes(url string, body interface{}, method string, result interface{}) (err error, resp *resty.Response) {
+	resp, err = HttpSendClient.R().
+		//EnableTrace().
+		SetBody(body).
+		SetHeader("Content-Type", "application/json"). // request header
+		ForceContentType("application/json").          // 强制返回格式
+		SetResult(result).                             // or SetResult(AuthSuccess{}).
+		//SetError(&AuthError{}).       // or SetError(AuthError{}).
+
+		Execute(method, url)
+	return
+}

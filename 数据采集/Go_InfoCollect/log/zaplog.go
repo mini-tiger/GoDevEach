@@ -73,11 +73,11 @@ func InitLog(flag string, filename string) {
 
 	hook := lumberjack.Logger{
 		Filename:   path.Join(conf.CurrentDir, filename), // 日志文件路径
-		MaxSize:    128,                                  // 每个日志文件保存的最大尺寸 单位：M
+		MaxSize:    10,                                   // 每个日志文件保存的最大尺寸 单位：M
 		MaxBackups: 0,                                    // 日志文件最多保存多少个备份
-		MaxAge:     1,                                    // 文件最多保存多少天
-		LocalTime:  true,
-		Compress:   false, // 是否压缩
+		//MaxAge:     1,                                    // 文件最多保存多少天
+		LocalTime: true,
+		Compress:  false, // 是否压缩
 	}
 
 	// 自定义时间输出格式
@@ -135,9 +135,9 @@ func InitLog(flag string, filename string) {
 	development := zap.Development()
 	//zap.AddCallerSkip(1)
 	// 设置初始化字段
-	filed := zap.Fields(zap.String("flag", flag)) //区别不同的agent
+	//filed := zap.Fields(zap.String("flag", flag)) //区别不同的agent
 	// 构造日志
-	ZapLogOpt := []zap.Option{caller, development, filed}
+	ZapLogOpt := []zap.Option{caller, development}
 	Glog = zap.New(core, ZapLogOpt...)
 	Glog.Sugar().Infof("当前运行目录: %s, 发布级别: %s,  日志级别:%s", conf.CurrentDir, conf.RunMode, level)
 

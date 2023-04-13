@@ -36,9 +36,9 @@ func (c *CronEntry) Run() {
 	log.Glog.Debug(fmt.Sprintf("cron collect data:%v", string(b)))
 	log.Glog.Error(fmt.Sprintf("cron collect errs:%v", c.lx.GetErrors()))
 	//
-	if err = SendHttpRes(c.lx.FormatData()); err != nil {
-		log.Glog.Error(fmt.Sprintf("cron sendHttp :%v", err))
-	}
+	//if err = SendHttpRes(c.lx.FormatData()); err != nil {
+	//	log.Glog.Error(fmt.Sprintf("cron sendHttp :%v", err))
+	//}
 
 }
 

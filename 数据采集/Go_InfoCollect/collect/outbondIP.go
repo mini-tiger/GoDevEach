@@ -4,7 +4,6 @@ import (
 	"collect_web/conf"
 	"collect_web/log"
 	"collect_web/tools"
-	"fmt"
 	"net"
 )
 
@@ -28,14 +27,15 @@ func (i *OutboundIP) GetName() string {
 
 func (i *OutboundIP) GetInfo(wraplog *log.Wraplog) (interface{}, ErrorCollect) {
 	var errors tools.MapStr = make(map[string]interface{})
-	host, port, err := tools.Url2Host(conf.SendHttpUrl)
-	if err != nil {
-		errors.Set("OutboundIP", err)
-		return nil, ErrorCollect(errors)
-	}
+	//host, port, err := tools.Url2Host(conf.SendHttpServer)
+	//if err != nil {
+	//	errors.Set("OutboundIP", err)
+	//	return nil, ErrorCollect(errors)
+	//}
 	//fmt.Printf("abcd:%v %v %v\n", host, port, err)
 	//time.Sleep(10)
-	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%s", host, port), conf.DefaultTimeOut)
+	conn, err := net.DialTimeout("tcp", net.JoinHostPort(conf.SendHttpServer, conf.ServerPort), conf.DefaultTimeOut)
+
 	if err != nil {
 		errors.Set("OutboundIP", err)
 		return nil, ErrorCollect(errors)

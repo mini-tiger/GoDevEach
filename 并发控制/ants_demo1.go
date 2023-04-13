@@ -26,7 +26,7 @@ func main() {
 	runTimes := 1000
 	var wg sync.WaitGroup
 	// 创建一个容量为10的goroutine池
-	p, _ := ants.NewPool(10)
+	p, _ := ants.NewPool(100)
 
 	defer p.Release() // xxx 使用完必须释放
 
@@ -38,6 +38,6 @@ func main() {
 		}, &wg))
 	}
 	wg.Wait()
-	fmt.Printf("running goroutines: %d\n", p.Running())
+	//fmt.Printf("running goroutines: %d\n", p.Running())
 	//fmt.Printf("finish all tasks, result is %d\n", sum)
 }

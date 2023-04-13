@@ -153,6 +153,10 @@ github.com/modern-go/reflect2
 # github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826
 ## explicit
 github.com/mohae/deepcopy
+# github.com/panjf2000/ants/v2 v2.7.2
+## explicit; go 1.13
+github.com/panjf2000/ants/v2
+github.com/panjf2000/ants/v2/internal/sync
 # github.com/pelletier/go-toml/v2 v2.0.6
 ## explicit; go 1.16
 github.com/pelletier/go-toml/v2
