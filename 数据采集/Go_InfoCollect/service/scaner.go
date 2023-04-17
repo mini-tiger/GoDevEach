@@ -9,6 +9,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/panjf2000/ants/v2"
 	"net"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -41,8 +42,8 @@ type CollectSendInter interface {
 var _ CollectSendInter = &CollectSend{}
 
 func NewCollectSend() *CollectSend {
-	var TcpConnSuccess chan net.IP = make(chan net.IP, 0)
-	var HttpAuthSuccess chan net.IP = make(chan net.IP, 0)
+	var TcpConnSuccess chan net.IP = make(chan net.IP, runtime.NumCPU()*10)
+	var HttpAuthSuccess chan net.IP = make(chan net.IP, runtime.NumCPU()*10)
 	var HttpSendSuccess chan struct{} = make(chan struct{}, 0)
 	return &CollectSend{
 		TcpConnSuccess:  TcpConnSuccess,
@@ -144,6 +145,7 @@ func (cs *CollectSend) ScanIPHttpSend() {
 			httpsendResp := &HttpSendResp{}
 
 			lx := new(LinuxMetric)
+			lx.Wlog = log.Wlog
 			lx.RegMetrics()
 			_ = conf.SetServerAddr(ip.To4().String()) // 写入配置 并 全局变量 outip
 

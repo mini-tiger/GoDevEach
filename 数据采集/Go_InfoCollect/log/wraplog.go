@@ -13,6 +13,11 @@ import (
 type Wraplog struct {
 	ZapLog *zap.Logger
 }
+type WrapLogInter interface {
+	Info(msg string, keysAndValues ...interface{})
+	Error(err error, msg string, keysAndValues ...interface{})
+	Printf(format string, v ...interface{})
+}
 
 var Wlog *Wraplog = new(Wraplog)
 

@@ -24,7 +24,7 @@ var DefaultTimeOut time.Duration = 15 * time.Second
 var CurrentDir string
 
 var GlobalCtx context.Context = context.Background()
-
+var Version = "debug"
 var configName = "config.yaml"
 var ServerPort = "8081"
 var ServerAuthUrlSuffix = "/api/v1/identity_verification"

@@ -66,7 +66,7 @@ func (d *Disk) GetIO(name string) map[string]disk.IOCountersStat {
 	}
 }
 
-func (d *Disk) GetInfo(wraplog *log.Wraplog) (interface{}, ErrorCollect) {
+func (d *Disk) GetInfo(wraplog log.WrapLogInter) (interface{}, ErrorCollect) {
 	var errors tools.MapStr = make(map[string]interface{})
 
 	//获取磁盘分区

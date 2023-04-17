@@ -14,7 +14,7 @@ import (
 type ErrorCollect map[string]interface{}
 
 type GetInfoInter interface {
-	GetInfo(wraplog *log.Wraplog) (interface{}, ErrorCollect)
+	GetInfo(wraplog log.WrapLogInter) (interface{}, ErrorCollect)
 	GetName() string
 }
 

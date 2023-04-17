@@ -38,6 +38,7 @@ func (i *IpCidr) getNicIps() {
 	}
 
 	for _, address := range interfaceAddr {
+
 		ipNet, isVailIpNet := address.(*net.IPNet)
 		// 检查ip地址判断是否回环地址
 		if isVailIpNet && !ipNet.IP.IsLoopback() {

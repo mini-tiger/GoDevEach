@@ -35,7 +35,7 @@ func (ni *NetInterfaces) GetName() string {
 }
 
 //网络接口信息采集
-func (ni *NetInterfaces) GetInfo(wraplog *log.Wraplog) (interface{}, ErrorCollect) {
+func (ni *NetInterfaces) GetInfo(wraplog log.WrapLogInter) (interface{}, ErrorCollect) {
 	var errors tools.MapStr = make(map[string]interface{})
 	interfaces, err := net.Interfaces()
 	if err != nil {

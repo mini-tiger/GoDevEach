@@ -24,7 +24,7 @@ func (m *Memory) GetName() string {
 	return "memory"
 }
 
-func (m *Memory) GetInfo(wlog *log.Wraplog) (interface{}, ErrorCollect) {
+func (m *Memory) GetInfo(wlog log.WrapLogInter) (interface{}, ErrorCollect) {
 	var errors tools.MapStr = make(map[string]interface{})
 	swapInfo, err := mem.SwapMemory()
 	if err != nil {

@@ -19,7 +19,7 @@ func (g *Gpu) GetName() string {
 	return "GPU"
 }
 
-func (g *Gpu) GetInfo(wraplog *log.Wraplog) (interface{}, ErrorCollect) {
+func (g *Gpu) GetInfo(wraplog log.WrapLogInter) (interface{}, ErrorCollect) {
 	var errors tools.MapStr = make(map[string]interface{})
 
 	gpu, err := ghw.GPU(&ghw.WithOption{Alerter: wraplog})
@@ -27,6 +27,7 @@ func (g *Gpu) GetInfo(wraplog *log.Wraplog) (interface{}, ErrorCollect) {
 		errors.Set("gpu", err)
 		return nil, ErrorCollect(errors)
 	}
+
 	//return HostInfo
 	if len(errors) > 0 {
 		return nil, ErrorCollect(errors)

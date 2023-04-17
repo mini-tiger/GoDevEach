@@ -52,6 +52,7 @@ type LinuxMetric struct {
 	CollectErrors tools.MapStr
 	MetricsFn     []collect.GetInfoInter
 	metricsData   tools.MapStr
+	Wlog          log.WrapLogInter
 }
 
 func (l *LinuxMetric) GetErrors() map[string]interface{} {
@@ -90,8 +91,9 @@ func (l *LinuxMetric) RegMetrics() {
 	var diskinfo collect.GetInfoInter = collect.GetDisk()
 	var outip collect.GetInfoInter = collect.GetOutboundIP()
 	var gpu collect.GetInfoInter = collect.GetGPU()
+	var pci collect.GetInfoInter = collect.GetPCI()
 
-	l.MetricsFn = append(l.MetricsFn, cpu, mem, hostinfo, netinfo, diskinfo, outip, gpu)
+	l.MetricsFn = append(l.MetricsFn, cpu, mem, hostinfo, netinfo, diskinfo, outip, gpu, pci)
 	//l.MetricsFn = append(l.MetricsFn, hostinfo)
 	l.CollectErrors = make(map[string]interface{})
 
@@ -103,7 +105,7 @@ func (l *LinuxMetric) GetMetrics(gctx context.Context) interface{} {
 
 }
 
-func (l *LinuxMetric) wrapFn(lg *log.Wraplog, inter collect.GetInfoInter) (interface{}, collect.ErrorCollect) {
+func (l *LinuxMetric) wrapFn(lg log.WrapLogInter, inter collect.GetInfoInter) (interface{}, collect.ErrorCollect) {
 	defer func() {
 		if err := recover(); err != nil {
 			l.CollectErrors.Set(inter.GetName(), fmt.Sprintf("panic %v", err))
@@ -120,7 +122,7 @@ func (l *LinuxMetric) getMetrics() interface{} {
 
 	for _, fn := range l.MetricsFn {
 		//data, err := fn.GetInfo(log.Wlog)
-		data, err := l.wrapFn(log.Wlog, fn)
+		data, err := l.wrapFn(l.Wlog, fn)
 
 		l.metricsData.Set(fn.GetName(), data)
 		//resData.Set(fn.GetName(), string(bytestr))

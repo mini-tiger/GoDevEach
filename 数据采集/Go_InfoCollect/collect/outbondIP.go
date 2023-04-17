@@ -25,7 +25,7 @@ func (i *OutboundIP) GetName() string {
 	return "OutboundIP"
 }
 
-func (i *OutboundIP) GetInfo(wraplog *log.Wraplog) (interface{}, ErrorCollect) {
+func (i *OutboundIP) GetInfo(wraplog log.WrapLogInter) (interface{}, ErrorCollect) {
 	var errors tools.MapStr = make(map[string]interface{})
 	//host, port, err := tools.Url2Host(conf.SendHttpServer)
 	//if err != nil {

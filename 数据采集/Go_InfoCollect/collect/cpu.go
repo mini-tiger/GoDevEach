@@ -27,7 +27,7 @@ func (c *Cpu) GetName() string {
 	return "CPU"
 }
 
-func (c *Cpu) GetInfo(wlog *log.Wraplog) (interface{}, ErrorCollect) {
+func (c *Cpu) GetInfo(wlog log.WrapLogInter) (interface{}, ErrorCollect) {
 	var errors tools.MapStr = make(map[string]interface{})
 	//cpu基本信息
 	cpuInfos, err := cpu.Info()

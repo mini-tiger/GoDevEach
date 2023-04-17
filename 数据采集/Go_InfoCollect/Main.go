@@ -1,6 +1,7 @@
 package main
 
 import (
+	"collect_web/cmd"
 	"collect_web/conf"
 	"collect_web/log"
 	"collect_web/service"
@@ -10,6 +11,8 @@ import (
 )
 
 func main() {
+	// 不加参数 往下执行
+	cmd.Execute()
 
 	runtime.GOMAXPROCS(runtime.NumCPU() * 2)
 	// init zap log
@@ -27,7 +30,6 @@ func main() {
 			log.Glog.Info(fmt.Sprintf("!!! Read Yaml ServerAddr:%s", ip))
 			go collectScan.ScanIPHttpSend()
 			collectScan.GetHttpAuthSuccess() <- net.ParseIP(ip)
-
 		} else {
 			go collectScan.ScanIPHttpSend()
 			go collectScan.ScanIPHttpAuth()

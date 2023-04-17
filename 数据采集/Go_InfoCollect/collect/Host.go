@@ -26,7 +26,7 @@ const HostInfoStatStr = "HostInfoStat"
 
 type HostInfoStat struct {
 	SN        string
-	hostStat  *host.InfoStat
+	HostStat  *host.InfoStat
 	Product   *ghw.ProductInfo
 	Bios      *ghw.BIOSInfo
 	BaseBoard *ghw.BaseboardInfo
@@ -39,7 +39,7 @@ func (h *HostInfoStat) GetName() string {
 	return HostInfoStatStr
 
 }
-func (h *HostInfoStat) GetInfo(wlog *log.Wraplog) (interface{}, ErrorCollect) {
+func (h *HostInfoStat) GetInfo(wlog log.WrapLogInter) (interface{}, ErrorCollect) {
 	var errors tools.MapStr = make(map[string]interface{})
 
 	HostInfo, err := host.Info()
@@ -65,7 +65,7 @@ func (h *HostInfoStat) GetInfo(wlog *log.Wraplog) (interface{}, ErrorCollect) {
 	}
 	h.SN = product.SerialNumber
 	h.BaseBoard = baseboard
-	h.hostStat = HostInfo
+	h.HostStat = HostInfo
 	h.Bios = bios
 	h.Product = product
 	if len(errors) > 0 {
