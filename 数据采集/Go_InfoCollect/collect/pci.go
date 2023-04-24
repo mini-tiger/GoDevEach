@@ -12,7 +12,7 @@ import (
 /**
  * @Author: Tao Jun
  * @Since: 2023/4/7
- * @Desc: outbondIP.go
+ * @Desc: pci.go
 **/
 
 type PCI struct {
@@ -47,7 +47,7 @@ func (i *PCI) GetInfo(wlog log.WrapLogInter) (interface{}, ErrorCollect) {
 		platform = hostInfo.Platform
 	}
 
-	if !strings.Contains(strings.ToLower(platform), "openeuler") {
+	if strings.Contains(strings.ToLower(platform), "openeuler") {
 		devices, err := gopci.Scan()
 		if err != nil {
 			errors.Set("pci", err)

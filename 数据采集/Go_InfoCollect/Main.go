@@ -6,38 +6,36 @@ import (
 	"collect_web/log"
 	"collect_web/service"
 	"fmt"
-	"net"
 	"runtime"
 )
 
 func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU() * 2)
+
 	// 不加参数 往下执行
 	cmd.Execute()
 
-	runtime.GOMAXPROCS(runtime.NumCPU() * 2)
-	// init zap log
-	log.InitLog("CollectAgent", "agent.log")
-	log.InitWrapLog()
+	//_ = conf.ReadYAML()
+	//var collectScan service.CollectSendInter = service.NewCollectSend()
+	//
+	//if ip := conf.GetServerAddr(); ip != "" {
+	//	log.Glog.Info(fmt.Sprintf("!!! Read Success , Current ServerAddr:%s ServerPort:%v ", ip, conf.GetServerPort()))
+	//	go collectScan.ScanIPHttpSend()
+	//	collectScan.GetHttpAuthSuccess() <- net.ParseIP(ip)
+	//} else {
+	//	log.Glog.Info(fmt.Sprintf("!!! Read Fail ,Current ServerPort:%v ", conf.GetServerPort()))
+	//	go collectScan.ScanIPHttpSend()
+	//	go collectScan.ScanIPHttpAuth()
+	//	go collectScan.LoopScanIpTcp()
+	//}
 
-	var collectScan service.CollectSendInter = service.NewCollectSend()
-	if err := conf.ReadYAML(); err != nil {
-		log.Glog.Error("config not found serveraddr")
-		go collectScan.ScanIPHttpSend()
-		go collectScan.ScanIPHttpAuth()
-		go collectScan.LoopScanIpTcp()
-	} else {
-		if ip := conf.GetServerAddr(); ip != "" {
-			log.Glog.Info(fmt.Sprintf("!!! Read Yaml ServerAddr:%s", ip))
-			go collectScan.ScanIPHttpSend()
-			collectScan.GetHttpAuthSuccess() <- net.ParseIP(ip)
+	if service.CollectFlag {
+		if b := <-service.CollectScan.GetHttpSendSuccess(); b {
+			log.Glog.Info(fmt.Sprintf("!!!! Success Push Collect Data To %s:%s", conf.GetServerAddr(), conf.GetServerPort()))
 		} else {
-			go collectScan.ScanIPHttpSend()
-			go collectScan.ScanIPHttpAuth()
-			go collectScan.LoopScanIpTcp()
+			log.Glog.Error(fmt.Sprintf("!!!! Fail Push Collect Data To %s:%s", conf.GetServerAddr(), conf.GetServerPort()))
 		}
-
 	}
-	<-collectScan.GetHttpSendSuccess()
 
 	//ctx, _ := context.WithTimeout(context.Background(), 2*time.Second)
 

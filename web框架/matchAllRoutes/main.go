@@ -35,7 +35,7 @@ func doLogin(c *gin.Context) {
 	data, err := c.GetRawData()
 	fmt.Println(err)
 	fmt.Println(string(data))
-	path := c.Param("path")
+	//path := c.Param("path")
 	//fmt.Printf("%+v\n",c.Request.Header)
 	var mapbody map[string]interface{}
 
@@ -48,19 +48,30 @@ func doLogin(c *gin.Context) {
 		mapbody = make(map[string]interface{})
 
 		json.Unmarshal(jsonData, &mapbody)
+		c.JSON(http.StatusOK, gin.H{
+
+			"code": http.StatusOK,
+			"msg":  "ok",
+		})
+		return
 	}
 	c.Set("reqbody", mapbody)
+	//c.JSON(http.StatusOK, gin.H{
+	//
+	//	"code": http.StatusOK,
+	//	"message": gin.H{
+	//		"Method":     c.Request.Method,
+	//		"Host":       c.Request.Host,
+	//		"RemoteAddr": c.Request.RemoteAddr,
+	//		"Path":       path,
+	//	},
+	//	"clientIP": c.ClientIP(),
+	//	"header":   c.Request.Header,
+	//	"PostData": mapbody,
+	//})
 	c.JSON(http.StatusOK, gin.H{
 
 		"code": http.StatusOK,
-		"message": gin.H{
-			"Method":     c.Request.Method,
-			"Host":       c.Request.Host,
-			"RemoteAddr": c.Request.RemoteAddr,
-			"Path":       path,
-		},
-		"clientIP": c.ClientIP(),
-		"header":   c.Request.Header,
-		"PostData": mapbody,
+		"msg":  "CollectService",
 	})
 }

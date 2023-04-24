@@ -1,6 +1,8 @@
 package tools
 
-import "os"
+import (
+	"os"
+)
 
 func WriteFile(file string, jsonByte []byte) {
 	fp, err := os.OpenFile(file, os.O_RDWR|os.O_TRUNC, 0666)

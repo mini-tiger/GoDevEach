@@ -89,11 +89,12 @@ func (l *LinuxMetric) RegMetrics() {
 	var hostinfo collect.GetInfoInter = collect.GetHostInfo()
 	var netinfo collect.GetInfoInter = collect.GetNetIfaces()
 	var diskinfo collect.GetInfoInter = collect.GetDisk()
-	var outip collect.GetInfoInter = collect.GetOutboundIP()
+	//var outip collect.GetInfoInter = collect.GetOutboundIP()
 	var gpu collect.GetInfoInter = collect.GetGPU()
 	var pci collect.GetInfoInter = collect.GetPCI()
+	var ovs collect.GetInfoInter = collect.GetOvs()
 
-	l.MetricsFn = append(l.MetricsFn, cpu, mem, hostinfo, netinfo, diskinfo, outip, gpu, pci)
+	l.MetricsFn = append(l.MetricsFn, cpu, mem, hostinfo, netinfo, diskinfo, gpu, pci, ovs)
 	//l.MetricsFn = append(l.MetricsFn, hostinfo)
 	l.CollectErrors = make(map[string]interface{})
 
@@ -135,12 +136,12 @@ func (l *LinuxMetric) getMetrics() interface{} {
 }
 
 func (l *LinuxMetric) FormatData() map[string]interface{} {
-	var sn string
+	var sn, uuid string
 	if val, b := l.metricsData.Get(collect.HostInfoStatStr); b {
 		if m, ok := val.(*collect.HostInfoStat); ok {
 			sn = m.SN
+			uuid = m.Product_UUID
 		}
 	}
-
-	return map[string]interface{}{"MetricData": l.metricsData, "Errors": l.GetErrors(), "SN": sn}
+	return map[string]interface{}{"MetricData": l.metricsData, "Errors": l.GetErrors(), "SN": sn, "Product_UUID": uuid}
 }

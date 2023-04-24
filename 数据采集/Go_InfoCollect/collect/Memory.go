@@ -3,6 +3,7 @@ package collect
 import (
 	"collect_web/log"
 	"collect_web/tools"
+	"github.com/jaypipes/ghw"
 	"github.com/shirou/gopsutil/mem"
 )
 
@@ -13,6 +14,12 @@ type Memory struct {
 	SwapMemory      *mem.SwapMemoryStat      `json:"swapMemory"`
 	VirtualMemory   *mem.VirtualMemoryStat   `json:"virtualMemory"`
 	VirtualMemoryEx *mem.VirtualMemoryExStat `json:"virtualMemoryEx"`
+	MemInfo         *MemoryInfo              `json:"memInfo"`
+}
+type MemoryInfo struct {
+	Unit   string `json:"Unit"`
+	Total  int64  `json:"total"`
+	Usable int64  `json:"Usable"`
 }
 
 //
@@ -43,6 +50,18 @@ func (m *Memory) GetInfo(wlog log.WrapLogInter) (interface{}, ErrorCollect) {
 	m.VirtualMemory = memInfo
 
 	m.VirtualMemoryEx = memExinfo
+
+	mi := new(MemoryInfo)
+	m.MemInfo = mi
+	memory, err := ghw.Memory()
+	if err != nil {
+		errors.Set("memoryInfo", err)
+	} else {
+		mi.Unit = "GB"
+		mi.Usable = tools.ToGB(memory.TotalUsableBytes)
+		mi.Total = tools.ToGB(memory.TotalPhysicalBytes)
+	}
+
 	if len(errors) > 0 {
 		return m, ErrorCollect(errors)
 	}

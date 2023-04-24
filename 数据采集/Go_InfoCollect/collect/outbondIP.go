@@ -34,7 +34,7 @@ func (i *OutboundIP) GetInfo(wraplog log.WrapLogInter) (interface{}, ErrorCollec
 	//}
 	//fmt.Printf("abcd:%v %v %v\n", host, port, err)
 	//time.Sleep(10)
-	conn, err := net.DialTimeout("tcp", net.JoinHostPort(conf.SendHttpServer, conf.ServerPort), conf.DefaultTimeOut)
+	conn, err := net.DialTimeout("tcp", net.JoinHostPort(conf.GetServerAddr(), conf.ServerPort), conf.DefaultTimeOut)
 
 	if err != nil {
 		errors.Set("OutboundIP", err)

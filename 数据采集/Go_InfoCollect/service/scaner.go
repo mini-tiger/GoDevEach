@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	"github.com/panjf2000/ants/v2"
+	"golang.org/x/sync/semaphore"
 	"net"
 	"runtime"
 	"strings"
@@ -28,7 +29,7 @@ type taskFunc func()
 type CollectSend struct {
 	TcpConnSuccess  chan net.IP
 	HttpAuthSuccess chan net.IP
-	HttpSendSuccess chan struct{}
+	HttpSendSuccess chan bool
 }
 
 type CollectSendInter interface {
@@ -36,7 +37,7 @@ type CollectSendInter interface {
 	ScanIPHttpAuth()
 	LoopScanIpTcp()
 	GetHttpAuthSuccess() chan<- net.IP
-	GetHttpSendSuccess() <-chan struct{}
+	GetHttpSendSuccess() <-chan bool
 }
 
 var _ CollectSendInter = &CollectSend{}
@@ -44,7 +45,7 @@ var _ CollectSendInter = &CollectSend{}
 func NewCollectSend() *CollectSend {
 	var TcpConnSuccess chan net.IP = make(chan net.IP, runtime.NumCPU()*10)
 	var HttpAuthSuccess chan net.IP = make(chan net.IP, runtime.NumCPU()*10)
-	var HttpSendSuccess chan struct{} = make(chan struct{}, 0)
+	var HttpSendSuccess chan bool = make(chan bool, 0)
 	return &CollectSend{
 		TcpConnSuccess:  TcpConnSuccess,
 		HttpAuthSuccess: HttpAuthSuccess,
@@ -55,7 +56,7 @@ func NewCollectSend() *CollectSend {
 func (cs *CollectSend) taskFuncWrapper(addr net.IP, tcpchan chan net.IP, wg *sync.WaitGroup) taskFunc {
 	return func() {
 		defer wg.Done()
-		if err := tools.TcpTry(addr, conf.ServerPort, 3); err != nil {
+		if err := tools.TcpTry(addr, conf.GetServerPort(), 3); err != nil {
 			log.Glog.Debug(fmt.Sprintf("ip:%s tcp conn fail", addr.To4().String()))
 		} else {
 			tcpchan <- addr
@@ -87,7 +88,10 @@ func (cs *CollectSend) ScanIpTcp() {
 func (cs *CollectSend) LoopScanIpTcp() {
 	for {
 		cs.ScanIpTcp()
-		time.Sleep(60 * time.Second)
+		log.Glog.Error(fmt.Sprintf("Not Found Valid Combine Server, Current PORT: %s,Loop Interval: %d minute",
+			conf.GetServerPort(), conf.LoopScanIpInterval))
+
+		time.Sleep(time.Duration(conf.LoopScanIpInterval) * time.Minute)
 	}
 }
 
@@ -100,7 +104,7 @@ func (cs *CollectSend) ScanIPHttpAuth() {
 	for {
 		select {
 		case ip := <-cs.TcpConnSuccess:
-			checkurl := tools.UrlJoin(ip, conf.ServerPort, conf.ServerAuthUrlSuffix)
+			checkurl := tools.UrlJoin(ip, conf.GetServerPort(), conf.ServerAuthUrlSuffix)
 			if checkurl == "" {
 				return
 			}
@@ -131,41 +135,61 @@ func (cs *CollectSend) GetHttpAuthSuccess() chan<- net.IP {
 	return cs.HttpAuthSuccess
 }
 
-func (cs *CollectSend) GetHttpSendSuccess() <-chan struct{} {
+func (cs *CollectSend) GetHttpSendSuccess() <-chan bool {
 	return cs.HttpSendSuccess
 }
 func (cs *CollectSend) ScanIPHttpSend() {
+	semap := semaphore.NewWeighted(1)
+
 	for {
 		select {
 		case ip := <-cs.HttpAuthSuccess:
-			sendurl := tools.UrlJoin(ip, conf.ServerPort, conf.ServerSendUrlSuffix)
-			if sendurl == "" {
-				return
+			if err := semap.Acquire(conf.GlobalCtx, 1); err == nil {
+				//fmt.Println("inside", ip.To4().String())
+				go func() {
+					defer semap.Release(1)
+					sendUrl := tools.UrlJoin(ip, conf.GetServerPort(), conf.ServerSendUrlSuffix)
+					if sendUrl == "" {
+						return
+					}
+					httpsendResp := &HttpSendResp{}
+
+					lx := new(LinuxMetric)
+					lx.Wlog = log.Wlog
+					lx.RegMetrics()
+
+					//conf.SetServerAddr(ip.To4().String())
+					//time.Sleep(500 * time.Millisecond) // viper setkey 延迟
+
+					var lxface collect.GetMetricInter = lx
+					lxface.GetMetrics(conf.GlobalCtx)
+					data := lxface.FormatData()
+
+					err, resp := tools.HttpGetRes(sendUrl, data, resty.MethodPost, httpsendResp)
+					if err != nil {
+						log.Glog.Error(fmt.Sprintf("Access sendUrl:%s Err:%v", sendUrl, err))
+						cs.HttpSendSuccess <- false
+					} else {
+						log.Glog.Debug(fmt.Sprintf("Access sendUrl:%s  Resp:%v", sendUrl, resp))
+						//fmt.Println(httpauthResp)
+						if httpsendResp.Code == 200 && strings.Contains(strings.ToLower(httpsendResp.Msg), "ok") {
+							log.Glog.Info(fmt.Sprintf("Access sendUrl:%s  Success:%v", sendUrl, httpsendResp))
+							conf.SetServerAddr(ip.To4().String())
+							err = conf.WriteToConfig()
+							if err != nil {
+								log.Glog.Error(fmt.Sprintf("Send CollectData Success IP:%s,Write Config Err:%v", ip.To4().String(), err))
+							} else {
+								log.Glog.Info(fmt.Sprintf("Send CollectData Success IP:%s, Write To config.yaml", ip.To4().String()))
+							}
+							cs.HttpSendSuccess <- true
+						} else {
+							log.Glog.Info(fmt.Sprintf("Access sendUrl:%s  Fail:%v", sendUrl, httpsendResp))
+							//cs.HttpSendSuccess <- false
+						}
+					}
+				}()
 			}
-			httpsendResp := &HttpSendResp{}
 
-			lx := new(LinuxMetric)
-			lx.Wlog = log.Wlog
-			lx.RegMetrics()
-			_ = conf.SetServerAddr(ip.To4().String()) // 写入配置 并 全局变量 outip
-
-			var lxface collect.GetMetricInter = lx
-			lxface.GetMetrics(conf.GlobalCtx)
-			data := lxface.FormatData()
-
-			err, resp := tools.HttpGetRes(sendurl, data, resty.MethodPost, httpsendResp)
-			if err != nil {
-				log.Glog.Error(fmt.Sprintf("Access SendUrl:%s Err:%v", sendurl, err))
-			} else {
-				log.Glog.Debug(fmt.Sprintf("Access SendUrl:%s  Resp:%v", sendurl, resp))
-				//fmt.Println(httpauthResp)
-				if httpsendResp.Code == 200 && strings.Contains(strings.ToLower(httpsendResp.Msg), "ok") {
-					log.Glog.Info(fmt.Sprintf("Access SendUrl:%s  Sucess:%v", sendurl, httpsendResp))
-					cs.HttpSendSuccess <- struct{}{}
-				} else {
-					log.Glog.Info(fmt.Sprintf("Access SendUrl:%s  Fail:%v", sendurl, httpsendResp))
-				}
-			}
 		}
 	}
 }

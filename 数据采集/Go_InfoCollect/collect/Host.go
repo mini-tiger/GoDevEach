@@ -25,11 +25,12 @@ import (
 const HostInfoStatStr = "HostInfoStat"
 
 type HostInfoStat struct {
-	SN        string
-	HostStat  *host.InfoStat
-	Product   *ghw.ProductInfo
-	Bios      *ghw.BIOSInfo
-	BaseBoard *ghw.BaseboardInfo
+	SN           string
+	Product_UUID string
+	HostStat     *host.InfoStat
+	Product      *ghw.ProductInfo
+	Bios         *ghw.BIOSInfo
+	BaseBoard    *ghw.BaseboardInfo
 }
 
 func GetHostInfo() GetInfoInter {
@@ -63,7 +64,8 @@ func (h *HostInfoStat) GetInfo(wlog log.WrapLogInter) (interface{}, ErrorCollect
 		errors.Set("baseboard", err)
 		//return nil,ErrorCollect(errors)
 	}
-	h.SN = product.SerialNumber
+	h.SN = baseboard.SerialNumber
+	h.Product_UUID = product.UUID
 	h.BaseBoard = baseboard
 	h.HostStat = HostInfo
 	h.Bios = bios
