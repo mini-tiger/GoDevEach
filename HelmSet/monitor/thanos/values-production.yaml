@@ -1,0 +1,505 @@
+global:
+  imageRegistry: "harbor.dev.21vianet.com"
+  storageClass: "standard"
+kubeVersion: "1.20.15"
+
+image:
+  registry: harbor.dev.21vianet.com
+  repository: library/thanos
+  tag: 0.23.1-scratch-r4
+
+objstoreConfig: |
+  type: s3
+  config:
+    bucket: thanos
+    endpoint: {{ include "thanos.minio.fullname" . }}:9000
+    access_key: admin
+    secret_key: "{{.Values.minio.auth.rootPassword }}"
+    insecure: true
+indexCacheConfig: |
+  type: IN-MEMORY
+  config:
+    max_size: "8192MB"
+bucketCacheConfig: ""
+
+query:
+  enabled: true
+  logLevel: debug
+  replicaLabel: [prometheus_replica]
+  dnsDiscovery:
+    enabled: false
+  stores: ["prometheus-k8s-0.prometheus-operated.monitoring:10901", "prometheus-k8s-1.prometheus-operated.monitoring:10901"]
+#  stores: ["prometheus-k8s-0.prometheus-operated.monitoring:10901", "prometheus-k8s-1.prometheus-operated.monitoring:10901","172.22.150.25:30438","172.22.150.25:32525", "172.23.50.25:31508", "172.23.50.25:30316", "172.22.240.10:31219", "172.22.240.10:31167"]
+  sdConfig: ""
+  extraFlags: ["--query.auto-downsampling", "--query.max-concurrent=40", "--query.max-concurrent-select=4", "--query.partial-response", "--query.timeout=3m", "--store.response-timeout=180s"]
+  replicaCount: 2
+  resources:
+    limits:
+      cpu: 1
+#      memory: 8Gi
+      memory: 4Gi
+    requests:
+      cpu: 1
+      #      memory: 8Gi
+      memory: 4Gi
+  grpc:
+    server:
+      tls:
+        enabled: false
+    client:
+      tls:
+        enabled: false
+  ingress:
+    enabled: false
+
+queryFrontend:
+  enabled: true
+  config: |
+    type: IN-MEMORY
+    config:
+      max_size: "4096MB"
+  extraFlags: ["--query-range.max-query-length=8784h", "--query-frontend.log-queries-longer-than=300s"]
+  replicaCount: 2
+  resources:
+    limits:
+      cpu: 1
+      memory: 4Gi
+    requests:
+      cpu: 1
+      memory: 2Gi
+  service:
+    type: ClusterIP
+    ports:
+      http: 9090
+  ingress:
+    enabled: false
+    hostname: thanos-query-monitor.dev.21vianet.com
+    ingressClassName: "traefik"
+    annotations:
+      traefik.ingress.kubernetes.io/buffering: |
+        maxRequestBodyBytes = 0
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
+    secrets:
+    - name: monitor-general-tls
+      key: |
+        -----BEGIN PRIVATE KEY-----
+        MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC+k9tarSxwewgJ
+        T1V+p5lJWFfcJaeIBgec8BxejjyZ4+cG+ETLDI6A9MY+ztrZ1OBcfZs7IetO4GUX
+        qVoIArf9rc7AmxvWWKhxgZSgSSkDK6toeAm07eKmQJS2ZZDP5A86fl4uDHnYnvME
+        cW+TmBpTVfI0FArlbqgGA/ZYBTYfTbRRpDU6fkqXxFtP8IyTqgvVfKEgDUmRvXv2
+        lvHgROZ1vRAigDnFxY3pnLkJzt7f/DRqWg713TWf/CsXURTTZNx9sp8JFav7x/HP
+        P9KlffozgiZBQb1lBHuVP5fRztEWzqJvSDW5kq9bOdythduRfqnNseQHfCH0w//s
+        oKS0Xg1tAgMBAAECggEAGRwsK79jepKLVYaxchWtGb/dG7GOaFq7CA+O/VpqW7Bu
+        kTmG/uXxpMYblMz2gvsMcMNP/7ORaHwidcKnjSSmj3MmKbSGL3DRCNuU9KWPFM7d
+        L8+ZH9C0K0mZDotFUE7xPrjFufWE3GjdBjnYBK9m0JIjbn8xjFdPJjPBcomFPwxo
+        mKuJnYDYy//vUazBxyGbPQFFhjpqqEhwT3h7iLcf0KwpAgW5BqThxHr01sR6o8QE
+        jskmOk7FDmCTueUS5INgE8FxIkJd18AiK6iyO2/gVn8pBTlOLypwnXsev5h0FC94
+        FD9njQr/okjoDLMip4xO/7wBIiX2IzezoBi5NCh4VQKBgQDtifTUliMJ1PdNkhj/
+        BZS6J/EQRwWGpsk80+VufdjH5UBbF1rwp74FXWQGT8DgBQpw5Fp8wh0osB0BsQha
+        8AHSj+3O2JAGvYfdnXKugrWHGH2UAV5uXVOMKYXcqoVSpdiG8k1hJxLgUTYeM85m
+        3FND6HaSZFAH+I5OioJNiPvztwKBgQDNY5Bbx1sJWwuRvZpCdohHQPap+TLmnxXK
+        CI0Twil1Ky9PFTQyTtxEOxYe21ataISYPrTcXWds7c6sz0yG96CvxN7YrWi8oYnA
+        5KoSffkqfU/UQvYm52q89t2gZA6YbCwG6/aJnKbc9vciXf3MFg5qugGwgKkdECqy
+        14oCPCSv+wKBgQClYs5CTZ5rtAnTyor41KvuyOyAxtJEJFAst+QggCK1Wxrp0WMR
+        99jH53RDKLhDwX65h2SxRH4E3En16YrFtiGut2N+By6QYtn8JSm582vsedLFgAZ9
+        lSEcj7SSJW/aUXpmysGxiQENib3CXZOx7mlS+MHFv24xfo+mg62hymSSFQKBgBV+
+        F7si72nZNyq3Fo9h6/zY1XcP9r2fZB5SKsEojkIOlNLHu0CQdAhHzpbICRf4Wfe8
+        iByPQaVqdTgsMSvmedAq3874xn8GwG2JACsTN6G0n0ftAeksSkUf6C1Ciyx0FV9c
+        Dd50oBl7Vn0oLMjQfg25DTg1Hn1GFdHFMFHvjT9FAoGANePebJqa+ZBLcQLs7o8R
+        a3lUMqygg5ow8rFBTI29B9aSVCpyISvw4dGK30bmcUacByG6/kDfQGWXo/+GtRR0
+        gQLMEI9pr5515656zAgmPs64Ja8AtDcaUu3b603vPwZ9Ekb9lAsvl07Ccy3J/ruR
+        qmA+YsuuaUv5pF+zKdOXefU=
+        -----END PRIVATE KEY-----
+      certificate: |
+        -----BEGIN CERTIFICATE-----
+        MIIDjTCCAnWgAwIBAgIUbCtohy6nYyGADdFIrAo0zaaoHfIwDQYJKoZIhvcNAQEL
+        BQAwUzELMAkGA1UEBhMCQ04xCzAJBgNVBAgMAkJKMQswCQYDVQQHDAJCSjETMBEG
+        A1UECgwKVm5ldCwgSW5jLjEVMBMGA1UEAwwMVm5ldCBSb290IENBMCAXDTIxMTIy
+        MzA4MDE1MFoYDzIxMjExMTI5MDgwMTUwWjBVMQswCQYDVQQGEwJDTjELMAkGA1UE
+        CAwCQkoxCzAJBgNVBAcMAkJKMRMwEQYDVQQKDApWbmV0LCBJbmMuMRcwFQYDVQQD
+        DA5tb25pdG9yLXRoYW5vczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
+        AL6T21qtLHB7CAlPVX6nmUlYV9wlp4gGB5zwHF6OPJnj5wb4RMsMjoD0xj7O2tnU
+        4Fx9mzsh607gZRepWggCt/2tzsCbG9ZYqHGBlKBJKQMrq2h4CbTt4qZAlLZlkM/k
+        Dzp+Xi4Medie8wRxb5OYGlNV8jQUCuVuqAYD9lgFNh9NtFGkNTp+SpfEW0/wjJOq
+        C9V8oSANSZG9e/aW8eBE5nW9ECKAOcXFjemcuQnO3t/8NGpaDvXdNZ/8KxdRFNNk
+        3H2ynwkVq/vH8c8/0qV9+jOCJkFBvWUEe5U/l9HO0RbOom9INbmSr1s53K2F25F+
+        qc2x5Ad8IfTD/+ygpLReDW0CAwEAAaNVMFMwUQYDVR0RBEowSIIfdGhhbm9zLW1v
+        bml0b3IuZGV2LjIxdmlhbmV0LmNvbYIldGhhbm9zLXF1ZXJ5LW1vbml0b3IuZGV2
+        LjIxdmlhbmV0LmNvbTANBgkqhkiG9w0BAQsFAAOCAQEAHgEDcZDH9d3vkLOHOgjo
+        SpA04DXglHTB9/cYEThcFPMHFqYje91TeIBmZ54Um9XK81KP4NbdYE7fJblbqdAO
+        dq61Eae9Uq0lAT9F8UXBgHx8nvQrOHLaQAToqlIXE73io8ODxGmiyKCsqUsEVuNV
+        Zhl2Y8rXhGich8E0VbN01c57ztjislCg/cRLyHttXRHwCRciMX0C33W5gaF1Q1UJ
+        ZkK3Z2KBOW00yCQR7o+YYAwFhQevMfUCRVmXm59YTmZt7NUb8KbKHTygFy2ZaT92
+        psQimkISYCR+Sikmr5nUlV3dIkQNNBvdAfatL4ghwltCBKQAGn2c6HAt4Rv4Elwu
+        aQ==
+        -----END CERTIFICATE-----
+    tls: true
+    path: /
+    pathType: Prefix
+
+bucketweb:
+  enabled: true
+  resources:
+    limits:
+      cpu: 500m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 2Gi
+  ingress:
+    enabled: false
+    hostname: thanos-bucketweb-monitor.dev.21vianet.com
+    ingressClassName: "traefik"
+    annotations:
+      traefik.ingress.kubernetes.io/buffering: |
+        maxRequestBodyBytes = 0
+      traefik.ingress.kubernetes.io/router.entrypoints: web
+    tls: false
+    path: /
+    pathType: Prefix
+compactor:
+  enabled: true
+  retentionResolutionRaw: 180d
+  retentionResolution5m: 1y
+  retentionResolution1h: 10y
+  resources:
+    limits:
+      cpu: 1
+      memory: 2Gi
+    requests:
+      cpu: 1
+      memory: 2Gi
+  ingress:
+    enabled: false
+    hostname: thanos-compactor-monitor.dev.21vianet.com
+    ingressClassName: "traefik"
+    annotations:
+      traefik.ingress.kubernetes.io/buffering: |
+        maxRequestBodyBytes = 0
+      traefik.ingress.kubernetes.io/router.entrypoints: web
+    tls: false
+    path: /
+    pathType: Prefix
+  persistence:
+    enabled: true
+    storageClass: "standard"
+    size: 5Gi
+storegateway:
+  enabled: true
+  config: ""
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 1
+      memory: 2Gi
+    requests:
+      cpu: 1
+      memory: 2Gi
+  service:
+    type: ClusterIP
+    ports:
+      http: 9090
+      grpc: 10901
+  persistence:
+    enabled: true
+    storageClass: "standard"
+    size: 5Gi
+  ingress:
+    enabled: false
+  sharded:
+    enabled: true
+    timePartitioning:
+      - min: "-2w"
+        max: "-1m"
+      - min: "-4w"
+        max: "-2w"
+ruler:
+  enabled: true
+  replicaLabel: replica
+  dnsDiscovery:
+    enabled: true
+  alertmanagers: ["dnssrv+_http-web._tcp.alertmanager-operated.kube-admin.svc.cluster.local"]
+  evalInterval: 1m
+  clusterName: "admin"
+  config: |
+    groups:
+      - name: "metamonitoring"
+        rules:
+          - alert: "PrometheusDown"
+            expr: absent(up{prometheus="monitoring/k8s"})
+  replicaCount: 3
+  resources:
+    limits:
+      cpu: 500m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 2Gi
+  service:
+    type: ClusterIP
+    ports:
+      http: 9090
+      grpc: 10901
+  persistence:
+    enabled: true
+    storageClass: "standard"
+    accessModes:
+      - ReadWriteOnce
+    size: 2Gi
+  ingress:
+    enabled: false
+    hostname: thanos-ruler.dev.21vianet.com
+    ingressClassName: "traefik"
+    annotations:
+      traefik.ingress.kubernetes.io/buffering: |
+        maxRequestBodyBytes = 0
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
+    secrets:
+    - name: thanos-ruler-tls
+      key: |
+        -----BEGIN RSA PRIVATE KEY-----
+        MIIEpQIBAAKCAQEAt3Vm5o1Pd8tT+1PiMsu2wIWxfYJp6wDOI+zYLq+7TsavoeX7
+        GGAUD0TrBC34EKhe9xQ0cnD9iXSr3Z+SUKBCEqu5hBSQMI0vV9U8BvpgEH86UMom
+        VaTWmGQjy3tTe2E5ovObtlMztxPDzPn6Kor7tUft7/Nrta7oCKRzP4T2gses0acB
+        Rh3wZVg6S9hGl8CVbxFTFScrf93KwSxqHuKnhjhRArDBfuolqQazZ1wAcwE5V5uA
+        bYpYpm1N8ZnRj+QdyfUr1Mu9Tc8M4izNVV5ykFXdmUCi0ukEs3UMh74yaYM9yprQ
+        EC1uQJezpzaYOXpSQ+Gz8VrEYas9MPEknTXpRQIDAQABAoIBAQCl0IT66Mnkum/j
+        fwO5aYp6I9wyVocpEoc+zTjvqYGgR9BCgj0a4OwAiQfptSq605NRun9U2G8vp7YX
+        D70NBmvxuChrCrLwTwt1VZN1syLUhknM74kKa3xSLGB177eaklunvosEldruI/0a
+        7O2BOjEavjJ+aAL4KWgrN4e655BuzkYcSOhgjTLf0j/AaPHLMWlQ7fpE/uMMUGce
+        cmbw8xzxrxTIxUXjeirfSS6+Q3QajzSMaU2Sf4z1eJB1kqCVO4PTrTQAz4MPG1lY
+        J4hax//+vVyZRCoh3hDdrId0KEj0bK/ySVgGs/uNPvwBdP838Yq2i3st1h+qrqFK
+        HULe1S0BAoGBAOYwnUGZdRGd6C+UQdg42ggpvTQfVoG32kfZDn82Swi9WQtfQkA5
+        J6NZQBYQIoBpV55qYGzZI2Z1W9/SaTUmgj+4LVmHUXLfRlN4ww7apBflNvLf4OdA
+        kvCJ0m9PHDYKhvgnwFdDTYe96xQPGOptde70zu4W6XuIbNtVqJ+GZVKhAoGBAMwH
+        aNOOqMTcYpXi4X30ZYRHqCQZWCKvGKo26i3dhzKdOLBc1G2uw1ZaKlHDQtwTXRzI
+        TASnJTsAbGn0egwLoeme9BHk6JN6FI0bPFzN7jaCOvODFGWeYnqx9RZZ0SZMaWWd
+        Eue3QbhLxqTmRsSe7+HcVhLjhXp1ukfsHDMPZfglAoGBALXeyyC9YmWc4YpWFQAF
+        Sx8P+1FnQS4UWP5TXMTd3ML295eol+uuPMcvCRdlgBz9HiEn4y+dD/8v0nsw/7bi
+        yh4WIp6N76hXCHWDAHqH/QZ0L8oNYODVgENUYVNYqe14u9LtdWZ84pDRWR7sHr95
+        5Kf7/FLY/3h+/aL+NtBzmzKBAoGALuTZFB7q7WxWAGtINqHwn0m0/K8Skc461gyP
+        IIGVLG30dJyxepA7d2J77ZT6jgipUw86YatlJD2BrYyybIhT65VMNbyuNA9QH+qN
+        oir2wHKISCXtjzmrGtZCJaP5LVtMsj069iUppslL2+TNiS2apwf0hJzktfPPH+7F
+        wHqejj0CgYEAoP08st8UqUhCY8/mOS3FKRIbIv/YTf+l1TivcCKyynHqE/Z69dfQ
+        ybArDG5UGHasOb7Z/6SH+gp0Bmkf19S6NaKi+O4uxLtBVf3PkyopYzAeXeGxzVv4
+        Qwm3F38+fsAfCAML00ukGHHdZGPzHPXqUbDK+9qiya3IIEWDmMchwBg=
+        -----END RSA PRIVATE KEY-----
+      certificate: |
+        -----BEGIN CERTIFICATE-----
+        MIIDeDCCAmCgAwIBAgIJAIVoissb1VN/MA0GCSqGSIb3DQEBCwUAMGQxCzAJBgNV
+        BAYTAkNOMQswCQYDVQQIDAJCSjELMAkGA1UEBwwCQkoxETAPBgNVBAoMCDIxdmlh
+        bmV0MRcwFQYDVQQLDA5Tb2Z0d2FyZUNlbnRlcjEPMA0GA1UEAwwGcm9vdGNhMCAX
+        DTIyMDUyNDA5Mzc1MVoYDzIxMjIwNDMwMDkzNzUxWjBjMQswCQYDVQQGEwJDTjEL
+        MAkGA1UECAwCQkoxCzAJBgNVBAcMAkJKMREwDwYDVQQKDAgyMXZpYW5ldDEXMBUG
+        A1UECwwOU29mdHdhcmVDZW50ZXIxDjAMBgNVBAMMBXJ1bGVyMIIBIjANBgkqhkiG
+        9w0BAQEFAAOCAQ8AMIIBCgKCAQEAt3Vm5o1Pd8tT+1PiMsu2wIWxfYJp6wDOI+zY
+        Lq+7TsavoeX7GGAUD0TrBC34EKhe9xQ0cnD9iXSr3Z+SUKBCEqu5hBSQMI0vV9U8
+        BvpgEH86UMomVaTWmGQjy3tTe2E5ovObtlMztxPDzPn6Kor7tUft7/Nrta7oCKRz
+        P4T2gses0acBRh3wZVg6S9hGl8CVbxFTFScrf93KwSxqHuKnhjhRArDBfuolqQaz
+        Z1wAcwE5V5uAbYpYpm1N8ZnRj+QdyfUr1Mu9Tc8M4izNVV5ykFXdmUCi0ukEs3UM
+        h74yaYM9yprQEC1uQJezpzaYOXpSQ+Gz8VrEYas9MPEknTXpRQIDAQABoywwKjAo
+        BgNVHREEITAfgh10aGFub3MtcnVsZXIuZGV2LjIxdmlhbmV0LmNvbTANBgkqhkiG
+        9w0BAQsFAAOCAQEAlvlDPr3uRI2KRsmfFsThdgmcGAis8W+fwP01UJ6h4AWAiKZo
+        TDhrXtMz62EXPRv5RxclXxFK7OyhpLShMa8AB2rCbTXSNbXGNrQ/SOjB6GUWvnH8
+        BRn8n5lS6aVYfWkQMfGEM2D8sX0nw7E0pHW6B39avU1fIBCXh7ikerfPksDk51JJ
+        YD0a5oQuf3w8yhwgTXuc4ZBxgcDJe7fsDu2oTb9cRkb2u9/O/mIiBLpIjgUpaLED
+        zVt2btWsNIhOVE8ZmbAR8hW2G8/tmvI687bdf7bHCosDqZcFgpfJjjUPtI2W6wYS
+        2VY67lQgdiXU5UoXPi3x8XhfwJAqlA+8DiEmmQ==
+        -----END CERTIFICATE-----
+    tls: true
+    path: /
+    pathType: ImplementationSpecific
+receive:
+  enabled: false
+receiveDistributor:
+  enabled: false
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: monitor
+volumePermissions:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: library/bitnami-shell
+    tag: 10-debian-10-r278
+minio:
+  enabled: true
+  auth:
+    rootUser: admin
+    rootPassword: "test123456" # least 8 char
+  defaultBuckets: 'thanos'
+  resources:
+    limits:
+      cpu: 2
+      memory: 4096Mi
+    requests:
+      cpu: 2
+      memory: 4096Mi
+  image:
+    repository: library/minio
+    # tag: docker pull bitnami/minio:2021.12.10-debian-10-r10
+    debug: true
+    tag: debug3
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1001
+    runAsUser: 1001
+  command:
+  - /opt/bitnami/scripts/minio/entrypoint.sh
+  - /opt/bitnami/scripts/minio/run.sh
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 50
+  persistence:
+    enabled: true
+    mountPath: /data
+    accessModes:
+      - ReadWriteOnce
+    # 1.5T 1 years
+    size: 15Gi
+  volumePermissions:
+    enabled: true
+    image:
+      repository: library/bitnami-shell
+      tag: 10-debian-10-r278
+  ingress:
+    enabled: false
+    ingressClassName: "traefik"
+    hostname: minitor-minio.dev.21vianet.com
+    path: /
+    pathType: Prefix
+    servicePort: minio-console
+    annotations:
+      traefik.ingress.kubernetes.io/buffering: |
+        maxRequestBodyBytes = 0
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
+    tls: true
+    selfSigned: false
+    secrets:
+    - name: minio-tls
+      key: |
+        -----BEGIN PRIVATE KEY-----
+        MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCoNnE7EoTHurNX
+        ZX08PsUxjTZ5xKlf6lV9Y2Dkcw97jNzbku58BUdXWWJZRz8HOBI38MBDCfVuLeig
+        ck+JQ53ovMa8oepakBsSSz1lo7Buj2qtunuwsTmVLMZsSmtmG4DBUUUo/4jFvvtH
+        tGf6GsyFQZ5JYf8wPM6P3psibKNgjh3vvhVpw7fVVRCpztWRje2fPT33RDqld81R
+        DfkhyuoxRLqNd8IO5fBZGIzeM1Dh68AgpilpcYoQzQQFnDlZNpMZ7Om4z1hfXWNV
+        dnH5t1opAXfTLD7uvlPJpFPBp45uiKoGKxRwsbrvEtZG3ABH4lTZDZ0LffhtuMfI
+        TMqCmiuXAgMBAAECggEATdzljPKFg+5oFYxk6/4iSU2Uackencdayy+1KgoYoJgT
+        o4/f1Iic/VHitHDGPBE4XayTUnTJpraZd6tyJZenAJRhae+JC2KpJU6unN2oTYUV
+        XFV169QdU2/maToJfLo+Xz2/RbsDFIXSyt43Qw4knYpCOrWh6jI7a10fck/XUFm4
+        TxG4bixPqcvBqQEss+WfL0lbkSc4Wkn/rpcX87bz77fvGGNqpPUQHdSLBaVnUvks
+        mVZey1skd4u7V5py26b7g/0/1564LpMyS+v6GXoRoiT18Y2a52EuuxMF0uXXoUjr
+        mdTpAHNz3X4dI59HmiiOWvnPbMcNmxLA2X6GTEOQAQKBgQDVw6HGnQAhO36RtkMg
+        wQJnLNYDnL5kGxPCe3gzQYqeIfTpJRFfyKWxv9ZLbSJWL6EsjTBo+LVNW3oM4HyT
+        GLTcZCDx+AOloKDJyPRpa/SdQYihHTHHhfQ72XxMU2FUIogZVF3EgJY8+sqUg6u2
+        Y2k/7V6sYfFj4rGbaJxNakoO8QKBgQDJcsbpQ9AHSsEQ3nVhMZsGz37marOqPa3Q
+        kVebqH8nAfrDxJkgUD63awrSgNw2K4k62JDShMUD13uVF3AIoYD6ZezhbvwsJuCC
+        EAh2r1iEf1CrUGmeY2vupzrspYjW3Hha7tPE9LpgG0lh4gDvwPYKFtI6VAavzKUu
+        s2hjnrXzBwKBgQCpfvZ+oqygrSj95tQxW3lJUA7eTGHWxHWVhwtXMQf1vR0R5Jdz
+        KIjheSg1JHLOffPBfK4+/b3cecU8AqAkjrmR6z8IPcy+frAfb90E3lnWe0kX3ytC
+        dp+i+R8K8i5BZSQfWXsEPaVi8sTAn+r+srKYwuGHtB2QQwbrIDaXV8kjMQKBgQCE
+        4X8wE5k/liHwXK2U5UHbpjeRCkVlQLZM4/KkLOti8b1WMXLIi+Yy2xsSbAnWebVV
+        6dDt7MKAnD1axVETgGUxxtYQhkM1ZJenc6gBkfyTud+egbaJ0g86J3mI7FBtWpTR
+        dsSeIMhn6NfpB0mS3PfvA8q8yvx2Lkmvmox7Wg+vNQKBgDxml2u3+usqG527vBqp
+        9IKh4kOtX4is1/6Xe5lq6K80HF7UXCd6AWeA+JG2rvTrMG2pjE30iK/A2E4sPD4G
+        C8JG3VMG+Cuqvi0n5CBT47FQalZqbrC7uAvUzY41M0hEzwp5OBWajbODlq9UgT8k
+        hevJgQm0Z+Jz/4WcyAFkkDAS
+        -----END PRIVATE KEY-----
+      certificate: |
+        -----BEGIN CERTIFICATE-----
+        MIIDgDCCAmigAwIBAgIUbCtohy6nYyGADdFIrAo0zaaoHfEwDQYJKoZIhvcNAQEL
+        BQAwUzELMAkGA1UEBhMCQ04xCzAJBgNVBAgMAkJKMQswCQYDVQQHDAJCSjETMBEG
+        A1UECgwKVm5ldCwgSW5jLjEVMBMGA1UEAwwMVm5ldCBSb290IENBMCAXDTIxMTIy
+        MzA2MzMwNVoYDzIxMjExMTI5MDYzMzA1WjBQMQswCQYDVQQGEwJDTjELMAkGA1UE
+        CAwCQkoxCzAJBgNVBAcMAkJKMRMwEQYDVQQKDApWbmV0LCBJbmMuMRIwEAYDVQQD
+        DAltb24tbWluaW8wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCoNnE7
+        EoTHurNXZX08PsUxjTZ5xKlf6lV9Y2Dkcw97jNzbku58BUdXWWJZRz8HOBI38MBD
+        CfVuLeigck+JQ53ovMa8oepakBsSSz1lo7Buj2qtunuwsTmVLMZsSmtmG4DBUUUo
+        /4jFvvtHtGf6GsyFQZ5JYf8wPM6P3psibKNgjh3vvhVpw7fVVRCpztWRje2fPT33
+        RDqld81RDfkhyuoxRLqNd8IO5fBZGIzeM1Dh68AgpilpcYoQzQQFnDlZNpMZ7Om4
+        z1hfXWNVdnH5t1opAXfTLD7uvlPJpFPBp45uiKoGKxRwsbrvEtZG3ABH4lTZDZ0L
+        ffhtuMfITMqCmiuXAgMBAAGjTTBLMEkGA1UdEQRCMECCHm1vbml0b3ItbWluaW8u
+        ZGV2LjIxdmlhbmV0LmNvbYIebWluaW8tbW9uaXRvci5kZXYuMjF2aWFuZXQuY29t
+        MA0GCSqGSIb3DQEBCwUAA4IBAQC7VrvnJVxmaUnmlU8kNgccwJW1xhOzk1JG/aVr
+        KJjUV4YsbciIGClUVqNpcH7E56I2g6Y7M4lhYwxovf1wShc/pJWwNoz5YR+4yB0h
+        imkPH7dUf5SZVl9HL+5G5OvTKhPQ3mUeMhMJa5GfddpFH4B2CAiyRlIoj9i0OwtJ
+        WQjJlZJmgURWQcDUq84w+0HziMwZXty41azr5RMRnYqoRYtIsNNbsFyaL+uderjX
+        oJheTVAqtnrzj0C3Fp0KWHdSS8TbYEixbuQ8zZQuFa7x6lWiDx5WNtUp7BtmaSY+
+        XsEodtVGmg0+ddXhDbN+hZIF9LjuQlOMBNbQUrdIj0ERPTXC
+        -----END CERTIFICATE-----
+  apiIngress:
+    enabled: false
+    ingressClassName: "traefik"
+    hostname: minitor-minio-api.dev.21vianet.com
+    path: /
+    pathType: Prefix
+    servicePort: minio-api
+    annotations:
+      traefik.ingress.kubernetes.io/buffering: |
+        maxRequestBodyBytes = 0
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
+    tls: true
+    selfSigned: false
+    secrets:
+    - name: minio-api-tls
+      key: |
+        -----BEGIN PRIVATE KEY-----
+        MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCytHAHWBltVB9D
+        9pAwKdU0/5ACFDqaAjXy8Igf93OkWIrMCU5z2+4CexolXh87eCg8vBob93accHlY
+        oUadKTwLPnoJcVOR48dpl1dTTcA5pXHtY5QiN5bzL8qY4+0odj6EUwM8rtMolkyu
+        o/TuiKP+lcjHsI2VgdJbe9q3dyN999w4xAcv/E740tDjm/ovzVREvoPWn8jEM9Yc
+        NDGyg4uTLcRqvtgvL/nhJQZcgg4ZgSEWZCZU+gHSyb0PbTHvmE3Ql20ues928DYO
+        yn+Z8jBUyHYP/A/ddqQyj7JjdYgcJyFHBqWXxw7bE04u2EIJbml8hscQXjxJUHT6
+        iPSqFdftAgMBAAECggEAAK3Q0yZRimnMaJyyNYyjI71o1akwA8/IVrD1Q3HUPaac
+        eGP8qVIHmHjRQ50U70vokzp/uuV4zOVcgKq0MvqqILzPB+QnViGQa2VIzqc3+MAZ
+        K7a6JFsjtq7SzTvodcPlPul11LAxWzEe/3beAl4AiYIWLjQMhanlm7VfwlywhNT/
+        n1aYjLt4qpmniD4ZqzoVeRebck06YMmlY1kVImbXZ+s7Ia5MsY+7QhGFxkcmd4Yk
+        jwQfJaTB3KH+O3m2isMoHfGGqLQTaRr1lJGutzB6+IJXB+ivNhYxamPnmy9DUD9H
+        3lSM2F6aYZOZYvDHfBl92Of75OF0uyIoNq4r6VlkPQKBgQDjan7vG9UoWt3bqPAz
+        drhj3A1VfwdoNAOk6EOSIzXo/ExN9NVKAtc/RneIvGQ578+bR5gM7Sqk04FHAV2F
+        1uzzXgdS8heLp0bQY1CknCN0onetZ1VDqYI0YUK6Kwu2NQbg2bPhgp4ulwvpntEQ
+        gGF+qGAfELl1vwM4M8qrmv4+owKBgQDJKpNYgyrado8J5bctMqc9VhqF002nfKEa
+        ly7Xm6pc7JZb0f/J8lXUg0GzStxKuw7+9jG28rQc2muOP3d+XuQGCg//ROKiNhe6
+        db5yQXYmoYvb7+JN+v4zll5zgIQJ7K8KVkY/iedVSTCOKQvllGJOJYud20zB0mJ4
+        kvEVHjPILwKBgQC+exv40Ro4Y+vCKf2PTZhiZBVzECQ3HqISxUybogxsqq6K+VCR
+        XlHGORK0H//fG0OL72qnIRt/1XxJ6hXYnc34hkCiNA6Otby1nQoV5oY4EkElqBCd
+        zOQ3VWPbpWR46G9rdE2bzJkLsw6STqkUJkQDH6rrOkntGuHqeE8Ab6EW+wKBgQDE
+        O84EV9+jwGeEJhvr8S+G+8lfpmJn8YFOaQ/+rxEfGIMMCuxUWRs09N1QQsRl+deF
+        CzAv4M2mH8MvveWY1oPlCEfWoaHazp2S/GzNE+JniMrfvz+pBiCWviZg0Yr8C3As
+        y0A3lxSc84p0AsJiL789sA5j7JsRr2Lzb5PRH+cvbQKBgQDY4td0veZkv4WblxS9
+        8Bc5bWsS6vuvLHmI5DMtNJwh3amDFJtEP+dCsu1tXqnkWpIZHKigzU7RBoT7k2nb
+        kujEbRErszBFr2e8ELTcUZODnx2KSSox8I8boDqXgGZAHImasiDWB/Xzo+OA1214
+        1caoDqIoPWxbJ5fXttI+891BoQ==
+        -----END PRIVATE KEY-----
+      certificate: |
+        -----BEGIN CERTIFICATE-----
+        MIIDjDCCAnSgAwIBAgIUbCtohy6nYyGADdFIrAo0zaaoHfAwDQYJKoZIhvcNAQEL
+        BQAwUzELMAkGA1UEBhMCQ04xCzAJBgNVBAgMAkJKMQswCQYDVQQHDAJCSjETMBEG
+        A1UECgwKVm5ldCwgSW5jLjEVMBMGA1UEAwwMVm5ldCBSb290IENBMCAXDTIxMTIy
+        MzA2Mjk0MFoYDzIxMjExMTI5MDYyOTQwWjBUMQswCQYDVQQGEwJDTjELMAkGA1UE
+        CAwCQkoxCzAJBgNVBAcMAkJKMRMwEQYDVQQKDApWbmV0LCBJbmMuMRYwFAYDVQQD
+        DA1tb24tbWluaW8tYXBpMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
+        srRwB1gZbVQfQ/aQMCnVNP+QAhQ6mgI18vCIH/dzpFiKzAlOc9vuAnsaJV4fO3go
+        PLwaG/d2nHB5WKFGnSk8Cz56CXFTkePHaZdXU03AOaVx7WOUIjeW8y/KmOPtKHY+
+        hFMDPK7TKJZMrqP07oij/pXIx7CNlYHSW3vat3cjfffcOMQHL/xO+NLQ45v6L81U
+        RL6D1p/IxDPWHDQxsoOLky3Ear7YLy/54SUGXIIOGYEhFmQmVPoB0sm9D20x75hN
+        0JdtLnrPdvA2Dsp/mfIwVMh2D/wP3XakMo+yY3WIHCchRwall8cO2xNOLthCCW5p
+        fIbHEF48SVB0+oj0qhXX7QIDAQABo1UwUzBRBgNVHREESjBIgiJtb25pdG9yLW1p
+        bmlvLWFwaS5kZXYuMjF2aWFuZXQuY29tgiJtaW5pby1tb25pdG9yLWFwaS5kZXYu
+        MjF2aWFuZXQuY29tMA0GCSqGSIb3DQEBCwUAA4IBAQAxIQejaorWHAne9mck+WRI
+        L72QQLkRzCcpAt8teEmOt0QDo9ri0v9EOHIk/JmI+lIgG4WFjdij9/s+6mmfjdYu
+        QlP5Xpfy7gYwhaXG7wEn1h+balYaCEZyT47Tcysgzcc9bjXNajt56ysF+o1X26HU
+        g5N70HjUZm7GbKcFG9fpPCCdCWn7LGg5yiK/desmduSBDwQ2k9VGvKWSo9NgOd//
+        vIU49V1C6KMPsSFNap6DoqXcJM+2qI3NK+5547vwH6B2OKxTbTzXxLErYou8KGkW
+        IPOL40ChVD/+0CceX9iRstoGsF73Va5pWz9Ro4l0wK7qq1ocVlWsgJmurdtUW6zX
+        -----END CERTIFICATE-----
+networkPolicy:
+  enabled: false

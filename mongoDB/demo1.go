@@ -31,9 +31,9 @@ xxx 分片 连接方法
 //var uri = "mongodb://root:pass2022@172.22.50.25:32092,172.22.50.25:32093,172.22.50.25:32094/?connectTimeoutMS=300000&authSource=admin"
 */
 
-//var uri = "mongodb://root:cc@172.22.50.25:32082,172.22.50.25:32083,172.22.50.25:32084/?connectTimeoutMS=300000&authSource=admin"
+var uri = "mongodb://root:cc@172.22.50.25:32082,172.22.50.25:32083,172.22.50.25:32084/?connectTimeoutMS=300000&authSource=admin"
 
-var uri string = "mongodb://cc:cc@172.22.50.25:27117,172.22.50.25:27118/?authMechanism=SCRAM-SHA-256&authSource=cmdb"
+//var uri string = "mongodb://cc:cc@172.22.50.25:27117,172.22.50.25:27118/?authMechanism=SCRAM-SHA-256&authSource=cmdb"
 
 func main() {
 	// 设置客户端连接配置
@@ -43,14 +43,7 @@ func main() {
 	//var rs = "rs0"
 	conOpt := options.ClientOptions{
 		MaxPoolSize: &mp,
-		//MaxPoolSize:     3000,
-		//MinPoolSize:     100,
-		//ConnectTimeout:  &timeout,
-		//SocketTimeout:   &socketTimeout,
-		//ReplicaSet: &rs,
-		//RetryWrites:     false,
-		//MaxConnIdleTime: "1500000000000"
-		AppName: &app,
+		AppName:     &app,
 	}
 
 	// 连接到MongoDB
@@ -66,17 +59,49 @@ func main() {
 	}
 	fmt.Println("Connected to MongoDB!")
 
-	db := client.Database("admin")
-	buildInfoCmd := bson.D{bson.E{Key: "buildInfo", Value: 1}}
-	var buildInfoDoc bson.M
-	if err := db.RunCommand(context.Background(), buildInfoCmd).Decode(&buildInfoDoc); err != nil {
-		log.Printf("Failed to run buildInfo command: %v", err)
-		return
-	}
-	log.Println("Database version:", buildInfoDoc["version"])
+	for _, host := range clientOptions.Hosts {
+		// 创建一个新的连接到当前mongos节点
+		mongosClientOptions := options.Client().ApplyURI(fmt.Sprintf("mongodb://%s", host))
+		mongosClient, err := mongo.Connect(context.TODO(), mongosClientOptions)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	// xxx insert
-	insertDemo(client)
+		// 获取admin数据库的isMaster信息
+		adminDB := mongosClient.Database("admin")
+		result := adminDB.RunCommand(context.TODO(), map[string]interface{}{
+			"hello": 1,
+		})
+
+		// 解析并获取mongos节点状态
+		var output map[string]interface{}
+		if err := result.Decode(&output); err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(output)
+		// 获取isMaster命令的返回字段中的"ismaster"值，判断节点是否为mongos节点
+		//ismaster, ok := output["ismaster"].(bool)
+		//if !ok {
+		//	log.Fatal("Unable to determine the status of mongos node")
+		//}
+		//
+		//if ismaster {
+		//	fmt.Printf("Mongos node %s is online\n", host)
+		//} else {
+		//	fmt.Printf("Mongos node %s is offline\n", host)
+		//}
+
+		// 关闭当前mongos节点的连接
+		if err := mongosClient.Disconnect(context.TODO()); err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	// 关闭MongoDB连接
+	if err := client.Disconnect(context.TODO()); err != nil {
+		log.Fatal(err)
+	}
+
 }
 
 func insertDemo(client *mongo.Client) {

@@ -27,6 +27,7 @@ func main() {
 		fmt.Printf("[%d] subvendor: %+v\n", index, device.Subvendor)
 		fmt.Printf("[%d] class: %+v\n", index, device.Class)
 		fmt.Printf("[%d] product: %+v\n", index, device.Product)
+		fmt.Printf("[%d] device: %+v\n", index, device)
 
 	}
 	fmt.Println("================================================================")

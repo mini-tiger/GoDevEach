@@ -1,0 +1,696 @@
+kubeTargetVersionOverride: "1.20.15"
+defaultRules:
+  create: false
+
+global:
+  rbac:
+    create: true
+    pspEnabled: false
+
+alertmanager:
+  enabled: true
+  email:
+    username: 'zhangsan@example.com'
+    password: pwd
+  config:
+# external alertmanager yaml
+    global:
+      resolve_timeout: 10m
+#      slack_api_url: url
+    route:
+      group_by: ['cluster','alertname']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 24h
+      receiver: 'null'
+      routes:
+      - matchers:
+          - cluster=~"kind-test-dev|foo2|baz"
+        receiver: 'null'
+    receivers:
+      - name: 'null'
+      - name: dc-email
+        email_configs:
+          - smarthost: "mail.21vianet.com:587"
+            from: '{{ .Values.alertmanager.email.username }}'
+            to: 'zhang.hu5@21vianet.com,patrick.zhu@dyxnet.com,gary.ji@dyxnet.com'
+            send_resolved: true
+            auth_username: '{{ .Values.alertmanager.email.username }}'
+            auth_password: '{{ .Values.alertmanager.email.password }}'
+            require_tls: true
+            tls_config:
+              insecure_skip_verify: true
+            text: |-
+              {{ `{{template "email.text" . }}` }}
+      - name: support-email
+        email_configs:
+          - smarthost: "mail.21vianet.com:587"
+            from: '{{ .Values.alertmanager.email.username }}'
+            to: 'matthew.chen@dyxnet.com'
+            send_resolved: true
+            auth_username: '{{ .Values.alertmanager.email.username }}'
+            auth_password: '{{ .Values.alertmanager.email.password }}'
+            require_tls: true
+            tls_config:
+              insecure_skip_verify: true
+            text: |-
+              {{ `{{template "email.text" . }}` }}
+      - name: bigdata-email
+        email_configs:
+          - smarthost: "mail.21vianet.com:587"
+            from: '{{ .Values.alertmanager.email.username }}'
+            to: 'zhang.hu5@21vianet.com,patrick.zhu@dyxnet.com,gary.ji@dyxnet.com,wang.kun6@neolink.com,lou.jian@neolink.com'
+            send_resolved: true
+            auth_username: '{{ .Values.alertmanager.email.username }}'
+            auth_password: '{{ .Values.alertmanager.email.password }}'
+            require_tls: true
+            tls_config:
+              insecure_skip_verify: true
+            text: |-
+              {{ `{{template "email.text" . }}` }}
+    templates:
+      - '/etc/alertmanager/config/*.tmpl'
+  tplConfig: true
+  templateFiles:
+    template_1.tmpl: |-
+      {{ define "cluster" }}{{ .ExternalURL }}{{ end }}
+
+      {{ define "email.text" }}
+      {{- $root := . -}}
+      {{ range .Alerts }}
+        *Alert:* {{ .Annotations.summary }} - `{{ .Labels.severity }}`
+        *Cluster:* {{ template "cluster" $root }}
+        *Description:* {{ .Annotations.description }}
+        *Graph:* <{{ .GeneratorURL }}|:chart_with_upwards_trend:>
+        *Runbook:* <{{ .Annotations.runbook }}|:spiral_note_pad:>
+        *Details:*
+          {{ range .Labels.SortedPairs }} - *{{ .Name }}:* `{{ .Value }}`
+          {{ end }}
+      {{ end }}
+      {{ end }}
+  ingress:
+    enabled: false
+    ingressClassName: traefik
+    annotations:
+      traefik.ingress.kubernetes.io/buffering: |
+        maxRequestBodyBytes = 0
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
+    hosts:
+      - monitor-alertmanager.dev.21vianet.com
+    paths:
+      - /
+    tls:
+      - secretName: alertmanager-general-tls
+        hosts:
+          - monitor-alertmanager.dev.21vianet.com
+  ingressPerReplica:
+    enabled: false
+    ingressClassName: traefik
+    annotations:
+      traefik.ingress.kubernetes.io/buffering: |
+        maxRequestBodyBytes = 0
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
+    hostPrefix: "monitor-alertmanager"
+    hostDomain: "dev.21vianet.com"
+    paths:
+      - /
+    pathType: ImplementationSpecific
+    tlsSecretName: "alertmanager-general-tls"
+  servicePerReplica:
+    enabled: true
+
+  alertmanagerSpec:
+    image:
+      repository: harbor.dev.21vianet.com/library/alertmanager
+      tag: v0.23.0
+    replicas: 1
+    retention: 120h
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: standard
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 1Gi
+    externalUrl: https://monitor-alertmanager.dev.21vianet.com
+    resources:
+      requests:
+        memory: 2048Mi
+        cpu: 500m
+      limits:
+        memory: 2048Mi
+        cpu: 500m
+  extraSecret:
+    name: "alertmanager-general-tls"
+    data:
+      tls.key: |
+        -----BEGIN RSA PRIVATE KEY-----
+        MIIEpgIBAAKCAQEAvYPeuKrsbpZzrnHaeKdcimaj96LglIeXj1D03JEfQjleDqeL
+        K2Zv2E9z/tFPr5oAn0hl9hDb7DQj09WGKNCOSrz4mEBT4ogXCDR9VvoEk+/9ROZ2
+        CIlI786KiGHdc70rbw076MLJzvVCFMr1qUrmrKeUu5MLbPTkB+94W4x/3G0JFg6X
+        0YeRaFACT0uh8KQMpcGkHIE9d42KDNehUkoZ/qzSyGc2Axc+sMk7Kd/LDeQnquS2
+        c5GP+SXDKGocIcS80e3niDEATkpnzo7EeRrtaHdNM8CI375dFtUQ0wjiMBVhkq9I
+        ATI6RFnr8AIhaEBu45yf8K1pnLIOlO1hnZrb3wIDAQABAoIBAQCmy3kqbsTIUAJg
+        djQiHKqF5PBK8z9VekEaEdZwiglI79SocS07dVzatJMSooXPt2r0xXN3rj7hFMKz
+        nioFogiaHtdsqLErnzsmLYxjEIkW6xGtomgf+zQGW3HxtrCBPO0NQEiKA2Y6kAEo
+        67hq11FOg++TZ0eXDbHkig8UBAREqu6ZyC9cilnFyV43SmFrcKhMiXsZ9dr6KfWG
+        hubgZ/ipWZFUybxjzvE6CX9I5dSmkTaq/4DtUGb5c0RwkOXb46gPX+LRG5HUtMFH
+        t9HA7GIYgYiK3jHSAgknicQKcds0XCcz97hVXeE78FkkX4XEq4FGTSOQyfGXYWFd
+        X+EnTMIBAoGBAOCMDfPHL33avxRgDoe4cMEy8UrjcXH2JYHvqYlkopOCBtg0LMU/
+        DHjTWLb+9kfnHj90SaY0bYsXxA646a4DUNE0B3pDwTa7gV1poyslEMasV75cKMy3
+        CxsY2/IbvM/iR/LpyhEA+gCbPj0R1mEn6lE8ciresMildkPKBjgHv1+xAoGBANgP
+        ni1JXCrGAdJOyIhDVxGDxydtiSIkAMfqopDCV4Zo988OP+c5uwDoU+2KHgBcyZys
+        Pvp1vk9mV7OQ/vIlOk/NTRnk7ppHILbmMZNA3+Ku5hquhIFcGJ0zXI6c7OPDXdIB
+        c+U1GKqZDWMTmtcrc/xXEiCTGTx6Kto1NAElvOiPAoGBAN4J//3wF8kmlk4qkhOo
+        0W5p1moML/DVys8K0yV2KsEcEXKXXTIKn2WW76G8yoHdS27Jqc49B5lD/e3k8cXN
+        p4vHHCHNf/CER268d8nBFC6w2u70qK+NzOCVm2B0Bye1hRnyDorz4ULaQBgZXFik
+        JLMBx48Wt88gtqpfyfh7yMRxAoGBAIWsq/1yzM498XSPf6wmlaDlefrf3x87TSxi
+        869CPeqP2PnG5CyH4DYAh6SIdmVdAvOm8dP9sv/m3s3fIIzqEXi8GT6zEBhtd0UR
+        iIyFb78M3JqXbK2oMCZaV6J4XmvQPKSod27Q+fDafpjU0VDctobhy/pRaCStpQOa
+        NRGcqpLrAoGBAIdFPSayujRpay5RjL0KEdXiMR+jXrjeK+7R+QChd7ywVdeORRW9
+        QwgEO5fjgPcT/oFiNwPIYfPEqbpft08WTVzFQPjxf81Q5ziLmwopA82oces7t0hx
+        wk8MioTJWBZPb7n04wPb/oX0PAbwIH8pCRtW3VauJ2ALFwH8njnsYYk9
+        -----END RSA PRIVATE KEY-----
+      tls.crt: |
+        -----BEGIN CERTIFICATE-----
+        MIIEBzCCAu+gAwIBAgIJAIVoissb1VOAMA0GCSqGSIb3DQEBCwUAMGQxCzAJBgNV
+        BAYTAkNOMQswCQYDVQQIDAJCSjELMAkGA1UEBwwCQkoxETAPBgNVBAoMCDIxdmlh
+        bmV0MRcwFQYDVQQLDA5Tb2Z0d2FyZUNlbnRlcjEPMA0GA1UEAwwGcm9vdGNhMCAX
+        DTIyMDUyNTA4MTk1NVoYDzIxMjIwNTAxMDgxOTU1WjBqMQswCQYDVQQGEwJDTjEL
+        MAkGA1UECAwCQkoxCzAJBgNVBAcMAkJKMREwDwYDVQQKDAgyMXZpYW5ldDEXMBUG
+        A1UECwwOU29mdHdhcmVDZW50ZXIxFTATBgNVBAMMDGFsZXJ0bWFuYWdlcjCCASIw
+        DQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAL2D3riq7G6Wc65x2ninXIpmo/ei
+        4JSHl49Q9NyRH0I5Xg6niytmb9hPc/7RT6+aAJ9IZfYQ2+w0I9PVhijQjkq8+JhA
+        U+KIFwg0fVb6BJPv/UTmdgiJSO/Oiohh3XO9K28NO+jCyc71QhTK9alK5qynlLuT
+        C2z05AfveFuMf9xtCRYOl9GHkWhQAk9LofCkDKXBpByBPXeNigzXoVJKGf6s0shn
+        NgMXPrDJOynfyw3kJ6rktnORj/klwyhqHCHEvNHt54gxAE5KZ86OxHka7Wh3TTPA
+        iN++XRbVENMI4jAVYZKvSAEyOkRZ6/ACIWhAbuOcn/CtaZyyDpTtYZ2a298CAwEA
+        AaOBszCBsDCBrQYDVR0RBIGlMIGigiVtb25pdG9yLWFsZXJ0bWFuYWdlci5kZXYu
+        MjF2aWFuZXQuY29tgidtb25pdG9yLWFsZXJ0bWFuYWdlci0wLmRldi4yMXZpYW5l
+        dC5jb22CJ21vbml0b3ItYWxlcnRtYW5hZ2VyLTEuZGV2LjIxdmlhbmV0LmNvbYIn
+        bW9uaXRvci1hbGVydG1hbmFnZXItMi5kZXYuMjF2aWFuZXQuY29tMA0GCSqGSIb3
+        DQEBCwUAA4IBAQAYA277ZNn2GX/+Cjgl+NL0uQKPeDS5N7OeJ0VsIIQXCHCcxYzH
+        EzeYM5VYaOeYxJbanH1eEgvy0DZsbgjtpknn6EAHSNaQwJM3qGvamIc9IuZZlO4A
+        fNRiQYPpy9xot6CRIvZcKGxWS3txBcEKMIbgibRNgZWCEr74rHppaWhSr3Jsq2fE
+        uLhC0/63nC/9oLq9UXMrEMpL5zWF62l7qScfSWIj1lBmuU7t8eewQtHBjAbnoRU/
+        GrQEHqd+8f+Q1iLJ+5H7ZosngvGVjQL3MLtt6rX33aTmmYrIwifb7ytU2HTiFb5p
+        /sPtFihUY284l8PgZ7HsFHBZQEswlV6desrb
+        -----END CERTIFICATE-----
+
+grafana:
+  adminUser: admin
+  adminPassword: prom-operator
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+      - name: 'prometheus-new'
+        type: 'prometheus'
+#        isDefault: true
+        access: 'proxy'
+        orgId: 1
+        url: http://thanos-admin-query-frontend:9090
+        version: 1
+        readOnly: false
+        editable: true
+        isDefault: true
+        jsonData:
+          timeInterval: '30s'
+
+  deploymentStrategy:
+    type: Recreate
+  grafana.ini:
+    smtp:
+      enabled: true
+      host: "mail.21vianet.com:587"
+      user: gitinfo@21vianet.com
+      password: 21Vnet@Rdc042
+      skip_verify: true
+      from_address: "gitinfo@21vianet.com"
+    alerting:
+      enabled: false
+      execute_alerts: true
+    unified_alerting:
+      enabled: true
+    auth.ldap:
+      enabled: false
+      allow_sign_up: true
+      config_file: /etc/grafana/ldap.toml
+  ldap:
+    enabled: false
+    existingSecret: ""
+    bind_password: "admin"
+    config: |-
+      verbose_logging = true
+
+      [[servers]]
+      host = "21vianet.com"
+      port = 3268
+      use_ssl = false
+      start_tls = false
+      ssl_skip_verify = false
+      bind_dn = "cn=gitadm,ou=serverusers,ou=21vianet,dc=21vianet,dc=com"
+      bind_password = '{{.Values.ldap.bind_password}}'
+      search_filter = "(sAMAccountName=%s)"
+      search_base_dns = ["dc=21vianet,dc=com"]
+
+      [servers.attributes]
+      name = "givenName"
+      surname = "sn"
+      username = "cn"
+      member_of = "memberOf"
+      email =  "mail"
+
+      [[servers.group_mappings]]
+      group_dn = "*"
+      org_role = "Viewer"
+  enabled: true
+  defaultDashboardsEnabled: true
+  defaultDashboardsTimezone: cst
+
+#  plugins: ["http://thanos-minio.kube-admin:9000/public/alexanderzobnin-zabbix-app-4.2.4.zip;custom-plugins"]
+  downloadDashboardsImage:
+    repository: harbor.dev.21vianet.com/library/curl
+    tag: 7.73.0
+  persistence:
+    type: pvc
+    enabled: true
+    storageClassName: standard
+    accessModes:
+      - ReadWriteOnce
+    size: 1Gi
+  initChownData:
+    enabled: true
+    image:
+      repository: harbor.dev.21vianet.com/library/bitnami-shell
+      tag: "10-debian-10-r278"
+      pullPolicy: IfNotPresent
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+#      - name: 'ceph'
+#        orgId: 1
+#        folder: 'Ceph'
+#        type: file
+#        disableDeletion: false
+#        editable: true
+#        options:
+#          path: /var/lib/grafana/dashboards/ceph
+#      - name: 'openstack'
+#        orgId: 1
+#        folder: 'Openstack'
+#        type: file
+#        disableDeletion: false
+#        editable: true
+#        options:
+#          path: /var/lib/grafana/dashboards/openstack
+#      - name: 'zabbix'
+#        orgId: 1
+#        folder: 'Zabbix'
+#        type: file
+#        disableDeletion: false
+#        editable: true
+#        options:
+#          path: /var/lib/grafana/dashboards/zabbix
+      - name: 'thanos'
+        orgId: 1
+        folder: 'Thanos'
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/thanos
+
+  dashboards:
+    zabbix:
+      zabbix-server:
+        file: dashboards/zabbix-server.json
+      zabbix-system-status:
+        file: dashboards/zabbix-system-status.json
+      agent-server:
+        file: dashboards/agent-server.json
+      network:
+        file: dashboards/network.json
+    ceph:
+      cluster:
+        file: dashboards/ceph/cluster.json
+      osds:    
+        file: dashboards/ceph/osds.json
+      pools:
+        file: dashboards/ceph/pools.json
+      node-exporter:
+        file: dashboards/ceph/node-exporter.json
+      ## 添加n版本
+      ceph-cluster:
+        file: dashboards/ceph2/ceph-cluster.json
+      ceph-overview:
+        file: dashboards/ceph2/ceph-overview.json
+      ceph-details:
+        file: dashboards/ceph2/ceph-details.json
+      host-overview:
+        file: dashboards/ceph2/host-overview.json
+      osd-overview:
+        file: dashboards/ceph2/osd-overview.json
+      pool-detail:
+        file: dashboards/ceph2/pool-detail.json
+      pool-overview:
+        file: dashboards/ceph2/pool-overview.json
+      radosgw-detail:
+        file: dashboards/ceph2/radosgw-detail.json
+      radosgw-overview:
+        file: dashboards/ceph2/radosgw-overview.json
+      radosgw-sync-overview:
+        file: dashboards/ceph2/radosgw-sync-overvie.json
+      rbd-details:
+        file: dashboards/ceph2/rbd-details.json
+      rbd-overview:
+        file: dashboards/ceph2/rbd-overview.json
+
+    openstack:
+      cluster:
+        file: dashboards/openstack/openstack-exporter.json
+      libvirt:
+        file: dashboards/openstack/libvirt.json
+    thanos:
+      overview:
+        file: dashboards/thanos/overview.json
+      query:
+        file: dashboards/thanos/query.json
+      compact:
+        file: dashboards/thanos/compact.json
+      bucket_replicate:
+        file: dashboards/thanos/bucket_replicate.json
+      rule:
+        file: dashboards/thanos/rule.json
+      store:
+        file: dashboards/thanos/store.json
+
+  ingress:
+    enabled: false
+    annotations:
+      kubernetes.io/ingress.class: traefik
+      traefik.ingress.kubernetes.io/buffering: |
+        maxRequestBodyBytes = 0
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
+    hosts:
+      - monitor.dev.21vianet.com
+    path: /
+    tls:
+    - secretName: monitor-general-tls
+      hosts:
+      - monitor.dev.21vianet.com
+  image:
+    repository: harbor.dev.21vianet.com/library/grafana
+    tag: 8.3.3
+  sidecar:
+    image:
+      repository: harbor.dev.21vianet.com/library/k8s-sidecar
+      tag: 1.14.2
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      multicluster:
+        global:
+          enabled: true
+        etcd:
+          enabled: false
+      provider:
+        allowUiUpdates: false
+        folder: Kubernetes
+    datasources:
+      enabled: true
+      defaultDatasourceEnabled: true
+      defaultDatasourceScrapeInterval: 30s
+      createPrometheusReplicasDatasources: false
+      label: grafana_datasource
+  zabbix:
+    password: "test"
+
+
+  ## Configure additional grafana datasources (passed through tpl)
+  ## ref: http://docs.grafana.org/administration/provisioning/#datasources
+  additionalDataSources:
+  - name: k8s
+    access: proxy
+    basicAuth: false
+    editable: false
+    jsonData:
+        tlsSkipVerify: true
+    orgId: 1
+    type: prometheus
+    url: http://thanos-query-frontend:9090
+    version: 1
+  - name: Alertmanager
+    type: alertmanager
+    url: http://alertmanager-operated:9093
+    access: proxy
+    jsonData:
+        implementation: prometheus
+    # optionally
+    basicAuth: false
+    editable: false
+#  - name: Zabbix
+#    access: proxy
+#    orgId: 1
+#    basicAuth: false
+#    type: alexanderzobnin-zabbix-datasource
+#    typeLogoUrl: ''
+#    url: http://172.22.50.228/api_jsonrpc.php
+#    password: ''
+#    user: ''
+#    database: ''
+#    basicAuthUser: ''
+#    basicAuthPassword: ''
+#    withCredentials: false
+#    isDefault: false
+#    jsonData:
+#      cacheTTL: ''
+#      dbConnectionEnable: false
+#      disableDataAlignment: false
+#      trends: true
+#      trendsFrom: ''
+#      trendsRange: ''
+#      username: admin
+#      password: "{{.Values.grafana.zabbix.password }}"
+#    secureJsonFields:
+#      password: true
+#    version: 6
+#    readOnly: false
+#  - name: Zabbix-5.4
+#    access: proxy
+#    orgId: 1
+#    basicAuth: false
+#    type: alexanderzobnin-zabbix-datasource
+#    typeLogoUrl: ''
+#    url: http://172.22.50.138/api_jsonrpc.php
+#    password: ''
+#    user: ''
+#    database: ''
+#    basicAuthUser: ''
+#    basicAuthPassword: ''
+#    withCredentials: false
+#    isDefault: false
+#    jsonData:
+#      cacheTTL: ''
+#      disableDataAlignment: false
+#      trends: true
+#      trendsFrom: ''
+#      trendsRange: ''
+#      username: admin
+#      password: "{{.Values.grafana.zabbix.password }}"
+#    secureJsonFields:
+#      password: true
+#    version: 4
+#    readOnly: false
+
+
+kubeApiServer:
+  enabled: false
+kubelet:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+coreDns:
+  enabled: false
+kubeEtcd:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+kubeStateMetrics:
+  enabled: false
+nodeExporter:
+  enabled: false
+prometheusOperator:
+  enabled: true
+  tls:
+    enabled: true
+    tlsMinVersion: VersionTLS13
+    internalPort: 10250
+  admissionWebhooks:
+    failurePolicy: Fail
+    enabled: true
+    patch:
+      enabled: true
+      image:
+        repository: harbor.dev.21vianet.com/library/kube-webhook-certgen
+        tag: v1.0
+        sha: ""
+        pullPolicy: IfNotPresent
+
+  namespaces: 
+    releaseNamespace: true
+    additional:
+    - kube-system
+  kubeletService:
+    enabled: false
+  resources: 
+    limits:
+      cpu: 4
+      memory: 4096Mi
+    requests:
+      cpu: 2
+      memory: 2048Mi
+  image:
+    repository: harbor.dev.21vianet.com/library/prometheus-operator
+    tag: v0.52.1
+    prometheusDefaultBaseImage: harbor.dev.21vianet.com/library/prometheus
+    alertmanagerDefaultBaseImage: harbor.dev.21vianet.com/library/alertmanager
+  prometheusConfigReloader:
+    image:
+      repository: harbor.dev.21vianet.com/library/prometheus-config-reloader
+      tag: v0.52.1
+  thanosImage:
+    repository: harbor.dev.21vianet.com/library/thanos
+    tag: v0.23.1
+
+prometheus:
+  enabled: true
+  thanosService:
+    enabled: true
+    type: ClusterIP
+    portName: grpc
+    port: 10901
+    targetPort: "grpc"
+    httpPortName: http
+    httpPort: 10902
+    targetHttpPort: "http"
+    clusterIP: "None"
+  service:
+    port: 9090
+    targetPort: 9090
+    type: ClusterIP
+  servicePerReplica:
+    enabled: false
+  podDisruptionBudget:
+    enabled: false
+  ingress:
+    enabled: false
+    ingressClassName: traefik
+    annotations:
+      traefik.ingress.kubernetes.io/buffering: |
+        maxRequestBodyBytes = 0
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
+    hosts:
+      - prometheus.dev.21vianet.com
+    paths: 
+      - /
+    pathType: Prefix
+    tls: 
+      - secretName: monitor-general-tls
+        hosts:
+          - prometheus.dev.21vianet.com
+  additionalConfigs:
+    dev-config: ""
+    prod-config: ""
+  prometheusSpec:
+    disableCompaction: false
+    apiserverConfig: {}
+    scrapeInterval: "30s"
+    scrapeTimeout: "15s"
+    enableAdminAPI: false
+    web: {}
+    image:
+      repository: harbor.dev.21vianet.com/library/prometheus
+      tag: v2.31.1
+    alertingEndpoints: []
+    # - name: ""
+    #   namespace: ""
+    #   port: http
+    #   scheme: http
+    #   pathPrefix: ""
+    #   tlsConfig: {}
+    #   bearerTokenFile: ""
+    #   apiVersion: v2
+
+    externalUrl: "https://prometheus.dev.21vianet.com"
+    retention: 365d
+    retentionSize: "20GB"
+    walCompression: false
+    paused: false
+    replicas: 1
+    shards: 1
+    logLevel: info
+    logFormat: logfmt
+    routePrefix: /
+    resources:
+      requests:
+        memory: 1024Mi
+        cpu: 1
+      limits:
+        memory: 4096Mi
+        cpu: 1
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: standard
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 30Gi
+    configMaps: []
+    additionalScrapeConfigs: []
+    ## If additional scrape configurations are already deployed in a single secret file you can use this section.
+    ## Expected values are the secret name and key
+    ## Cannot be used with additionalScrapeConfigs
+    additionalScrapeConfigsSecret:
+      enabled: true
+      name: monitor-kube-prometheus-st-prometheus-scrape-custom-confg
+      key: additional-scrape-custom-configs.yaml
+
+    additionalAlertManagerConfigs: []
+    # - consul_sd_configs:
+    #   - server: consul.dev.test:8500
+    #     scheme: http
+    #     datacenter: dev
+    #     tag_separator: ','
+    #     services:
+    #       - metrics-prometheus-alertmanager
+    additionalAlertManagerConfigsSecret: {}
+      # name:
+      # key:
+    additionalAlertRelabelConfigs: []
+    # - separator: ;
+    #   regex: prometheus_replica
+    #   replacement: $1
+    #   action: labeldrop
+    ## Thanos configuration allows configuring various aspects of a Prometheus server in a Thanos environment.
+    ## This section is experimental, it may change significantly without deprecation notice in any release.
+    ## This is experimental and may change significantly without backward compatibility in any release.
+    ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/api.md#thanosspec
+    ##
+    thanos:
+      resources:
+        requests:
+          memory: 4096Mi
+          cpu: 4
+        limits:
+          memory: 4096Mi
+          cpu: 4

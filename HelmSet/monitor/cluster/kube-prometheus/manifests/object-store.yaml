@@ -1,0 +1,17 @@
+type: S3
+config:
+  bucket: "thanos"
+  endpoint: "thanos-admin-minio.kube-admin.svc.cluster.local:9000"
+  access_key: "admin"
+  insecure: false
+  signature_version2: false
+  secret_key: "test123456"
+  http_config:
+    idle_conn_timeout: 1m30s
+    response_header_timeout: 2m
+    insecure_skip_verify: true
+    tls_handshake_timeout: 10s
+    expect_continue_timeout: 1s
+    max_idle_conns: 100
+    max_idle_conns_per_host: 100
+    max_conns_per_host: 0

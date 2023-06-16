@@ -26,7 +26,7 @@ func main() {
 	// 路由定义post请求, url路径为：/user/login, 绑定doLogin控制器函数
 	r.GET("/*path", doLogin)
 	r.POST("/*path", doLogin)
-	r.Run(":8081")
+	r.Run(":30980")
 
 }
 
