@@ -1,0 +1,98 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.8.0
+  creationTimestamp: null
+  name: guestbooks.webapp.demo2.com
+spec:
+  group: webapp.demo2.com
+  names:
+    kind: Guestbook
+    listKind: GuestbookList
+    plural: guestbooks
+    shortNames:
+    - gb
+    singular: guestbook
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - description: single pod qps field
+      jsonPath: .spec.singlePodQPS
+      name: SinglePodQPS
+      type: integer
+    - description: TotalQPS field
+      jsonPath: .spec.totalQPS
+      name: TotalQPS
+      type: integer
+    - description: port field
+      jsonPath: .spec.port
+      name: Port
+      type: integer
+    - description: pushport field
+      jsonPath: .spec.pushPort
+      name: PushPort
+      type: integer
+    name: v1
+    schema:
+      openAPIV3Schema:
+        description: Guestbook is the Schema for the guestbooks API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: GuestbookSpec defines the desired state of Guestbook 期望状态
+            properties:
+              image:
+                description: 业务服务对应的镜像，包括名称:tag
+                type: string
+              port:
+                format: int32
+                type: integer
+              pushPort:
+                description: service占用的宿主机端口，外部请求通过此端口访问pod的服务
+                format: int32
+                type: integer
+              singlePodQPS:
+                description: 单个pod的QPS上限
+                format: int32
+                type: integer
+              totalQPS:
+                description: 当前整个业务的总QPS需求量
+                format: int32
+                type: integer
+            required:
+            - image
+            - pushPort
+            - singlePodQPS
+            type: object
+          status:
+            description: GuestbookStatus defines the observed state of Guestbook 实际状态，该数据结构中的值都是业务代码计算出来的
+            properties:
+              realQPS:
+                description: 当前kubernetes中实际发生的总QPS
+                format: int32
+                type: integer
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
