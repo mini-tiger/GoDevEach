@@ -1,0 +1,16 @@
+domain: demo1.com
+layout:
+- go.kubebuilder.io/v3
+projectName: demo1
+repo: GoDevEach
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: demo1.com
+  group: webapp
+  kind: Guestbook
+  path: GoDevEach/api/v1
+  version: v1
+version: "3"
