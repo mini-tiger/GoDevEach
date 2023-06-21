@@ -17,6 +17,7 @@ limitations under the License.
 package v1
 
 import (
+	"fmt"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -89,7 +90,7 @@ func (r *Guestbook) validateElasticWeb() error {
 	var allErrs field.ErrorList
 
 	if *r.Spec.SinglePodQPS > 1000 {
-		guestbooklog.Info("c. Invalid SinglePodQPS")
+		guestbooklog.Info(fmt.Sprintf("c. Invalid SinglePodQPS [%d]", *r.Spec.SinglePodQPS))
 
 		err := field.Invalid(field.NewPath("spec").Child("singlePodQPS"),
 			*r.Spec.SinglePodQPS,
