@@ -59,8 +59,8 @@ func Example_userAuthentication1() {
 		// 这里是 LDAP 查询的 Filter.这个例子例子,我们通过查询 uid=username 且 objectClass=organizationalPerson.
 
 		//"(objectClass=group)",  // xxx 所有组
-		fmt.Sprintf("(&(objectClass=person))"), //xxx 所有用户
-		//fmt.Sprintf("(&(objectClass=organizationalPerson)(sAMAccountName=%s))", ldap.EscapeFilter(username)), // xxx 根据属性筛选
+		//fmt.Sprintf("(&(objectClass=person))"), //xxx 所有用户
+		fmt.Sprintf("(&(objectCategory=user)(sAMAccountName=%s))", ldap.EscapeFilter(username)), // xxx 根据属性筛选
 		// xxx 这里是查询返回的属性,以数组形式提供.如果为空则会返回所有的属性
 		nil,
 		//[]string{"dn", "cn", "uid"},
