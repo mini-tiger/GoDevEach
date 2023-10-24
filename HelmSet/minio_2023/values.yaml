@@ -1,3 +1,6 @@
+# Copyright VMware, Inc.
+# SPDX-License-Identifier: APACHE-2.0
+
 ## @section Global parameters
 ## Global Docker image parameters
 ## Please, note that this will override the image parameters, including dependencies, configured to use the global value
@@ -47,6 +50,7 @@ extraDeploy: []
 ## @param image.registry MinIO&reg; image registry
 ## @param image.repository MinIO&reg; image repository
 ## @param image.tag MinIO&reg; image tag (immutable tags are recommended)
+## @param image.digest MinIO&reg; image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag
 ## @param image.pullPolicy Image pull policy
 ## @param image.pullSecrets Specify docker-registry secret names as an array
 ## @param image.debug Specify if debug logs should be enabled
@@ -54,7 +58,8 @@ extraDeploy: []
 image:
   registry: harbor.dev.21vianet.com
   repository: neolinkgpt/minio
-  tag: 2022.12.12-debian-11-r12
+  tag: 2023.7.18-debian-11-r2
+  digest: ""
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
   ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -70,17 +75,19 @@ image:
   pullSecrets: []
   ## Set to true if you would like to see extra information on logs
   ##
-  debug: true
+  debug: false
 ## Bitnami MinIO&reg; Client image version
 ## ref: https://hub.docker.com/r/bitnami/minio-client/tags/
 ## @param clientImage.registry MinIO&reg; Client image registry
 ## @param clientImage.repository MinIO&reg; Client image repository
 ## @param clientImage.tag MinIO&reg; Client image tag (immutable tags are recommended)
+## @param clientImage.digest MinIO&reg; Client image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag
 ##
 clientImage:
-  registry: harbor.dev.21vianet.com
-  repository: neolinkgpt/minio-client
-  tag: 2022.12.24-debian-11-r7
+  registry: docker.io
+  repository: bitnami/minio-client
+  tag: 2023.7.18-debian-11-r0
+  digest: ""
 ## @param mode MinIO&reg; server mode (`standalone` or `distributed`)
 ## ref: https://docs.minio.io/docs/distributed-minio-quickstart-guide
 ##
@@ -165,7 +172,7 @@ schedulerName: ""
 ##
 terminationGracePeriodSeconds: ""
 ## MinIO&reg; deployment parameters
-## Only when 'mode' is 'standalone' or 'gateway.enabled' is 'true'
+## Only when 'mode' is 'standalone'
 ##
 deployment:
   ## @param deployment.updateStrategy.type Deployment strategy type
@@ -218,6 +225,10 @@ provisioning:
   ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
   ##
   schedulerName: ""
+  ## @param provisioning.podLabels Extra labels for provisioning pods
+  ## Ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+  ##
+  podLabels: {}
   ## @param provisioning.podAnnotations Provisioning Pod annotations.
   ##
   podAnnotations: {}
@@ -227,6 +238,9 @@ provisioning:
   ## @param provisioning.args Default provisioning container args (useful when using custom images). Use array form
   ##
   args: []
+  ## @param provisioning.extraCommands Optionally specify extra list of additional commands for MinIO&reg; provisioning pod
+  ##
+  extraCommands: []
   ## @param provisioning.extraVolumes Optionally specify extra list of additional volumes for MinIO&reg; provisioning pod
   ##
   extraVolumes: []
@@ -359,8 +373,8 @@ provisioning:
   ##     # Only when mode is 'distributed'
   ##     # ref: https://docs.minio.io/docs/distributed-minio-quickstart-guide
   ##     quota:
-  ##       # hard or clear(+ omit size)
-  ##       type: hard
+  ##       # set (hard still works as an alias but is deprecated) or clear(+ omit size)
+  ##       type: set
   ##       size: 10GiB
   ##     tags:
   ##       key1: value1
@@ -373,7 +387,32 @@ provisioning:
   ##     options:
   ##       name: us-east-1
   config: []
-
+  ## MinIO&reg; pod Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+  ## @param provisioning.podSecurityContext.enabled Enable pod Security Context
+  ## @param provisioning.podSecurityContext.fsGroup Group ID for the container
+  ##
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1001
+  ## MinIO&reg; container Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
+  ## @param provisioning.containerSecurityContext.enabled Enable container Security Context
+  ## @param provisioning.containerSecurityContext.runAsUser User ID for the container
+  ## @param provisioning.containerSecurityContext.runAsNonRoot Avoid running as root User
+  ##
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
+    runAsNonRoot: true
+  ## Automatic Cleanup for Finished Jobs
+  ## @param provisioning.cleanupAfterFinished.enabled Enables Cleanup for Finished Jobs
+  ## @param provisioning.cleanupAfterFinished.seconds Sets the value of ttlSecondsAfterFinished
+  ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/ttlafterfinished/
+  ##
+  cleanupAfterFinished:
+    enabled: false
+    seconds: 600
 ## @param hostAliases MinIO&reg; pod host aliases
 ## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
 ##
@@ -392,7 +431,6 @@ containerPorts:
 podSecurityContext:
   enabled: true
   fsGroup: 1001
-  runAsUser: 1001
 ## MinIO&reg; container Security Context
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
 ## @param containerSecurityContext.enabled Enable container Security Context
@@ -472,9 +510,7 @@ resources:
   ## limits:
   ##    cpu: 250m
   ##    memory: 256Mi
-  limits:
-    cpu: 4000m
-    memory: 4096Mi
+  limits: {}
   ## Examples:
   ## requests:
   ##    cpu: 250m
@@ -586,7 +622,7 @@ service:
   ## @param service.nodePorts.api Specify the MinIO&reg API nodePort value for the LoadBalancer and NodePort service types
   ## @param service.nodePorts.console Specify the MinIO&reg Console nodePort value for the LoadBalancer and NodePort service types
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
-  ## 与上次 环境变量 端口顺序相反
+  ##
   nodePorts:
     api: "31087"
     console: "31086"
@@ -618,12 +654,18 @@ service:
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
   ##
   annotations: {}
+  ## Headless service properties
+  ##
+  headless:
+    ## @param service.headless.annotations Annotations for the headless service.
+    ##
+    annotations: {}
 ## Configure the ingress resource that allows you to access the
 ## MinIO&reg; Console. Set up the URL
 ## ref: https://kubernetes.io/docs/user-guide/ingress/
 ##
 ingress:
-  ## @param ingress.enabled Enable ingress controller resource
+  ## @param ingress.enabled Enable ingress controller resource for MinIO Console
   ##
   enabled: false
   ## @param ingress.apiVersion Force Ingress API version (automatically detected if not set)
@@ -732,7 +774,7 @@ ingress:
 ## ref: https://kubernetes.io/docs/user-guide/ingress/
 ##
 apiIngress:
-  ## @param apiIngress.enabled Enable ingress controller resource
+  ## @param apiIngress.enabled Enable ingress controller resource for MinIO API
   ##
   enabled: false
   ## @param apiIngress.apiVersion Force Ingress API version (automatically detected if not set)
@@ -847,7 +889,7 @@ networkPolicy:
   ##
   allowExternal: true
   ## @param networkPolicy.extraFromClauses Allows to add extra 'from' clauses to the NetworkPolicy
-  extraFromClauses: {}
+  extraFromClauses: []
   ## Example
   ## extraFromClauses:
   ## - podSelector:
@@ -880,7 +922,7 @@ persistence:
     - ReadWriteOnce
   ## @param persistence.size PVC Storage Request for MinIO&reg; data volume
   ##
-  size: 300Gi
+  size: 8Gi
   ## @param persistence.annotations Annotations for the PVC
   ##
   annotations: {}
@@ -900,13 +942,15 @@ volumePermissions:
   ## @param volumePermissions.image.registry Init container volume-permissions image registry
   ## @param volumePermissions.image.repository Init container volume-permissions image repository
   ## @param volumePermissions.image.tag Init container volume-permissions image tag (immutable tags are recommended)
+  ## @param volumePermissions.image.digest Init container volume-permissions image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag
   ## @param volumePermissions.image.pullPolicy Init container volume-permissions image pull policy
   ## @param volumePermissions.image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
     registry: docker.io
-    repository: bitnami/bitnami-shell
-    tag: 11-debian-11-r0
+    repository: bitnami/os-shell
+    tag: 11-debian-11-r11
+    digest: ""
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
@@ -962,7 +1006,6 @@ serviceAccount:
 ## @section Other parameters
 
 ## MinIO&reg; Pod Disruption Budget configuration in distributed mode.
-## If MinIO&reg; Gateway is enabled, creates a Pod Disruption Budget for the Gateway instead (mutually exclusive with distributed mode).
 ## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
 ##
 pdb:
@@ -1018,10 +1061,15 @@ metrics:
     ##
     honorLabels: false
     ## @param metrics.serviceMonitor.selector Prometheus instance selector labels
-    ## ref: https://github.com/bitnami/charts/tree/master/bitnami/prometheus-operator#prometheus-configuration
+    ## ref: https://github.com/bitnami/charts/tree/main/bitnami/prometheus-operator#prometheus-configuration
     ##
     selector: {}
-    
+    ## @param metrics.serviceMonitor.apiVersion ApiVersion for the serviceMonitor Resource (defaults to "monitoring.coreos.com/v1")
+    apiVersion: ""
+    ## @param metrics.serviceMonitor.tlsConfig Additional TLS configuration for metrics endpoint with "https" scheme
+    ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.TLSConfig
+    tlsConfig: {}
+
   ## Prometheus Operator PrometheusRule configuration
   ##
   prometheusRule:
@@ -1046,89 +1094,3 @@ metrics:
       #     group: PaaS
     ##
     rules: []
-
-## @section Gateway parameters
-
-gateway:
-  ## @param gateway.enabled Use MinIO&reg; as Gateway for other storage systems
-  ##
-  enabled: false
-  ## @param gateway.type Gateway type. Supported types are: `azure`, `gcs`, `nas`, `s3`
-  ## ref: https://docs.minio.io/docs/minio-gateway-for-azure
-  ## ref: https://docs.minio.io/docs/minio-gateway-for-gcs
-  ## ref: https://docs.minio.io/docs/minio-gateway-for-nas
-  ## ref: https://docs.minio.io/docs/minio-gateway-for-s3
-  ##
-  type: s3
-  ## @param gateway.replicaCount Number of MinIO&reg; Gateway replicas
-  ##
-  replicaCount: 4
-  ## @param gateway.updateStrategy.type Update strategy type for MinIO&reg; Gateway replicas
-  updateStrategy:
-    type: Recreate
-  ## Autoscaling configuration for MinIO&reg; Gateway. overrides gateway.replicaCount if enabled
-  ## @param gateway.autoscaling.enabled Enable autoscaling for MinIO&reg; Gateway deployment
-  ## @param gateway.autoscaling.minReplicas Minimum number of replicas to scale back
-  ## @param gateway.autoscaling.maxReplicas Maximum number of replicas to scale out
-  ## @param gateway.autoscaling.targetCPU Target CPU utilization percentage
-  ## @param gateway.autoscaling.targetMemory Target Memory utilization percentage
-  autoscaling:
-    enabled: false
-    minReplicas: "4"
-    maxReplicas: "4"
-    targetCPU: ""
-    targetMemory: ""
-  ## @param gateway.priorityClassName Pod priority class name for MinIO&reg; Gateway
-  ##
-  priorityClassName: ""
-  ## Gateway authentication configuration
-  ##
-  auth:
-    ## Authentication configuration for Azure. Ignored unless type=azure
-    ## @param gateway.auth.azure.accessKey Access key to access MinIO&reg; using Azure Gateway
-    ## @param gateway.auth.azure.secretKey Secret key to access MinIO&reg; using Azure Gateway
-    ## @param gateway.auth.azure.serviceEndpoint Azure Blob Storage custom endpoint
-    ## @param gateway.auth.azure.storageAccountName Azure Storage Account Name to use to access Azure Blob Storage
-    ## @param gateway.auth.azure.storageAccountKey Azure Storage Account Key to use to access Azure Blob Storage
-    ## @param gateway.auth.azure.storageAccountNameExistingSecret Existing Secret name to extract Azure Storage Account Name from to access Azure Blob Storage
-    ## @param gateway.auth.azure.storageAccountNameExistingSecretKey Existing Secret key to extract Azure Storage Account Name from to use to access Azure Blob Storage
-    ## @param gateway.auth.azure.storageAccountKeyExistingSecret Existing Secret name to extract Azure Storage Account Key from to access Azure Blob Storage
-    ## @param gateway.auth.azure.storageAccountKeyExistingSecretKey Existing Secret key to extract Azure Storage Account Key from to use to access Azure Blob Storage
-    ##
-    azure:
-      accessKey: ""
-      secretKey: ""
-      serviceEndpoint: ""
-      storageAccountName: ""
-      storageAccountKey: ""
-      storageAccountNameExistingSecret: ""
-      storageAccountNameExistingSecretKey: ""
-      storageAccountKeyExistingSecret: ""
-      storageAccountKeyExistingSecretKey: ""
-    ## Authentication configuration for GCS. Ignored unless type=gcs
-    ## @param gateway.auth.gcs.accessKey Access key to access MinIO&reg; using GCS Gateway
-    ## @param gateway.auth.gcs.secretKey Secret key to access MinIO&reg; using GCS Gateway
-    ## @param gateway.auth.gcs.keyJSON Service Account key to access GCS
-    ## @param gateway.auth.gcs.projectID GCP Project ID to use
-    ##
-    gcs:
-      accessKey: ""
-      secretKey: ""
-      keyJSON: ""
-      projectID: ""
-    ## Authentication configuration for NAS. Ignored unless type=nas
-    ## @param gateway.auth.nas.accessKey Access key to access MinIO&reg; using NAS Gateway
-    ## @param gateway.auth.nas.secretKey Secret key to access MinIO&reg; using NAS Gateway
-    ##
-    nas:
-      accessKey: ""
-      secretKey: ""
-    ## Authentication configuration for S3. Ignored unless type=s3
-    ## @param gateway.auth.s3.accessKey Access key to use to access AWS S3
-    ## @param gateway.auth.s3.secretKey Secret key to use to access AWS S3
-    ## @param gateway.auth.s3.serviceEndpoint AWS S3 endpoint
-    ##
-    s3:
-      accessKey: ""
-      secretKey: ""
-      serviceEndpoint: https://s3.amazonaws.com
